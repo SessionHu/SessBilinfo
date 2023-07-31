@@ -1,0 +1,29 @@
+name: Build JAR Package
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: build
+    steps:
+      - name: Clone Repo
+        uses: actions/checkout@v3
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3.12.0
+        with:
+          java-version: '8'
+          distribution: 'liberica'
+          architecture: 'x64'
+      - name: Build
+        run: bash ./buildjar.sh
+      - name: Upload
+        uses: actions/upload-artifact@v3
+        with:
+            name: SessBilinfo
+            path: build/SessBilinfo.jar
+          
