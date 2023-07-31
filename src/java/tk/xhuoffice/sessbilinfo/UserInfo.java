@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+
 public class UserInfo {
     
     public static final String BILI_API_USER_CARD = "https://api.bilibili.com/x/web-interface/card";
