@@ -14,9 +14,16 @@ javac -encoding utf-8 \
       src/java/tk/xhuoffice/sessbilinfo/UserInfo.java \
       src/java/tk/xhuoffice/sessbilinfo/Main.java
 
-echo -e "Packing..."
-cp ./README.md ./LICENSE build/
-cd build/
-jar -cvfm 'SessBilinfo.jar' ../manifest -C ./ .
+if [ $? -eq 0 ]; then
+    echo -e "Packing..."
+    cp ./README.md ./LICENSE build/
+    cd build/
+    jar -cvfm 'SessBilinfo.jar' ../manifest -C ./ .
+    cd ..
+    exit 0
+else
+    echo "Build failed!"
+    exit 1
+fi
 
-cd ..
+
