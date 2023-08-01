@@ -1,5 +1,9 @@
 package tk.xhuoffice.sessbilinfo;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+
 public class Json {
 
     public static String formatJson(String json, int indent) {
@@ -43,6 +47,23 @@ public class Json {
             }
         }
         return result.toString();
+    }
+    
+    public static int getIntAfterStr(String inputJson, String str) {
+        // 获取查找内容
+        Pattern pattern = Pattern.compile("\""+str+"\":(-?\\d+),");
+        // 检测查找内容
+        Matcher matcher = pattern.matcher(inputJson);
+        int num = -8888;
+        if(matcher.find()) {
+            // 正常赋值
+            num = Integer.parseInt(matcher.group(1));
+        } else {
+            // 异常处理
+            System.err.println("fatal: couldn't find any number after "+str);
+            System.exit(127);
+        }
+        return num;
     }
     
 }

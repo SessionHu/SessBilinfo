@@ -32,6 +32,8 @@ public class UserInfo {
         String rawJson = Http.get(BILI_API_USER_CARD+"?mid="+mid);
         // 输出结果
         System.out.println(Json.formatJson(rawJson,4));
+        // 输出解析结果(用法示例)
+        System.out.println("请求代码: "+Json.getIntAfterStr(rawJson,"code"));
     }
     
 }
