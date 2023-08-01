@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 public class Http {
 
@@ -29,13 +30,16 @@ public class Http {
             in.close();
             // 输出返回的 JSON 数据
             return response.toString();
+        } catch (UnknownHostException e) {
+            // 域名解析错误
+            System.err.println("fatal: 域名解析失败, 请检查网络连接与hosts文件配置");
         } catch(Exception e) {
             // 异常报告
-            System.err.println("fatal: HTTP 请求发生错误");
+            System.err.println("fatal: HTTP 请求发生未知错误");
             e.printStackTrace();
-            System.exit(1);
         }
         // 防止编译报错
+        System.exit(1);
         return null;
     }
     
