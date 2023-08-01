@@ -30,7 +30,10 @@ public class Http {
             // 输出返回的 JSON 数据
             return response.toString();
         } catch(Exception e) {
+            // 异常报告
+            System.err.println("fatal: HTTP 请求发生错误");
             e.printStackTrace();
+            System.exit(1);
         }
         // 防止编译报错
         return null;

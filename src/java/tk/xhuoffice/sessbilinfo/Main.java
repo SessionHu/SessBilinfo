@@ -16,13 +16,12 @@ public class Main {
             // 获取用户信息
             UserInfo.getUserInfo();
         } else if(task==0) {
-            // 正常退出
-            System.exit(0);
+            // noting here...
         } else {
             // 输出错误并退出
-            System.err.println("error: 无效的操作编号");
-            System.exit(1);
+            System.err.println("warn: 无效的操作编号");
         }
+        System.exit(0);
     }
     
     public static int menu() {
