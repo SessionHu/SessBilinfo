@@ -14,7 +14,7 @@ public class Main {
         // 执行操作
         if(task==1) {
             // 获取用户信息
-            getUserInfo();
+            UserInfo.getUserInfo();
         } else if(task==0) {
             // 正常退出
             System.exit(0);
@@ -37,22 +37,6 @@ public class Main {
         task = scan.nextInt();
         scan.nextLine(); // 消耗掉换行符
         return task;
-    }
-    
-    public static void getUserInfo() {
-        String mid;
-        // 提示输入信息
-        System.out.println(
-                "请输入被查询用户的 Mid 信息\n"+
-                "示例: 645769214"
-                );
-        System.out.print("> ");
-        // 获取输入信息
-        mid = scan.nextLine();
-        // 提示输入完成
-        System.out.println("Mid: "+mid);
-        // 输出用户信息
-        UserInfo.card(mid);
     }
     
 }

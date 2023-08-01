@@ -32,6 +32,8 @@ public class Http {
         } catch(Exception e) {
             e.printStackTrace();
         }
+        // 防止编译报错
+        return null;
     }
     
 }
