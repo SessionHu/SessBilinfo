@@ -43,7 +43,7 @@ public class UserInfo {
             System.out.println();
         } else {
             Error.code(code);
-            System.out.println("error: "+message);
+            System.out.println("错误信息: "+message);
         }
     }
     
