@@ -32,14 +32,14 @@ public class Http {
             return response.toString();
         } catch (UnknownHostException e) {
             // 域名解析错误
-            System.err.println("fatal: 域名解析失败, 请检查网络连接与hosts文件配置");
+            System.err.println("[FATAL] 域名解析失败, 请检查网络连接与hosts文件配置");
         } catch(Exception e) {
             // 异常报告
-            System.err.println("fatal: HTTP 请求发生未知错误");
+            System.err.println("[FATAL] HTTP 请求发生未知错误");
             e.printStackTrace();
         }
+        System.exit(64);
         // 防止编译报错
-        System.exit(1);
         return null;
     }
     
