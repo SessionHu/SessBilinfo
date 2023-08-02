@@ -14,29 +14,64 @@ public class UserInfo {
     public static final String BILI_API_USER_CARD = "https://api.bilibili.com/x/web-interface/card";
     
     public static void getUserInfo() {
-        String mid;
         // 提示输入信息
         System.out.println(
                 "请输入被查询用户的 Mid 信息\n"+
                 "示例: 645769214"
                 );
-        System.out.print("> ");
-        // 获取输入信息
-        mid = scan.nextLine();
-        // 提示输入完成
-        System.out.println("Mid: "+mid);
-        // 输出用户信息
+        // 向用户获取 Mid
+        int mid = getMid();
+        // 获取被查询B站用户信息
         card(mid);
     }
     
-    public static void card(String mid) {
+    public static int getMid() {
+        int mid = 1;
+        System.out.print("> ");
+        // 检查输入是否为整数
+        while (!scan.hasNextInt()) {
+            // 消耗错误的输入
+            scan.next();
+            // 输出警告
+            System.err.println("warn: 无效的 Mid");
+            // 提示重新输入
+            System.out.print("> ");
+        }
+        // 获取输入信息
+        mid = scan.nextInt();
+        scan.nextLine(); // 消耗换行符
+        // 验证输入内容是否正确
+        while (mid < 1) {
+            // 输出警告
+            System.err.println("warn: 无效的 Mid");
+            // 提示重新输入
+            System.out.print("> ");
+            // 检查输入是否为整数
+            while (!scan.hasNextInt()) {
+                // 消耗错误的输入
+                scan.next();
+                // 输出警告
+                System.err.println("warn: 无效的 Mid");
+                // 提示重新输入
+                System.out.print("> ");
+            }
+            // 获取输入信息
+            mid = scan.nextInt();
+            scan.nextLine(); // 消耗换行符
+        }
+        return mid;
+    }
+
+    
+    public static void card(int mid) {
         // 向 API 发送 GET 请求
         String rawJson = Http.get(BILI_API_USER_CARD+"?mid="+mid);
         // 输出结果(用于调试)
         System.out.println(JsonLib.formatJson(rawJson));
-        // 输出解析结果
+        // 获取解析结果
         int code = JsonLib.getRootObjectInt(rawJson,"code");
         String message = JsonLib.getRootObjectString(rawJson,"message");
+        // 输出解析结果
         System.out.print("请求代码: "+code+" ");
         // 输出错误信息
         if(code==0) {
