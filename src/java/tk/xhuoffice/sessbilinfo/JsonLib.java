@@ -16,15 +16,11 @@ public class JsonLib {
     }
     
     public static int getRootObjectInt(String inputJson, String str) {
-        JsonObject jsonObject = gson.fromJson(inputJson, JsonObject.class);
-        int num = jsonObject.get(str).getAsInt();
-        return num;
+        return gson.fromJson(inputJson, JsonObject.class).get(str).getAsInt();
     }
     
     public static String getRootObjectString(String inputJson, String str) {
-        JsonObject jsonObject = gson.fromJson(inputJson, JsonObject.class);
-        String mssag = jsonObject.get(str).getAsString();
-        return mssag;
+        return gson.fromJson(inputJson, JsonObject.class).get(str).getAsString();
     }
     
 }
