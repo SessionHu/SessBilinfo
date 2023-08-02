@@ -10,17 +10,15 @@ public class JsonLib {
     public static Gson gson = new Gson();
     
     public static String formatJson(String inputJson) {
-        Gson gsonBuilder = new GsonBuilder().setPrettyPrinting().create();
-        JsonObject jsonObject = gsonBuilder.fromJson(inputJson, JsonObject.class);
-        return gsonBuilder.toJson(jsonObject);
+        return new GsonBuilder().setPrettyPrinting().create().toJson(gson.fromJson(inputJson,JsonObject.class));
     }
     
     public static int getRootObjectInt(String inputJson, String str) {
-        return gson.fromJson(inputJson, JsonObject.class).get(str).getAsInt();
+        return gson.fromJson(inputJson,JsonObject.class).get(str).getAsInt();
     }
     
     public static String getRootObjectString(String inputJson, String str) {
-        return gson.fromJson(inputJson, JsonObject.class).get(str).getAsString();
+        return gson.fromJson(inputJson,JsonObject.class).get(str).getAsString();
     }
     
 }
