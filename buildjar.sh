@@ -22,9 +22,10 @@ if [ $? -eq 0 ]; then
     cd build/
     jar -cvfm 'SessBilinfo.jar' ../manifest -C ./ .
     cd ..
+    echo -e "Done!"
     exit 0
 else
-    echo "Build failed!"
+    echo -e "Build failed!"
     exit 1
 fi
 
