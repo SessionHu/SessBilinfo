@@ -1,9 +1,11 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.util.Scanner;
+import tk.xhuoffice.sessbilinfo.Error;
 import tk.xhuoffice.sessbilinfo.Http;
 import tk.xhuoffice.sessbilinfo.JsonLib;
 
+// API来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md
 
 public class UserInfo {
     
@@ -30,10 +32,19 @@ public class UserInfo {
     public static void card(String mid) {
         // 向 API 发送 GET 请求
         String rawJson = Http.get(BILI_API_USER_CARD+"?mid="+mid);
-        // 输出结果
+        // 输出结果(用于调试)
         System.out.println(JsonLib.formatJson(rawJson));
-        // 输出解析结果(用法示例)
-        System.out.println("请求代码: "+JsonLib.getRootObjectInt(rawJson,"code"));
+        // 输出解析结果
+        int code = JsonLib.getRootObjectInt(rawJson,"code");
+        String message = JsonLib.getRootObjectString(rawJson,"message");
+        System.out.print("请求代码: "+code+" ");
+        // 输出错误信息
+        if(code==0) {
+            System.out.println();
+        } else {
+            Error.code(code);
+            System.out.println("error: "+message);
+        }
     }
     
 }
