@@ -2,7 +2,7 @@ package tk.xhuoffice.sessbilinfo;
 
 import java.util.Scanner;
 import tk.xhuoffice.sessbilinfo.Http;
-import tk.xhuoffice.sessbilinfo.Json;
+import tk.xhuoffice.sessbilinfo.JsonLib;
 
 
 public class UserInfo {
@@ -31,9 +31,9 @@ public class UserInfo {
         // 向 API 发送 GET 请求
         String rawJson = Http.get(BILI_API_USER_CARD+"?mid="+mid);
         // 输出结果
-        System.out.println(Json.formatJson(rawJson,4));
+        System.out.println(JsonLib.formatJson(rawJson));
         // 输出解析结果(用法示例)
-        System.out.println("请求代码: "+Json.getIntAfterStr(rawJson,"code"));
+        System.out.println("请求代码: "+JsonLib.getRootObjectInt(rawJson,"code"));
     }
     
 }
