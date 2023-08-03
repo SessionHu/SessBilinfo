@@ -80,6 +80,7 @@ public class UserInfo {
         String message = JsonLib.getRootObjectString(rawJson,"message");
         String data_card_name = JsonLib.getSubSubObjectString(rawJson,"data","card","name");
         String data_card_sign = JsonLib.getSubSubObjectString(rawJson,"data","card","sign");
+        int data_card_fans = JsonLib.getSubSubObjectInt(rawJson,"data","card","fans");
         // 输出解析结果
         System.out.print("[INFO] 请求代码: "+code+" ");
         // 输出错误信息
@@ -87,6 +88,7 @@ public class UserInfo {
             System.out.println();
             System.out.println("[INFO] 昵称: "+data_card_name);
             System.out.println("[INFO] 签名: "+data_card_sign);
+            System.out.println("[INFO] 粉丝数: "+data_card_fans);
         } else {
             Error.code(code);
             System.out.println("[INFO] 详细信息: "+message);

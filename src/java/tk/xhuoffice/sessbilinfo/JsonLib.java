@@ -24,4 +24,9 @@ public class JsonLib {
     public static String getSubSubObjectString(String inputJson, String objName1, String objName2, String str) {
         return gson.fromJson(inputJson,JsonObject.class).getAsJsonObject(objName1).getAsJsonObject(objName2).get(str).getAsString();
     }
+    
+    public static int getSubSubObjectInt(String inputJson, String objName1, String objName2, String str) {
+        return gson.fromJson(inputJson,JsonObject.class).getAsJsonObject(objName1).getAsJsonObject(objName2).get(str).getAsInt();
+    }
+    
 }
