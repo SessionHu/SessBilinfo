@@ -74,22 +74,22 @@ public class UserInfo {
         // 向 API 发送 GET 请求
         String rawJson = Http.get(BILI_API_USER_CARD+"?mid="+mid);
         // 输出结果(用于调试)
-        System.out.println("[DEBUG] "+JsonLib.formatJson(rawJson));
-        // 获取解析结果
+        //System.out.println("[DEBUG] "+JsonLib.formatJson(rawJson));
+        // 获取返回值及可能的错误信息
         int code = JsonLib.getRootObjectInt(rawJson,"code");
         String message = JsonLib.getRootObjectString(rawJson,"message");
-        String data_card_name = JsonLib.getSubSubObjectString(rawJson,"data","card","name");
-        String data_card_sign = JsonLib.getSubSubObjectString(rawJson,"data","card","sign");
-        int data_card_fans = JsonLib.getSubSubObjectInt(rawJson,"data","card","fans");
-        // 输出解析结果
-        System.out.print("[INFO] 请求代码: "+code+" ");
-        // 输出错误信息
         if(code==0) {
-            System.out.println();
+            // 解析返回内容
+            String data_card_name = JsonLib.getSubSubObjectString(rawJson,"data","card","name");
+            String data_card_sign = JsonLib.getSubSubObjectString(rawJson,"data","card","sign");
+            int data_card_fans = JsonLib.getSubSubObjectInt(rawJson,"data","card","fans");
+            // 输出解析结果
             System.out.println("[INFO] 昵称: "+data_card_name);
             System.out.println("[INFO] 签名: "+data_card_sign);
             System.out.println("[INFO] 粉丝数: "+data_card_fans);
         } else {
+            // 输出错误信息
+            System.err.print("[ERROR] 请求代码: "+code+" ");
             Error.code(code);
             System.out.println("[INFO] 详细信息: "+message);
         }
