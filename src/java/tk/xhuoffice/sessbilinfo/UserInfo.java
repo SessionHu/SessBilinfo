@@ -26,27 +26,17 @@ public class UserInfo {
     }
     
     public static int getMid() {
-        int mid = 1;
+        int mid = 0;
+        int trytime = 0;
         try {
-            System.out.print("> ");
-            // 检查输入是否为整数
-            while(!scan.hasNextInt()) {
-                // 消耗错误的输入
-                scan.next();
-                // 输出警告
-                System.err.println("[WARN] 无效的 Mid");
-                // 提示重新输入
-                System.out.print("> ");
-            }
-            // 获取输入信息
-            mid = scan.nextInt();
-            scan.nextLine(); // 消耗换行符
-            // 验证输入内容是否正确
             while(mid < 1) {
-                // 输出警告
-                System.err.println("[WARN] 无效的 Mid");
-                // 提示重新输入
+                if(trytime!=0) {
+                    // 尝试次数不为0时输出警告
+                    System.err.println("[WARN] 无效的 Mid");
+                }
+                // 提示输入
                 System.out.print("> ");
+                trytime++;
                 // 检查输入是否为整数
                 while(!scan.hasNextInt()) {
                     // 消耗错误的输入
@@ -55,6 +45,7 @@ public class UserInfo {
                     System.err.println("[WARN] 无效的 Mid");
                     // 提示重新输入
                     System.out.print("> ");
+                    trytime++;
                 }
                 // 获取输入信息
                 mid = scan.nextInt();
