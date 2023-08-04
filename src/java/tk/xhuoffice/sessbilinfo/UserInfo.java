@@ -66,7 +66,6 @@ public class UserInfo {
         }
         return mid;
     }
-
     
     public static void card(int mid) {
         // 提示信息
