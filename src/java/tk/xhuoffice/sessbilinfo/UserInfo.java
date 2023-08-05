@@ -20,45 +20,42 @@ public class UserInfo {
                 "[INFO] 示例: 645769214"
                 );
         // 向用户获取 Mid
-        int mid = getMid();
+        String mid = getMid();
         // 获取被查询B站用户信息
         card(mid);
     }
     
-    public static int getMid() {
-        int mid = 0;
-        int trytime = 0;
-        try {
-            while(mid < 1) {
-                if(trytime!=0) {
-                    // 尝试次数不为0时输出警告
-                    System.err.println("[WARN] 无效的 Mid");
-                }
-                // 提示输入
-                System.out.print("> ");
-                trytime++;
-                // 检查输入是否为整数
-                while(!scan.hasNextInt()) {
-                    // 消耗错误的输入
-                    scan.next();
+    public static String getMid() {
+        // 定义并初始化变量
+        String input = "";
+        while(true) {
+            // 提示输入
+            System.out.print("> ");
+            try {
+                // 获取输入
+                input = scan.nextLine();
+            } catch(Exception e) {
+                // 异常处理
+                System.err.println("\n[FATAL] 无效的 Mid");
+                System.exit(1);
+            }
+            try {
+                // 检测输入是否大于0
+                if(Integer.parseInt(input)>0) {
+                    // 返回结果
+                    return input;
+                } else {
                     // 输出警告
                     System.err.println("[WARN] 无效的 Mid");
-                    // 提示重新输入
-                    System.out.print("> ");
-                    trytime++;
                 }
-                // 获取输入信息
-                mid = scan.nextInt();
-                scan.nextLine(); // 消耗换行符
+            } catch(Exception e) {
+                // 输出警告
+                System.err.println("[WARN] 无效的 Mid");
             }
-        } catch(Exception e) {
-            System.err.println("\n[FATAL] 无效的 Mid");
-            System.exit(1);
         }
-        return mid;
     }
     
-    public static void card(int mid) {
+    public static void card(String mid) {
         // 提示信息
         System.out.println("[INFO] 正在请求数据...");
         // 向 API 发送 GET 请求
