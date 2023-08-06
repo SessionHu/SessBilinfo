@@ -67,13 +67,16 @@ public class UserInfo {
         String message = JsonLib.getRootObjectString(rawJson,"message");
         if(code==0) {
             // 解析返回内容
-            String data_card_name = JsonLib.getSubSubObjectString(rawJson,"data","card","name");
-            String data_card_sign = JsonLib.getSubSubObjectString(rawJson,"data","card","sign");
-            int data_card_fans = JsonLib.getSubSubObjectInt(rawJson,"data","card","fans");
+            String nickname = JsonLib.getSubSubObjectString(rawJson,"data","card","name");
+            String sign = JsonLib.getSubSubObjectString(rawJson,"data","card","sign");
+            int fans = JsonLib.getSubSubObjectInt(rawJson,"data","card","fans");
+            int level = JsonLib.getSubSubSubObjectInt(rawJson,"data","card","level_info","current_level");
             // 输出解析结果
-            System.out.println("[INFO] 昵称: "+data_card_name);
-            System.out.println("[INFO] 签名: "+data_card_sign);
-            System.out.println("[INFO] 粉丝数: "+data_card_fans);
+            System.out.println("[INFO] Mid: "+mid);
+            System.out.println("[INFO] 昵称: "+nickname);
+            System.out.println("[INFO] 签名: "+sign);
+            System.out.println("[INFO] 等级: "+level);
+            System.out.println("[INFO] 粉丝数: "+fans);
         } else {
             // 输出错误信息
             System.err.print("[ERROR] 请求代码: "+code+" ");
