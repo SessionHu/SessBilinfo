@@ -159,7 +159,7 @@ public class Error {
                 break;
             // 其她情况
             default:
-                System.err.println("fatal: 无效的错误代码 "+code);
+                System.err.println("\n[ERROR] 未知的错误代码 "+code);
         }
     }
     
