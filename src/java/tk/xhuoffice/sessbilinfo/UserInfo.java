@@ -47,11 +47,11 @@ public class UserInfo {
                     return input;
                 } else {
                     // 输出警告
-                    System.err.println("[WARN] 无效的 Mid");
+                    System.err.println("[WARN] 无效的 Mid "+input);
                 }
             } catch(Exception e) {
                 // 输出警告
-                System.err.println("[WARN] 无效的 Mid");
+                System.err.println("[WARN] 过大或非数字不能作为 Mid");
             }
         }
     }
