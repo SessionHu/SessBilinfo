@@ -40,10 +40,12 @@ public class UserInfo {
                 System.exit(1);
             }
             try {
+                // 将输入转换为 int
+                int mid = Integer.parseInt(input);
                 // 检测输入是否大于0
-                if(Integer.parseInt(input)>0) {
+                if(mid>0) {
                     // 提示并返回结果
-                    System.out.println("[INFO] Mid: "+input);
+                    System.out.println("[INFO] Mid: "+mid);
                     return input;
                 } else {
                     // 输出警告
@@ -70,6 +72,10 @@ public class UserInfo {
             String sign = JsonLib.getSubSubObjectString(rawJson,"data","card","sign"); // 签名
             int fans = JsonLib.getSubSubObjectInt(rawJson,"data","card","fans"); // 粉丝数
             int level = JsonLib.getSubSubSubObjectInt(rawJson,"data","card","level_info","current_level"); // 当前等级
+            // 处理空数据
+            if(sign==null||sign.trim().isEmpty()) {
+                sign = "(这个人很神秘,什么都没有写)";
+            } // 签名
             // 输出解析结果
             System.out.println("[INFO] ------------");
             System.out.println("[INFO] Lv"+level+"  "+nickname);
