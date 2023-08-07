@@ -73,13 +73,17 @@ public class UserInfo {
             int fans = JsonLib.getSubSubObjectInt(rawJson,"data","card","fans"); // 粉丝数
             int level = JsonLib.getSubSubSubObjectInt(rawJson,"data","card","level_info","current_level"); // 当前等级
             int friend = JsonLib.getSubSubObjectInt(rawJson,"data","card","friend"); // 关注数
-            // 处理空数据
-            if(sign==null||sign.trim().isEmpty()) {
+            String sex = JsonLib.getSubSubObjectString(rawJson,"data","card","sex"); // 性别
+            // 处理无效数据
+            if(sign.trim().isEmpty()) {
                 sign = "(这个人很神秘,什么都没有写)";
             } // 签名
+            if(sex.equals("保密")) {
+                sex = "";
+            }
             // 输出解析结果
             System.out.println("[INFO] --------------------");
-            System.out.println("[INFO] Lv"+level+"  "+nickname);
+            System.out.println("[INFO] Lv"+level+"  "+nickname+"  "+sex);
             System.out.println("[INFO] 粉丝 "+fans+"   关注 "+friend);
             System.out.println("[INFO] 签名 "+sign);
             System.out.println("[INFO] --------------------");
