@@ -42,7 +42,8 @@ public class UserInfo {
             try {
                 // 检测输入是否大于0
                 if(Integer.parseInt(input)>0) {
-                    // 返回结果
+                    // 提示并返回结果
+                    System.out.println("[INFO] Mid: "+input);
                     return input;
                 } else {
                     // 输出警告
@@ -56,32 +57,30 @@ public class UserInfo {
     }
     
     public static void card(String mid) {
-        // 提示信息
-        System.out.println("[INFO] 正在请求数据...");
         // 向 API 发送 GET 请求
         String rawJson = Http.get(BILI_API_USER_CARD+"?mid="+mid);
         // 输出结果(用于调试)
         //System.out.println("[DEBUG] "+JsonLib.formatJson(rawJson));
         // 获取返回值及可能的错误信息
-        int code = JsonLib.getRootObjectInt(rawJson,"code");
-        String message = JsonLib.getRootObjectString(rawJson,"message");
+        int code = JsonLib.getRootObjectInt(rawJson,"code"); // 返回值
+        String message = JsonLib.getRootObjectString(rawJson,"message"); // 错误信息
         if(code==0) {
             // 解析返回内容
-            String nickname = JsonLib.getSubSubObjectString(rawJson,"data","card","name");
-            String sign = JsonLib.getSubSubObjectString(rawJson,"data","card","sign");
-            int fans = JsonLib.getSubSubObjectInt(rawJson,"data","card","fans");
-            int level = JsonLib.getSubSubSubObjectInt(rawJson,"data","card","level_info","current_level");
+            String nickname = JsonLib.getSubSubObjectString(rawJson,"data","card","name"); // 用户昵称
+            String sign = JsonLib.getSubSubObjectString(rawJson,"data","card","sign"); // 签名
+            int fans = JsonLib.getSubSubObjectInt(rawJson,"data","card","fans"); // 粉丝数
+            int level = JsonLib.getSubSubSubObjectInt(rawJson,"data","card","level_info","current_level"); // 当前等级
             // 输出解析结果
-            System.out.println("[INFO] Mid: "+mid);
-            System.out.println("[INFO] 昵称: "+nickname);
-            System.out.println("[INFO] 签名: "+sign);
-            System.out.println("[INFO] 等级: "+level);
-            System.out.println("[INFO] 粉丝数: "+fans);
+            System.out.println("[INFO] ------------");
+            System.out.println("[INFO] Lv"+level+"  "+nickname);
+            System.out.println("[INFO] 粉丝 "+fans);
+            System.out.println("[INFO] 签名 "+sign);
+            System.out.println("[INFO] ------------");
         } else {
             // 输出错误信息
-            System.err.print("[ERROR] 请求代码: "+code+" ");
+            System.err.print("[ERROR] 返回值: "+code+" ");
             Error.code(code);
-            System.out.println("[INFO] 详细信息: "+message);
+            System.out.println("[ERROR] 错误信息: "+message);
         }
     }
     

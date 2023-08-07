@@ -12,6 +12,8 @@ public class Http {
     
     public static String get(String inurl) {
         try {
+            // 提示信息
+            System.out.println("[INFO] 正在请求数据...");
             // 创建 URL 对象
             URL url = new URL(inurl);
             // 打开连接
@@ -28,7 +30,9 @@ public class Http {
                 response.append(inputLine);
             }
             in.close();
-            // 输出返回的 JSON 数据
+            // 提示请求完毕
+            System.out.println("[INFO] 请求完毕");
+            // 输出返回的数据
             return response.toString();
         } catch (UnknownHostException e) {
             // 域名解析错误
