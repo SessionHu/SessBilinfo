@@ -96,7 +96,9 @@ public class UserInfo {
             System.out.println("[INFO] --------------------");
             System.out.println("[INFO] Lv"+level+"  "+nickname+"  "+sex);
             System.out.println("[INFO] 粉丝 "+fans+"   关注 "+friend);
-            System.out.println("[INFO] "+offical_tag+offical_info);
+            if(!offical_tag.trim().isEmpty()) { // 有认证信息时打印
+                System.out.println("[INFO] "+offical_tag+offical_info);
+            }
             System.out.println("[INFO] 签名 "+sign);
             System.out.println("[INFO] --------------------");
         } else {
