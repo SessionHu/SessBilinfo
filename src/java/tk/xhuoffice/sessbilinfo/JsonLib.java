@@ -76,4 +76,18 @@ public class JsonLib {
         return GSON.fromJson(inputJson,JsonObject.class).getAsJsonObject(obj1).getAsJsonObject(obj2).getAsJsonObject(obj3).get(str).getAsInt();
     }
     
+    /* eg: 获取下面这段 JSON 中 "title" 的内容
+        {
+            "data": {
+                "card": {
+                    "Offical": {
+                        "title": "example"
+                    }
+                }
+            }
+        }
+    */
+    public static String getSubSubSubObjectString(String inputJson, String obj1, String obj2, String obj3, String str) {
+        return GSON.fromJson(inputJson,JsonObject.class).getAsJsonObject(obj1).getAsJsonObject(obj2).getAsJsonObject(obj3).get(str).getAsString();
+    }
 }

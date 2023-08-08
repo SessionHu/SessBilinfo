@@ -6,6 +6,7 @@ import tk.xhuoffice.sessbilinfo.Http;
 import tk.xhuoffice.sessbilinfo.JsonLib;
 
 // API来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md
+// 认证类型来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/official_role.md
 
 public class UserInfo {
     
@@ -74,6 +75,16 @@ public class UserInfo {
             int level = JsonLib.getSubSubSubObjectInt(rawJson,"data","card","level_info","current_level"); // 当前等级
             int friend = JsonLib.getSubSubObjectInt(rawJson,"data","card","friend"); // 关注数
             String sex = JsonLib.getSubSubObjectString(rawJson,"data","card","sex"); // 性别
+            int offical_typ = -1;
+            String offical_tag = "";
+            String offical_info = "";
+            if(JsonLib.getSubSubSubObjectInt(rawJson,"data","card","Official","type")==0) { // 认证信息
+                // 处理认证类型
+                offical_typ = JsonLib.getSubSubSubObjectInt(rawJson,"data","card","Official","role");
+                offical_tag = offical(offical_typ);
+                // 处理认证信息
+                offical_info = JsonLib.getSubSubSubObjectString(rawJson,"data","card","Official","title"); // 认证内容
+            }
             // 处理无效数据
             if(sign.trim().isEmpty()) {
                 sign = "(这个人很神秘,什么都没有写)";
@@ -85,6 +96,7 @@ public class UserInfo {
             System.out.println("[INFO] --------------------");
             System.out.println("[INFO] Lv"+level+"  "+nickname+"  "+sex);
             System.out.println("[INFO] 粉丝 "+fans+"   关注 "+friend);
+            System.out.println("[INFO] "+offical_tag+offical_info);
             System.out.println("[INFO] 签名 "+sign);
             System.out.println("[INFO] --------------------");
         } else {
@@ -95,4 +107,40 @@ public class UserInfo {
         }
     }
     
+    public static String offical(int typ) {
+        String offical_tag = "";
+        switch(typ) {
+            // 个人认证
+            case 1:
+                offical_tag = "UP主(知名UP主)认证: ";
+                break;
+            case 2:
+                offical_tag = "UP主(大V达人)认证: ";
+                break;
+            case 7:
+                offical_tag = "UP主(高能主播)认证: ";
+                break;
+            case 9:
+                offical_tag = "UP主(社会知名人士)认证: ";
+                break;
+            // 机构认证
+            case 3:
+                offical_tag = "机构(企业)认证: ";
+                break;
+            case 4:
+                offical_tag = "机构(组织)认证: ";
+                break;
+            case 5:
+                offical_tag = "机构(媒体)认证: ";
+                break;
+            case 6:
+                offical_tag = "机构(政府)认证: ";
+                break;
+            default:
+                // 我也不知道 role 为 8 时是什么
+                System.err.println("[ERROR] 未知的认证类型 "+typ);
+                System.err.println("[ERROR] 请向 SocialSisterYi/bilibili-API-collect 与 SessionHu/SessBilinfo 提交 Issue, 内容请包含 有关请求的 Mid 的信息 与 上一行认证类型输出 的截图");
+        }
+        return offical_tag;
+    }
 }
