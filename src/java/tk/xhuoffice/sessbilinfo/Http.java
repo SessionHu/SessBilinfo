@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
+import javax.net.ssl.SSLHandshakeException;
 
 public class Http {
 
@@ -34,9 +35,12 @@ public class Http {
             System.out.println("[INFO] 请求完毕");
             // 输出返回的数据
             return response.toString();
-        } catch (UnknownHostException e) {
+        } catch(UnknownHostException e) {
             // 域名解析错误
             System.err.println("[FATAL] 域名解析失败, 请检查网络连接与hosts文件配置");
+        } catch(SSLHandshakeException e) {
+            // SSL 握手错误
+            System.err.println("[FATAL] SSL 握手失败, 请检查网络连接是否稳定");
         } catch(Exception e) {
             // 异常报告
             System.err.println("[FATAL] HTTP 请求发生未知错误");
