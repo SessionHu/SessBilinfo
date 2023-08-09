@@ -22,7 +22,7 @@ public class UserInfo {
                 );
         // 向用户获取 Mid
         String mid = getMid();
-        // 获取被查询B站用户信息
+        // 输出被查询B站用户信息
         card(mid);
     }
     
@@ -62,11 +62,8 @@ public class UserInfo {
     public static void card(String mid) {
         // 向 API 发送 GET 请求
         String rawJson = Http.get(BILI_API_USER_CARD+"?mid="+mid);
-        // 输出结果(用于调试)
-        //System.out.println("[DEBUG] "+JsonLib.formatJson(rawJson));
-        // 获取返回值及可能的错误信息
+        // 获取返回值
         int code = JsonLib.getRootObjectInt(rawJson,"code"); // 返回值
-        String message = JsonLib.getRootObjectString(rawJson,"message"); // 错误信息
         if(code==0) {
             // 解析返回内容
             String nickname = JsonLib.getSubSubObjectString(rawJson,"data","card","name"); // 用户昵称
@@ -75,12 +72,11 @@ public class UserInfo {
             int level = JsonLib.getSubSubSubObjectInt(rawJson,"data","card","level_info","current_level"); // 当前等级
             int friend = JsonLib.getSubSubObjectInt(rawJson,"data","card","friend"); // 关注数
             String sex = JsonLib.getSubSubObjectString(rawJson,"data","card","sex"); // 性别
-            int offical_typ = -1;
             String offical_tag = "";
             String offical_info = "";
             if(JsonLib.getSubSubSubObjectInt(rawJson,"data","card","Official","type")==0) { // 认证信息
                 // 处理认证类型
-                offical_typ = JsonLib.getSubSubSubObjectInt(rawJson,"data","card","Official","role");
+                int offical_typ = JsonLib.getSubSubSubObjectInt(rawJson,"data","card","Official","role");
                 offical_tag = offical(offical_typ);
                 // 处理认证信息
                 offical_info = JsonLib.getSubSubSubObjectString(rawJson,"data","card","Official","title"); // 认证内容
@@ -91,7 +87,7 @@ public class UserInfo {
             } // 签名
             if(sex.equals("保密")) {
                 sex = "";
-            }
+            } // 性别
             // 输出解析结果
             System.out.println("[INFO] --------------------");
             System.out.println("[INFO] Lv"+level+"  "+nickname+"  "+sex);
@@ -102,6 +98,8 @@ public class UserInfo {
             System.out.println("[INFO] 签名 "+sign);
             System.out.println("[INFO] --------------------");
         } else {
+        	// 获取错误信息
+        	String message = JsonLib.getRootObjectString(rawJson,"message");
             // 输出错误信息
             System.err.print("[ERROR] 返回值: "+code+" ");
             Error.code(code);
@@ -145,4 +143,5 @@ public class UserInfo {
         }
         return offical_tag;
     }
+    
 }
