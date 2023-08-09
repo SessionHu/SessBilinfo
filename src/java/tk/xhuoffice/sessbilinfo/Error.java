@@ -1,166 +1,77 @@
 package tk.xhuoffice.sessbilinfo;
 
-// 信息来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/errcode.md
+import java.util.Map;
+import java.util.HashMap;
+
+// 信息来源, https,//github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/errcode.md
 
 public class Error {
     
     public static void code(int code) {
-        // 0 ~ -115 的 code 多半用不上
-        switch(code) {
-            case 0:
-                // 这段文本正常不可能被输出
-                System.out.println("info: 成功");
-                break;
-            // 权限类
-            case -1:
-                System.err.println("应用程序不存在或已被封禁");
-                break;
-            case -2:
-                System.err.println("Access Key 错误");
-                break;
-            case -3:
-                System.err.println("API 校验密匙错误");
-                break;
-            case -4:
-                System.err.println("调用方对该 Method 没有权限");
-                break;
-            case -101:
-                System.err.println("账号未登录");
-                break;
-            case -102:
-                System.err.println("账号被封停");
-                break;
-            case -103:
-                System.err.println("积分不足");
-                break;
-            case -104:
-                System.err.println("硬币不足");
-                break;
-            case -105:
-                System.err.println("验证码错误");
-                break;
-            case -106:
-                System.err.println("账号非正式会员或在适应期");
-                break;
-            case -107:
-                System.err.println("应用不存在或者被封禁");
-                break;
-            case -108:
-            case -110:
-                System.err.println("未绑定手机");
-                break;
-            case -111:
-                System.err.println("csrf 校验失败");
-                break;
-            case -112:
-                System.err.println("系统升级中");
-                break;
-            case -113:
-                System.err.println("账号尚未实名认证");
-                break;
-            case -114:
-                // 好臭的 code
-                // 这和 -108 与 -110 没区别吧
-                System.err.println("请先绑定手机");
-                break;
-            case -115:
+    	Map<Integer,String> errMsg = new HashMap<>();
+        // -1 ~ -115 的 code 多半用不上
+        // 权限类
+        errMsg.put(-1,  "应用程序不存在或已被封禁");
+        errMsg.put(-2,  "Access Key 错误");
+        errMsg.put(-3,  "API 校验密匙错误");
+        errMsg.put(-4,  "调用方对该 Method 没有权限");
+        errMsg.put(-101,"账号未登录");
+        errMsg.put(-102,"账号被封停");
+        errMsg.put(-103,"积分不足");
+        errMsg.put(-104,"硬币不足");
+        errMsg.put(-105,"验证码错误");
+        errMsg.put(-106,"账号非正式会员或在适应期");
+        errMsg.put(-107,"应用不存在或者被封禁");
+        errMsg.put(-108,"未绑定手机");
+        errMsg.put(-110,"未绑定手机");
+        errMsg.put(-111,"csrf 校验失败");
+        errMsg.put(-112,"系统升级中");
+        errMsg.put(-113,"账号尚未实名认证");
+        errMsg.put(-114,"请先绑定手机");
+                // 好臭的 code, 这和 -108 与 -110 没区别吧
+        errMsg.put(-115,"请先完成实名认证");
                 // 这和 -113 有区别吗
-                System.err.println("请先完成实名认证");
-                break;
-            // 请求类
-            case -304:
-                System.err.println("木有改动");
-                break;
-            case -307:
-                System.err.println("撞车跳转");
-                break;
-            case -400:
-                System.err.println("请求错误");
-                break;
-            case -401:
-                System.err.println("未认证 (或非法请求)");
-                break;
-            case -403:
-                System.err.println("访问权限不足");
-                break;
-            case -404:
-                System.err.println("啥都木有");
-                break;
-            case -405:
-                System.err.println("不支持该方法");
-                break;
-            case -409:
-                System.err.println("冲突");
-                break;
-            case -412:
-                System.err.println("请求被拦截 (客户端 ip 被服务端风控)");
-                break;
-            case -500:
-                System.err.println("服务器错误");
-                break;
-            case -503:                
-                System.err.println("过载保护, 服务暂不可用");
-                break;
-            case -504:
-                System.err.println("服务调用超时");
-                break;
-            case -509:
-                System.err.println("超出限制");
-                break;
-            case -616:
-                System.err.println("上传文件不存在");
-                break;
-            case -617:
-                System.err.println("上传文件太大");
-                break;
-            case -625:
-                System.err.println("登录失败次数太多");
-            case -626:
-                System.err.println("用户不存在");
-                break;
-            case -628:
-                System.err.println("密码太弱");
-                break;
-            case -629:
-                System.err.println("用户名或密码错误");
-                break;
-            case -632:
-                System.err.println("操作对象数量限制");
-                break;
-            case -643:
-                System.err.println("被锁定");
-                break;
-            case -650:
-                System.err.println("用户等级太低");
-                break;
-            case -652:
-                System.err.println("重复的用户");
-                break;
-            case -658:
-                System.err.println("Token 过期");
-                break;
-            case -662:
-                System.err.println("密码时间戳过期");
-                break;
-            case -688:
-                System.err.println("地理区域限制 (请检查梯子)");
-                break;
-            case -689:
-                System.err.println("版权限制");
-                break;
-            case -701:
-                System.err.println("扣节操失败");
-                break;
-            case -799:
-                System.err.println("请求过于频繁，请稍后再试");
-                break;
-            case -8888:
-                System.err.println("对不起，服务器开小差了~ (ಥ﹏ಥ)");
-                break;
-            // 其她情况
-            default:
-                System.err.println("\n[ERROR] 未知的错误代码 "+code);
-        }
+        // 请求类
+        errMsg.put(-304,"木有改动");
+        errMsg.put(-307,"撞车跳转");
+        errMsg.put(-400,"请求错误");
+        errMsg.put(-401,"未认证 (或非法请求)");
+        errMsg.put(-403,"访问权限不足");
+        errMsg.put(-404,"啥都木有");
+        errMsg.put(-405,"不支持该方法");
+        errMsg.put(-409,"冲突");
+        errMsg.put(-412,"请求被拦截 (客户端 IP 被服务端风控)");
+        errMsg.put(-500,"服务器错误");
+        errMsg.put(-503,"过载保护, 服务暂不可用");
+        errMsg.put(-504,"服务调用超时");
+        errMsg.put(-509,"超出限制");
+        errMsg.put(-616,"上传文件不存在");
+        errMsg.put(-617,"上传文件太大");
+        errMsg.put(-625,"登录失败次数太多");
+        errMsg.put(-626,"用户不存在");
+        errMsg.put(-628,"密码太弱");
+        errMsg.put(-629,"用户名或密码错误");
+        errMsg.put(-632,"操作对象数量限制");
+        errMsg.put(-643,"被锁定");
+        errMsg.put(-650,"用户等级太低");
+        errMsg.put(-652,"重复的用户");
+        errMsg.put(-658,"Token 过期");
+        errMsg.put(-662,"密码时间戳过期");
+        errMsg.put(-688,"地理区域限制 (请检查梯子)");
+        errMsg.put(-689,"版权限制");
+        errMsg.put(-701,"扣节操失败");
+        errMsg.put(-799,"请求过于频繁，请稍后再试");
+        errMsg.put(-8888,"对不起，服务器开小差了~ (ಥ﹏ಥ)");
+        // 打印结果
+        System.err.println(
+                // 根据情况输出
+                errMsg.getOrDefault(
+                        // 输入值
+                        code,
+                        // 若输入值不符合前面的内容输出下面
+                        "\n[ERROR] 未知的错误代码 "+code
+                )
+        );
     }
     
 }
