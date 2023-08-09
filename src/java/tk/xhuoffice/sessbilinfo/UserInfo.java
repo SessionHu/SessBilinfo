@@ -63,23 +63,23 @@ public class UserInfo {
         // 向 API 发送 GET 请求
         String rawJson = Http.get(BILI_API_USER_CARD+"?mid="+mid);
         // 获取返回值
-        int code = JsonLib.getRootObjectInt(rawJson,"code"); // 返回值
+        int code = JsonLib.getInt(rawJson,"code"); // 返回值
         if(code==0) {
             // 解析返回内容
-            String nickname = JsonLib.getSubSubObjectString(rawJson,"data","card","name"); // 用户昵称
-            String sign = JsonLib.getSubSubObjectString(rawJson,"data","card","sign"); // 签名
-            int fans = JsonLib.getSubSubObjectInt(rawJson,"data","card","fans"); // 粉丝数
-            int level = JsonLib.getSubSubSubObjectInt(rawJson,"data","card","level_info","current_level"); // 当前等级
-            int friend = JsonLib.getSubSubObjectInt(rawJson,"data","card","friend"); // 关注数
-            String sex = JsonLib.getSubSubObjectString(rawJson,"data","card","sex"); // 性别
+            String nickname = JsonLib.getString(rawJson,"data","card","name"); // 用户昵称
+            String sign = JsonLib.getString(rawJson,"data","card","sign"); // 签名
+            int fans = JsonLib.getInt(rawJson,"data","card","fans"); // 粉丝数
+            int level = JsonLib.getInt(rawJson,"data","card","level_info","current_level"); // 当前等级
+            int friend = JsonLib.getInt(rawJson,"data","card","friend"); // 关注数
+            String sex = JsonLib.getString(rawJson,"data","card","sex"); // 性别
             String offical_tag = "";
             String offical_info = "";
-            if(JsonLib.getSubSubSubObjectInt(rawJson,"data","card","Official","type")==0) { // 认证信息
+            if(JsonLib.getInt(rawJson,"data","card","Official","type")==0) { // 认证信息
                 // 处理认证类型
-                int offical_typ = JsonLib.getSubSubSubObjectInt(rawJson,"data","card","Official","role");
+                int offical_typ = JsonLib.getInt(rawJson,"data","card","Official","role");
                 offical_tag = offical(offical_typ);
                 // 处理认证信息
-                offical_info = JsonLib.getSubSubSubObjectString(rawJson,"data","card","Official","title"); // 认证内容
+                offical_info = JsonLib.getString(rawJson,"data","card","Official","title"); // 认证内容
             }
             // 处理无效数据
             if(sign.trim().isEmpty()) {
@@ -99,11 +99,11 @@ public class UserInfo {
             System.out.println("[INFO] --------------------");
         } else {
         	// 获取错误信息
-        	String message = JsonLib.getRootObjectString(rawJson,"message");
+        	String msg = JsonLib.getString(rawJson,"message");
             // 输出错误信息
             System.err.print("[ERROR] 返回值: "+code+" ");
             Error.code(code);
-            System.out.println("[ERROR] 错误信息: "+message);
+            System.out.println("[ERROR] 错误信息: "+msg);
         }
     }
     
