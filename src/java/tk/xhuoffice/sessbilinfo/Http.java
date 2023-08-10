@@ -4,12 +4,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.UnknownHostException;
 import javax.net.ssl.SSLHandshakeException;
 
 public class Http {
 
-    public static final String HTTP_USER_AGENT = "Dalvik/2.1.0 (Linux; U; Android 12; MLD-AL00 Build/HUAWEIMLD-AL00) 7.38.0 os/android model/MLD-AL00 mobi_app/Ai4cCreatorAndroid build/7380300 channel/master innerVer/7380310 osVer/12 network/2 grpc-java-cronet/1.36.1";
+    public static final String ANDROID_APP_UA = "Dalvik/2.1.0 (Linux; U; Android 12; MLD-AL00 Build/HUAWEIMLD-AL00) 7.38.0 os/android model/MLD-AL00 mobi_app/Ai4cCreatorAndroid build/7380300 channel/master innerVer/7380310 osVer/12 network/2 grpc-java-cronet/1.36.1";
     
     public static String get(String inurl) {
         try {
@@ -22,7 +21,7 @@ public class Http {
             // 设置请求方法为 GET
             conn.setRequestMethod("GET");
             // 设置 User-Agent 请求头
-            conn.setRequestProperty("User-Agent",HTTP_USER_AGENT);
+            conn.setRequestProperty("User-Agent",ANDROID_APP_UA);
             // 创建输入流并读取返回数据
             BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String inputLine;
@@ -35,7 +34,7 @@ public class Http {
             System.out.println("[INFO] 请求完毕");
             // 输出返回的数据
             return response.toString();
-        } catch(UnknownHostException e) {
+        } catch(java.net.UnknownHostException e) {
             // 域名解析错误
             System.err.println("[FATAL] 域名解析失败, 请检查网络连接与hosts文件配置");
         } catch(SSLHandshakeException e) {
@@ -47,8 +46,7 @@ public class Http {
             e.printStackTrace();
         }
         System.exit(64);
-        // 防止编译报错
-        return null;
+        return ""; // 防止编译报错
     }
     
 }
