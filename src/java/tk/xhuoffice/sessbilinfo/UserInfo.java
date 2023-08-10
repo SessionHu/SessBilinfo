@@ -66,7 +66,7 @@ public class UserInfo {
     
     public static void card(String mid) {
         // 向 API 发送 GET 请求
-        String rawJson = Http.get(USER_CARD+"?mid="="+mid);
+        String rawJson = Http.get(USER_CARD+"?mid="+mid);
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
