@@ -12,7 +12,12 @@ public class UserInfo {
     
     public static Scanner scan = new Scanner(System.in);
     
-    public static final String BILI_API_USER_CARD = "https://api.bilibili.com/x/web-interface/card";
+    // 基本API
+    public static final String BASE_URL = "https://api.bilibili.com/x";
+    // 用户名片信息
+    public static final String USER_CARD = BASE_URL+"/web-interface/card";
+    // 用户置顶视频
+    public static final String USER_SPACE_TOP = BASE_URL+"/space/top/arc";
     
     public static void getUserInfo() {
         // 提示输入信息
@@ -61,9 +66,9 @@ public class UserInfo {
     
     public static void card(String mid) {
         // 向 API 发送 GET 请求
-        String rawJson = Http.get(BILI_API_USER_CARD+"?mid="+mid);
+        String rawJson = Http.get(USER_CARD+"?mid="="+mid);
         // 获取返回值
-        int code = JsonLib.getInt(rawJson,"code"); // 返回值
+        int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
             // 解析返回内容
             String nickname = JsonLib.getString(rawJson,"data","card","name"); // 用户昵称
@@ -82,12 +87,12 @@ public class UserInfo {
                 offical_info = JsonLib.getString(rawJson,"data","card","Official","title"); // 认证内容
             }
             // 处理无效数据
-            if(sign.trim().isEmpty()) {
+            if(sign.trim().isEmpty()) { // 签名
                 sign = "(这个人很神秘,什么都没有写)";
-            } // 签名
-            if(sex.equals("保密")) {
+            }
+            if(sex.equals("保密")) { // 性别
                 sex = "";
-            } // 性别
+            }
             // 输出解析结果
             System.out.println("[INFO] --------------------");
             System.out.println("[INFO] Lv"+level+"  "+nickname+"  "+sex);
