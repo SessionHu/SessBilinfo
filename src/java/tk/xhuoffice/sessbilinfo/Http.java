@@ -9,10 +9,10 @@ public class Http {
 
     public static final String ANDROID_APP_UA = "Dalvik/2.1.0 (Linux; U; Android 12; MLD-AL00 Build/HUAWEIMLD-AL00) 7.38.0 os/android model/MLD-AL00 mobi_app/Ai4cCreatorAndroid build/7380300 channel/master innerVer/7380310 osVer/12 network/2 grpc-java-cronet/1.36.1";
     
-    public static String get(String inurl) {
+    public static String get(String inurl, String... msg) {
         try {
             // 提示信息
-            System.out.println("[INFO] 正在请求数据...");
+            System.out.println("[INFO] 正在请求数据... "+msg);
             // 创建 URL 对象
             URL url = new URL(inurl);
             // 打开连接
@@ -30,7 +30,7 @@ public class Http {
             }
             in.close();
             // 提示请求完毕
-            System.out.println("[INFO] 请求完毕");
+            System.out.println("[INFO] 请求完毕 "+msg);
             // 输出返回的数据
             return response.toString();
         } catch(java.net.UnknownHostException e) {

@@ -27,8 +27,10 @@ public class UserInfo {
                 );
         // 向用户获取 Mid
         String mid = getMid();
-        // 输出被查询B站用户信息
-        card(mid);
+        // 获取被查询B站用户信息
+        String usrinfo = card(mid);
+        // 打印信息
+        System.out.println(usrinfo);
     }
     
     public static String getMid() {
@@ -64,9 +66,9 @@ public class UserInfo {
         }
     }
     
-    public static void card(String mid) {
+    public static String card(String mid) {
         // 向 API 发送 GET 请求
-        String rawJson = Http.get(USER_CARD+"?mid="+mid);
+        String rawJson = Http.get(USER_CARD+"?mid="+mid,"(1/2)");
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -94,21 +96,23 @@ public class UserInfo {
                 sex = "";
             }
             // 输出解析结果
-            System.out.println("[INFO] --------------------");
-            System.out.println("[INFO] Lv"+level+"  "+nickname+"  "+sex);
-            System.out.println("[INFO] 粉丝 "+fans+"   关注 "+friend);
+            String cardinfo = "";
+            cardinfo += "[INFO] Lv"+level+"  "+nickname+"  "+sex+"\n";
+            cardinfo += "[INFO] 粉丝 "+fans+"   关注 "+friend+"\n";
             if(!offical_tag.trim().isEmpty()) { // 有认证信息时打印
-                System.out.println("[INFO] "+offical_tag+offical_info);
+                cardinfo += "[INFO] "+offical_tag+offical_info+"\n";
             }
-            System.out.println("[INFO] 签名 "+sign);
-            System.out.println("[INFO] --------------------");
+            cardinfo += "[INFO] 签名 "+sign+"\n";
+            return cardinfo;
         } else {
-        	// 获取错误信息
-        	String msg = JsonLib.getString(rawJson,"message");
+            // 获取错误信息
+            String msg = JsonLib.getString(rawJson,"message");
             // 输出错误信息
             System.err.print("[ERROR] 返回值: "+code+" ");
             Error.code(code);
             System.out.println("[ERROR] 错误信息: "+msg);
+            System.exit(0);
+            return "";
         }
     }
     
