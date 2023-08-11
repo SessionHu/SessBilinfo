@@ -32,9 +32,10 @@ public class UserInfo {
         String usrinfo = "";
         usrinfo += card(mid);
         usrinfo += space(mid);
-        System.out.print("----------------\n\n");
+        System.out.print("[INFO]\n");
+        System.out.print("[INFO] ----------------\n[INFO]\n");
         System.out.print(usrinfo);
-        System.out.print("----------------\n");
+        System.out.print("[INFO] ----------------\n");
     }
     
     public static String getMid() {
@@ -109,7 +110,7 @@ public class UserInfo {
                 cardinfo += "[INFO] "+offical_tag+offical_info+"\n";
             }
             cardinfo += "[INFO] 签名 "+sign+"\n";
-            cardinfo += "\n";
+            cardinfo += "[INFO]\n";
             return cardinfo;
         } else {
             Error.out(rawJson);
@@ -142,11 +143,11 @@ public class UserInfo {
             String strDanmaku = NumFormat.num(danmaku); // 弹幕
             // 输出处理结果
             String topinfo = "";
-            topinfo += "置顶视频 "+avid+"\n";
-            topinfo += title+"\n";
-            topinfo += "播放 "+strView+"   弹幕 "+strDanmaku+"\n";
-            topinfo += "时长 "+playtime+"s\n";
-            topinfo += "\n";
+            topinfo += "[INFO] 置顶视频 "+title+"\n";
+            topinfo += "[INFO] AV号 "+avid+"\n";
+            topinfo += "[INFO] 播放 "+strView+"   弹幕 "+strDanmaku+"\n";
+            topinfo += "[INFI] 时长 "+playtime+"\n";
+            topinfo += "[INFO]\n";
             return topinfo;
         } else if(code==53016) {
             // 无置顶视频...
