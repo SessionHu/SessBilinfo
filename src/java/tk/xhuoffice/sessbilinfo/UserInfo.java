@@ -28,9 +28,11 @@ public class UserInfo {
         // 向用户获取 Mid
         String mid = getMid();
         // 获取并打印被查询的B站用户信息
+        String usrinfo = "";
+        usrinfo += card(mid);
+        usrinfo += space(mid);
         System.out.print("----------------\n\n");
-        System.out.print(card(mid));
-        System.out.print(space(mid));
+        System.out.print(usrinfo);
         System.out.print("----------------\n");
     }
     
