@@ -4,6 +4,7 @@ import java.util.Scanner;
 import tk.xhuoffice.sessbilinfo.Error;
 import tk.xhuoffice.sessbilinfo.Http;
 import tk.xhuoffice.sessbilinfo.JsonLib;
+import tk.xhuoffice.sessbilinfo.NumFormat;
 
 // API来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md
 // 认证类型来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/official_role.md
@@ -129,17 +130,18 @@ public class UserInfo {
             // 解析返回信息
             int aid = JsonLib.getInt(rawJson,"data","aid"); // avid
             String title = JsonLib.getString(rawJson,"data","title"); // 标题
-            int alltime = JsonLib.getInt(rawJson,"data","duration"); // 总时长
+            int allsec = JsonLib.getInt(rawJson,"data","duration"); // 总时长
             int view = JsonLib.getInt(rawJson,"data","stat","view"); // 播放
             int danmaku = JsonLib.getInt(rawJson,"data","stat","danmaku"); // 弹幕
             // 处理返回信息
             String avid = "av"+aid; // avid
+            String playtime = NumFormat.time(allsec); // 总时长
             // 输出处理结果
             String topinfo = "";
             topinfo += "置顶视频 "+avid+"\n";
             topinfo += title+"\n";
             topinfo += "播放 "+view+"   弹幕 "+danmaku+"\n";
-            topinfo += "时长 "+alltime+"s\n";
+            topinfo += "时长 "+playtime+"s\n";
             topinfo += "\n";
             return topinfo;
         } else if(code==53016) {
