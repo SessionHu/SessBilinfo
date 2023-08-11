@@ -126,7 +126,22 @@ public class UserInfo {
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
-            // ...
+            // 解析返回信息
+            int aid = JsonLib.getInrt(rawJson,"data","aid"); // avid
+            String title = JsonLib.getString(rawJson,"data","title"); // 标题
+            int alltime = JsonLib.getInt(rawJson,"data","duration"); // 总时长
+            int view = JsonLib.getInt(rawJson,"data","stat","view"); // 播放
+            int danmaku = JsonLib.getInt(rawJson,"data","stat","danmaku"); // 弹幕
+            // 处理返回信息
+            String avid = "av"+aid; // avid
+            // 输出处理结果
+            String topinfo = "";
+            topinfo += "置顶视频 "+avid+"\n";
+            topinfo += title+"\n";
+            topinfo += "播放 "+view+"   弹幕 "+danmaku+"\n";
+            topinfo += "时长 "+alltime+"s\n";
+            topinfo += "\n";
+            return topinfo;
         } else if(code==53016) {
             // 无置顶视频...
         } else {
