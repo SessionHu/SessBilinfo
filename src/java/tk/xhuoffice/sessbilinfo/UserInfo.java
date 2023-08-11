@@ -127,7 +127,7 @@ public class UserInfo {
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
             // 解析返回信息
-            int aid = JsonLib.getInrt(rawJson,"data","aid"); // avid
+            int aid = JsonLib.getInt(rawJson,"data","aid"); // avid
             String title = JsonLib.getString(rawJson,"data","title"); // 标题
             int alltime = JsonLib.getInt(rawJson,"data","duration"); // 总时长
             int view = JsonLib.getInt(rawJson,"data","stat","view"); // 播放
