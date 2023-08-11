@@ -27,8 +27,13 @@ public class UserInfo {
                 );
         // 向用户获取 Mid
         String mid = getMid();
-        // 输出被查询B站用户信息
-        card(mid);
+        // 获取并打印被查询的B站用户信息
+        String usrinfo = "";
+        usrinfo += card(mid);
+        usrinfo += space(mid);
+        System.out.print("----------------\n\n");
+        System.out.print(usrinfo);
+        System.out.print("----------------\n");
     }
     
     public static String getMid() {
@@ -64,9 +69,9 @@ public class UserInfo {
         }
     }
     
-    public static void card(String mid) {
+    public static String card(String mid) {
         // 向 API 发送 GET 请求
-        String rawJson = Http.get(USER_CARD+"?mid="+mid);
+        String rawJson = Http.get(USER_CARD+"?mid="+mid,"(1/2)");
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -94,22 +99,40 @@ public class UserInfo {
                 sex = "";
             }
             // 输出解析结果
-            System.out.println("[INFO] --------------------");
-            System.out.println("[INFO] Lv"+level+"  "+nickname+"  "+sex);
-            System.out.println("[INFO] 粉丝 "+fans+"   关注 "+friend);
+            String cardinfo = "";
+            cardinfo += "[INFO] Lv"+level+"  "+nickname+"  "+sex+"\n";
+            cardinfo += "[INFO] 粉丝 "+fans+"   关注 "+friend+"\n";
             if(!offical_tag.trim().isEmpty()) { // 有认证信息时打印
-                System.out.println("[INFO] "+offical_tag+offical_info);
+                cardinfo += "[INFO] "+offical_tag+offical_info+"\n";
             }
-            System.out.println("[INFO] 签名 "+sign);
-            System.out.println("[INFO] --------------------");
+            cardinfo += "[INFO] 签名 "+sign+"\n";
+            cardinfo += "\n";
+            return cardinfo;
         } else {
-        	// 获取错误信息
-        	String msg = JsonLib.getString(rawJson,"message");
-            // 输出错误信息
-            System.err.print("[ERROR] 返回值: "+code+" ");
-            Error.code(code);
-            System.out.println("[ERROR] 错误信息: "+msg);
+            Error.out(rawJson);
+            System.exit(0);
+            return "";
         }
+    }
+    
+    public static String space(String mid) {
+        String top = spaceTop(mid);
+        return top;
+    }
+    
+    public static String spaceTop(String mid) {
+        // 向 API 发送 GET 请求
+        String rawJson = Http.get(USER_SPACE_TOP+"?vmid="+mid,"(2/2)");
+        // 获取返回值
+        int code = JsonLib.getInt(rawJson,"code");
+        if(code==0) {
+            // ...
+        } else if(code==53016) {
+            // 无置顶视频...
+        } else {
+            Error.out(rawJson);
+        }
+        return "";
     }
     
     public static String offical(int typ) {
