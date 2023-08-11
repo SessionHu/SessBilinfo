@@ -4,6 +4,7 @@ import java.util.Scanner;
 import tk.xhuoffice.sessbilinfo.Error;
 import tk.xhuoffice.sessbilinfo.Http;
 import tk.xhuoffice.sessbilinfo.JsonLib;
+import tk.xhuoffice.sessbilinfo.NumFormat;
 
 // API来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md
 // 认证类型来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/official_role.md
@@ -91,17 +92,19 @@ public class UserInfo {
                 // 处理认证信息
                 offical_info = JsonLib.getString(rawJson,"data","card","Official","title"); // 认证内容
             }
-            // 处理无效数据
+            // 处理返回内容
             if(sign.trim().isEmpty()) { // 签名
                 sign = "(这个人很神秘,什么都没有写)";
             }
+            String strFans = NumFormat.num(fans); // 粉丝数
+            String strFriend = NumFormat.num(friend); // 关注数
             if(sex.equals("保密")) { // 性别
                 sex = "";
             }
             // 输出解析结果
             String cardinfo = "";
             cardinfo += "[INFO] Lv"+level+"  "+nickname+"  "+sex+"\n";
-            cardinfo += "[INFO] 粉丝 "+fans+"   关注 "+friend+"\n";
+            cardinfo += "[INFO] 粉丝 "+strFans+"   关注 "+strFriend+"\n";
             if(!offical_tag.trim().isEmpty()) { // 有认证信息时打印
                 cardinfo += "[INFO] "+offical_tag+offical_info+"\n";
             }
@@ -126,7 +129,25 @@ public class UserInfo {
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
-            // ...
+            // 解析返回信息
+            int aid = JsonLib.getInt(rawJson,"data","aid"); // avid
+            String title = JsonLib.getString(rawJson,"data","title"); // 标题
+            int allsec = JsonLib.getInt(rawJson,"data","duration"); // 总时长(s)
+            int view = JsonLib.getInt(rawJson,"data","stat","view"); // 播放
+            int danmaku = JsonLib.getInt(rawJson,"data","stat","danmaku"); // 弹幕
+            // 处理返回信息
+            String avid = "av"+aid; // avid
+            String playtime = NumFormat.time(allsec); // 总时长((hh:m)m:ss)
+            String strView = NumFormat.num(view); // 播放
+            String strDanmaku = NumFormat.num(danmaku); // 弹幕
+            // 输出处理结果
+            String topinfo = "";
+            topinfo += "置顶视频 "+avid+"\n";
+            topinfo += title+"\n";
+            topinfo += "播放 "+strView+"   弹幕 "+strDanmaku+"\n";
+            topinfo += "时长 "+playtime+"s\n";
+            topinfo += "\n";
+            return topinfo;
         } else if(code==53016) {
             // 无置顶视频...
         } else {
