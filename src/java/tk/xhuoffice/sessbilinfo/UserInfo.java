@@ -27,10 +27,11 @@ public class UserInfo {
                 );
         // 向用户获取 Mid
         String mid = getMid();
-        // 获取被查询B站用户信息
-        String usrinfo = card(mid);
-        // 打印信息
-        System.out.println(usrinfo);
+        // 获取并打印被查询的B站用户信息
+        System.out.print("----------------\n\n");
+        System.out.print(card(mid));
+        System.out.print(space(mid));
+        System.out.print("----------------\n");
     }
     
     public static String getMid() {
@@ -103,17 +104,33 @@ public class UserInfo {
                 cardinfo += "[INFO] "+offical_tag+offical_info+"\n";
             }
             cardinfo += "[INFO] 签名 "+sign+"\n";
+            cardinfo += "\n";
             return cardinfo;
         } else {
-            // 获取错误信息
-            String msg = JsonLib.getString(rawJson,"message");
-            // 输出错误信息
-            System.err.print("[ERROR] 返回值: "+code+" ");
-            Error.code(code);
-            System.out.println("[ERROR] 错误信息: "+msg);
+            Error.out(rawJson);
             System.exit(0);
             return "";
         }
+    }
+    
+    public static String space(String mid) {
+        String top = spaceTop(mid);
+        return top;
+    }
+    
+    public static String spaceTop(String mid) {
+        // 向 API 发送 GET 请求
+        String rawJson = Http.get(USER_SPACE_TOP+"?vmid="+mid,"(2/2)");
+        // 获取返回值
+        int code = JsonLib.getInt(rawJson,"code");
+        if(code==0) {
+            // ...
+        } else if(code==53016) {
+            // 无置顶视频...
+        } else {
+            Error.out(rawJson);
+        }
+        return "";
     }
     
     public static String offical(int typ) {

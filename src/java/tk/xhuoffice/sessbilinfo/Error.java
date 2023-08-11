@@ -2,13 +2,24 @@ package tk.xhuoffice.sessbilinfo;
 
 import java.util.Map;
 import java.util.HashMap;
+import tk.xhuoffice.sessbilinfo.JsonLib;
 
-// 信息来源, https,//github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/errcode.md
+// 信息来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/errcode.md
 
 public class Error {
     
+    public static void out(String rawJson) {
+        // 获取错误
+        int code = JsonLib.getInt(rawJson,"code");
+        String msg = JsonLib.getString(rawJson,"message");
+        // 输出错误信息
+        System.err.print("[ERROR] 返回值: "+code+" ");
+        code(code);
+        System.out.println("[ERROR] 错误信息: "+msg);
+    }
+    
     public static void code(int code) {
-    	Map<Integer,String> errMsg = new HashMap<>();
+        Map<Integer,String> errMsg = new HashMap<>();
         // -1 ~ -115 的 code 多半用不上
         // 权限类
         errMsg.put(-1,  "应用程序不存在或已被封禁");
