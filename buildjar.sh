@@ -12,6 +12,7 @@ javac -encoding utf-8 \
       -sourcepath src/java/tk/xhuoffice/sessbilinfo/ \
       src/java/tk/xhuoffice/sessbilinfo/Http.java \
       src/java/tk/xhuoffice/sessbilinfo/JsonLib.java \
+      src/java/tk/xhuoffice/sessbilinfo/NumFormat.java \
       src/java/tk/xhuoffice/sessbilinfo/Error.java \
       src/java/tk/xhuoffice/sessbilinfo/UserInfo.java \
       src/java/tk/xhuoffice/sessbilinfo/Main.java
