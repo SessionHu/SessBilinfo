@@ -1,6 +1,8 @@
 package tk.xhuoffice.sessbilinfo;
 
+import java.text.NumberFormat;
 import java.time.Duration;
+import java.util.Locale;
 
 public class NumFormat {
     
@@ -13,6 +15,10 @@ public class NumFormat {
             formattedTime = String.format("%d:%02d", duration.toMinutes(), duration.getSeconds() % 60);
         }
         return formattedTime;
+    }
+    
+    public static String num(int num) {
+        return NumberFormat.getInstance(Locale.US).format(num);
     }
     
 }
