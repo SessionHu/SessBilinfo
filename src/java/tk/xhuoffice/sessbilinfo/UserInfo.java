@@ -131,26 +131,30 @@ public class UserInfo {
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
             // 解析返回信息
-            int aid = JsonLib.getInt(rawJson,"data","aid"); // avid
+            long aid = JsonLib.getLong(rawJson,"data","aid"); // avid
             String title = JsonLib.getString(rawJson,"data","title"); // 标题
             int allsec = JsonLib.getInt(rawJson,"data","duration"); // 总时长(s)
             int view = JsonLib.getInt(rawJson,"data","stat","view"); // 播放
             int danmaku = JsonLib.getInt(rawJson,"data","stat","danmaku"); // 弹幕
+            long pubdate= JsonLib.getLong(rawJson,"data","pubdate"); // 发布时间
+            String desc = JsonLib.getString(rawJson,"data","desc"); // 简介
             // 处理返回信息
             String avid = "av"+aid; // avid
             String playtime = NumFormat.time(allsec); // 总时长((hh:m)m:ss)
             String strView = NumFormat.num(view); // 播放
             String strDanmaku = NumFormat.num(danmaku); // 弹幕
+            String date = NumFormat.date(pubdate); // 发布时间
             // 输出处理结果
             String topinfo = "";
-            topinfo += "[INFO] 置顶视频 "+title+"\n";
-            topinfo += "[INFO] AV号 "+avid+"\n";
+            topinfo += "[INFO] 置顶\n"
+            topinfo += "[INFO] "+title+"\n";
+            topinfo += "[INFO] AV号 "+avid+"   "+date+"   时长 "+playtime+"\n";
             topinfo += "[INFO] 播放 "+strView+"   弹幕 "+strDanmaku+"\n";
-            topinfo += "[INFI] 时长 "+playtime+"\n";
+            topinfo += "[INFO] 简介 "+desc+"\n";
             topinfo += "[INFO]\n";
             return topinfo;
         } else if(code==53016) {
-            // 无置顶视频...
+            // 无置顶视频
         } else {
             Error.out(rawJson);
         }
