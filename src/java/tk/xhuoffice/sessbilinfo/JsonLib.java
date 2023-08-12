@@ -21,7 +21,7 @@ public class JsonLib {
         for (String key : path) {
             element = element.getAsJsonObject().get(key);
         }
-        return GSON.fromJson(element, String.class);
+        return element.getAsString();
     }
     
     // 获取 int
@@ -30,6 +30,15 @@ public class JsonLib {
         for (String key : path) {
             element = element.getAsJsonObject().get(key);
         }
-        return GSON.fromJson(element, Integer.class);
+        return element.getAsInt();
+    }
+    
+    // 获取 long
+    public static long getLong(String inputJson, String... path) {
+        JsonElement element = GSON.fromJson(inputJson, JsonObject.class);
+        for (String key : path) {
+            element = element.getAsJsonObject().get(key);
+        }
+        return element.getAsLong();
     }
 }
