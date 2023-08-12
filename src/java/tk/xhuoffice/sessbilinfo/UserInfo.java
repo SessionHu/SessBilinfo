@@ -146,7 +146,7 @@ public class UserInfo {
             String date = NumFormat.date(pubdate); // 发布时间
             // 输出处理结果
             String topinfo = "";
-            topinfo += "[INFO] 置顶\n"
+            topinfo += "[INFO] 置顶\n";
             topinfo += "[INFO] "+title+"\n";
             topinfo += "[INFO] AV号 "+avid+"   "+date+"   时长 "+playtime+"\n";
             topinfo += "[INFO] 播放 "+strView+"   弹幕 "+strDanmaku+"\n";
