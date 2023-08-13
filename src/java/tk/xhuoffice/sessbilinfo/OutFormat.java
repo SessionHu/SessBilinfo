@@ -7,7 +7,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Locale;
 
-public class NumFormat {
+public class OutFormat {
     
     public static final ZoneId ZONE_HK = ZoneId.of("Asia/Hong_Kong");
     

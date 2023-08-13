@@ -4,7 +4,7 @@ import java.util.Scanner;
 import tk.xhuoffice.sessbilinfo.Error;
 import tk.xhuoffice.sessbilinfo.Http;
 import tk.xhuoffice.sessbilinfo.JsonLib;
-import tk.xhuoffice.sessbilinfo.outFormat;
+import tk.xhuoffice.sessbilinfo.OutFormat;
 
 // API来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md
 // 认证类型来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/official_role.md
