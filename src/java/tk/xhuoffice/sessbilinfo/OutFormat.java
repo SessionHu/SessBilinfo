@@ -58,7 +58,7 @@ public class NumFormat {
         // 拼接替换内容
         String info = "\n" + "["+ level + "] " + other;
         // 进行替换
-        str.replaceAll("\\n",info);
+        str = str.replaceAll("\\n",info);
         // 返回内容
         return str;
     }
