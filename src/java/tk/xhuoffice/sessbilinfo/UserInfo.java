@@ -4,7 +4,7 @@ import java.util.Scanner;
 import tk.xhuoffice.sessbilinfo.Error;
 import tk.xhuoffice.sessbilinfo.Http;
 import tk.xhuoffice.sessbilinfo.JsonLib;
-import tk.xhuoffice.sessbilinfo.NumFormat;
+import tk.xhuoffice.sessbilinfo.outFormat;
 
 // API来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md
 // 认证类型来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/official_role.md
@@ -97,8 +97,8 @@ public class UserInfo {
             if(sign.trim().isEmpty()) { // 签名
                 sign = "(这个人很神秘,什么都没有写)";
             }
-            String strFans = NumFormat.num(fans); // 粉丝数
-            String strFriend = NumFormat.num(friend); // 关注数
+            String strFans = OutFormat.num(fans); // 粉丝数
+            String strFriend = OutFormat.num(friend); // 关注数
             if(sex.equals("保密")) { // 性别
                 sex = "";
             }
@@ -140,17 +140,18 @@ public class UserInfo {
             String desc = JsonLib.getString(rawJson,"data","desc"); // 简介
             // 处理返回信息
             String avid = "av"+aid; // avid
-            String playtime = NumFormat.time(allsec); // 总时长((hh:m)m:ss)
-            String strView = NumFormat.num(view); // 播放
-            String strDanmaku = NumFormat.num(danmaku); // 弹幕
-            String date = NumFormat.date(pubdate); // 发布时间
+            String playtime = OutFormat.time(allsec); // 总时长((hh:m)m:ss)
+            String strView = OutFormat.num(view); // 播放
+            String strDanmaku = OutFormat.num(danmaku); // 弹幕
+            String date = OutFormat.date(pubdate); // 发布时间
+            String dscpt = OutFormat.lnStringLogger(desc,1,"     ");
             // 输出处理结果
             String topinfo = "";
             topinfo += "[INFO] 置顶视频\n";
             topinfo += "[INFO] 标题 "+title+"\n";
             topinfo += "[INFO] AV号 "+avid+"   "+date+"   时长 "+playtime+"\n";
             topinfo += "[INFO] 播放 "+strView+"   弹幕 "+strDanmaku+"\n";
-            topinfo += "[INFO] 简介 "+desc+"\n";
+            topinfo += "[INFO] 简介 "+dscpt+"\n";
             topinfo += "[INFO]\n";
             return topinfo;
         } else if(code==53016) {
