@@ -20,7 +20,9 @@ public class UserInfo {
     public static final String USER_CARD = BASE_URL+"/web-interface/card";
     // 用户置顶视频
     public static final String USER_SPACE_TOP = BASE_URL+"/space/top/arc";
-    
+    // 用户代表作
+    public static final String USER_SPACE_MASTERPIECE = BASE_URL+"/space/masterpiece";
+
     public static void getUserInfo() {
         // 提示输入信息
         Logger.println(
@@ -121,8 +123,10 @@ public class UserInfo {
     }
     
     public static String space(String mid) {
-        String top = spaceTop(mid);
-        return top;
+        String space = "";
+        space += spaceTop(mid);
+        space += spaceMasterpiece(mid);
+        return space;
     }
     
     public static String spaceTop(String mid) {
@@ -156,6 +160,19 @@ public class UserInfo {
             return topinfo;
         } else if(code==53016) {
             // 无置顶视频
+        } else {
+            Error.out(rawJson);
+        }
+        return "";
+    }
+
+    public static String spaceMasterpiece(String mid) {
+        // 向 API 发送 GET 请求
+        Http.get(USER_SPACE_MASTERPIECE+"?vmid="+mid);
+        // 获取返回值
+        int code = JsonLib.getInt(rawJson,"code");
+        if(code==0) {
+            // ...
         } else {
             Error.out(rawJson);
         }
