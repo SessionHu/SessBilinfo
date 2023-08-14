@@ -79,8 +79,7 @@ public class Error {
                 code,
                 // 若输入值不符合前面的内容输出下面
                 "\n未知的错误代码 "+code
-                )
-        );
+                );
     }
     
 }
