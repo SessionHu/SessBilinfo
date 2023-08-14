@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import tk.xhuoffice.sessbilinfo.Logger;
 
 public class Http {
 
@@ -12,7 +13,7 @@ public class Http {
     public static String get(String inurl, String msg) {
         try {
             // 提示信息
-            System.out.println("[INFO] 正在请求数据... "+msg);
+            Logger.println("正在请求数据... "+msg,1);
             // 创建 URL 对象
             URL url = new URL(inurl);
             // 打开连接
@@ -30,19 +31,23 @@ public class Http {
             }
             in.close();
             // 提示请求完毕
-            System.out.println("[INFO] 请求完毕 "+msg);
+            Logger.println("请求完毕 "+msg,1);
             // 输出返回的数据
             return response.toString();
         } catch(java.net.UnknownHostException e) {
             // 域名解析错误
-            System.err.println("[FATAL] 域名解析失败, 请检查网络连接与hosts文件配置");
+            Logger.println("域名解析失败, 请检查网络连接与hosts文件配置",4);
         } catch(javax.net.ssl.SSLHandshakeException e) {
             // SSL 握手错误
-            System.err.println("[FATAL] SSL 握手失败, 请检查网络连接是否稳定");
+            Logger.println("SSL 握手失败, 请检查网络连接是否稳定",4);
         } catch(Exception e) {
             // 异常报告
-            System.err.println("[FATAL] HTTP 请求发生未知错误");
-            e.printStackTrace();
+            Logger.println("HTTP 请求发生未知错误",4);
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            String stackTrace = sw.toString();
+            Logger.println(starkTrace,4);
         }
         System.exit(64);
         return ""; // 防止编译报错
