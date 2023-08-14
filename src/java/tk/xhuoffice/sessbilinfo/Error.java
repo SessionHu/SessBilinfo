@@ -2,6 +2,7 @@ package tk.xhuoffice.sessbilinfo;
 
 import java.util.Map;
 import java.util.HashMap;
+import tk.xhuoffice.sessbilinfo.Logger;
 import tk.xhuoffice.sessbilinfo.JsonLib;
 
 // 信息来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/errcode.md
@@ -13,12 +14,11 @@ public class Error {
         int code = JsonLib.getInt(rawJson,"code");
         String msg = JsonLib.getString(rawJson,"message");
         // 输出错误信息
-        System.err.print("[ERROR] 返回值: "+code+" ");
-        code(code);
-        System.out.println("[ERROR] 错误信息: "+msg);
+        Logger.println("返回值: "+code+" "+code(code),3);
+        Logger.println("错误信息: "+msg,3);
     }
     
-    public static void code(int code) {
+    public static String code(int code) {
         Map<Integer,String> errMsg = new HashMap<>();
         // -1 ~ -115 的 code 多半用不上
         // 权限类
@@ -73,14 +73,12 @@ public class Error {
         errMsg.put(-701,"扣节操失败");
         errMsg.put(-799,"请求过于频繁，请稍后再试");
         errMsg.put(-8888,"对不起，服务器开小差了~ (ಥ﹏ಥ)");
-        // 打印结果
-        System.err.println(
-                // 根据情况输出
-                errMsg.getOrDefault(
-                        // 输入值
-                        code,
-                        // 若输入值不符合前面的内容输出下面
-                        "\n[ERROR] 未知的错误代码 "+code
+        // 根据情况返回结果
+        return errMsg.getOrDefault(
+                // 输入值
+                code,
+                // 若输入值不符合前面的内容输出下面
+                "\n未知的错误代码 "+code
                 )
         );
     }

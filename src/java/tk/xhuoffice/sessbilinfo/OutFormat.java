@@ -43,24 +43,8 @@ public class OutFormat {
         }
     }
     
-    public static String lnStringLogger(String str, int lv, String other) {
-        // 确认 Log 级别
-        String level = "DEBUG"; // 默认级别
-        if(lv==1) {
-            level = "INFO"; // 信息
-        } else if(lv==2) {
-            level = "WARN"; // 警告
-        } else if(lv==3) {
-            level = "ERROR"; // 错误
-        } else if(lv==4) {
-            level = "FATAL"; // 致命
-        }
-        // 拼接替换内容
-        String info = "\n" + "["+ level + "] " + other;
-        // 进行替换
-        str = str.replaceAll("\\n",info);
-        // 返回内容
-        return str;
+    public static String formatString(String origin, String add) {
+        return origin.replaceAll("\\n","\n"+add);
     }
     
 }

@@ -3,6 +3,7 @@ package tk.xhuoffice.sessbilinfo;
 import java.util.Scanner;
 import tk.xhuoffice.sessbilinfo.Error;
 import tk.xhuoffice.sessbilinfo.Http;
+import tk.xhuoffice.sessbilinfo.Logger;
 import tk.xhuoffice.sessbilinfo.JsonLib;
 import tk.xhuoffice.sessbilinfo.OutFormat;
 
@@ -22,20 +23,20 @@ public class UserInfo {
     
     public static void getUserInfo() {
         // 提示输入信息
-        System.out.println(
-                "[INFO] 请输入被查询用户的 Mid 信息\n"+
-                "[INFO] 示例: 645769214"
-                );
+        Logger.println(
+                "请输入被查询用户的 Mid 信息\n"+
+                "示例: 645769214"
+                ,1);
         // 向用户获取 Mid
         String mid = getMid();
         // 获取并打印被查询的B站用户信息
         String usrinfo = "";
         usrinfo += card(mid);
         usrinfo += space(mid);
-        System.out.print("[INFO]\n");
-        System.out.print("[INFO] ----------------\n[INFO]\n");
-        System.out.print(usrinfo);
-        System.out.print("[INFO] ----------------\n");
+        Logger.println("",1);
+        Logger.println("----------------\n",1);
+        Logger.println(usrinfo,1);
+        Logger.println("----------------",1);
     }
     
     public static String getMid() {
@@ -43,13 +44,14 @@ public class UserInfo {
         String input = "";
         while(true) {
             // 提示输入
-            System.out.print("> ");
+            Logger.inputHere();
             try {
                 // 获取输入
                 input = scan.nextLine();
             } catch(Exception e) {
                 // 异常处理
-                System.err.println("\n[FATAL] 无效的 Mid");
+                Logger.ln();
+                Logger.println("无效的 Mid",4);
                 System.exit(1);
             }
             try {
@@ -58,15 +60,15 @@ public class UserInfo {
                 // 检测输入是否大于0
                 if(mid>0) {
                     // 提示并返回结果
-                    System.out.println("[INFO] Mid: "+mid);
+                    Logger.println("Mid: "+mid,1);
                     return input;
                 } else {
                     // 输出警告
-                    System.err.println("[WARN] 无效的 Mid "+input);
+                    Logger.println("无效的 Mid "+input,2);
                 }
             } catch(Exception e) {
                 // 输出警告
-                System.err.println("[WARN] 过大或非数字不能作为 Mid");
+                Logger.println("过大或非数字不能作为 Mid",2);
             }
         }
     }
@@ -104,13 +106,12 @@ public class UserInfo {
             }
             // 输出解析结果
             String cardinfo = "";
-            cardinfo += "[INFO] Lv"+level+"  "+nickname+"  "+sex+"\n";
-            cardinfo += "[INFO] 粉丝 "+strFans+"   关注 "+strFriend+"\n";
+            cardinfo += "Lv"+level+"  "+nickname+"  "+sex+"\n";
+            cardinfo += "粉丝 "+strFans+"   关注 "+strFriend+"\n";
             if(!offical_tag.trim().isEmpty()) { // 有认证信息时打印
-                cardinfo += "[INFO] "+offical_tag+offical_info+"\n";
+                cardinfo += offical_tag+offical_info+"\n";
             }
-            cardinfo += "[INFO] 签名 "+sign+"\n";
-            cardinfo += "[INFO]\n";
+            cardinfo += "签名 "+sign+"\n";
             return cardinfo;
         } else {
             Error.out(rawJson);
@@ -144,15 +145,14 @@ public class UserInfo {
             String strView = OutFormat.num(view); // 播放
             String strDanmaku = OutFormat.num(danmaku); // 弹幕
             String date = OutFormat.date(pubdate); // 发布时间
-            String dscpt = OutFormat.lnStringLogger(desc,1,"     ");
+            String dscpt = OutFormat.formatString(desc,"     ");
             // 输出处理结果
             String topinfo = "";
-            topinfo += "[INFO] 置顶视频\n";
-            topinfo += "[INFO] 标题 "+title+"\n";
-            topinfo += "[INFO] AV号 "+avid+"   "+date+"   时长 "+playtime+"\n";
-            topinfo += "[INFO] 播放 "+strView+"   弹幕 "+strDanmaku+"\n";
-            topinfo += "[INFO] 简介 "+dscpt+"\n";
-            topinfo += "[INFO]\n";
+            topinfo += "置顶视频\n";
+            topinfo += "标题 "+title+"\n";
+            topinfo += "AV号 "+avid+"   "+date+"   时长 "+playtime+"\n";
+            topinfo += "播放 "+strView+"   弹幕 "+strDanmaku+"\n";
+            topinfo += "简介 "+dscpt+"\n";
             return topinfo;
         } else if(code==53016) {
             // 无置顶视频
@@ -193,8 +193,8 @@ public class UserInfo {
                 break;
             default:
                 // 我也不知道 role 为 8 时是什么
-                System.err.println("[ERROR] 未知的认证类型 "+typ);
-                System.err.println("[ERROR] 请向 SocialSisterYi/bilibili-API-collect 与 SessionHu/SessBilinfo 提交 Issue, 内容请包含 有关请求的 Mid 的信息 与 上一行认证类型输出 的截图");
+                Logger.println("未知的认证类型 "+typ,3);
+                Logger.println("请向 SocialSisterYi/bilibili-API-collect 与 SessionHu/SessBilinfo 提交 Issue, 内容请包含 有关请求的 Mid 的信息 与 上一行认证类型输出 的截图",3);
         }
         return offical_tag;
     }
