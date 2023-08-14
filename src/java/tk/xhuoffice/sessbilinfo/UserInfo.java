@@ -37,7 +37,7 @@ public class UserInfo {
         usrinfo += space(mid);
         Logger.println("",1);
         Logger.println("----------------\n",1);
-        Logger.println(usrinfo,1);
+        Logger.print(usrinfo,1);
         Logger.println("----------------",1);
     }
     
@@ -114,6 +114,7 @@ public class UserInfo {
                 cardinfo += offical_tag+offical_info+"\n";
             }
             cardinfo += "签名 "+sign+"\n";
+            cardinfo += "\n";
             return cardinfo;
         } else {
             Error.out(rawJson);
@@ -157,6 +158,7 @@ public class UserInfo {
             topinfo += "AV号 "+avid+"   "+date+"   时长 "+playtime+"\n";
             topinfo += "播放 "+strView+"   弹幕 "+strDanmaku+"\n";
             topinfo += "简介 "+dscpt+"\n";
+            topinfo += "\n";
             return topinfo;
         } else if(code==53016) {
             // 无置顶视频
