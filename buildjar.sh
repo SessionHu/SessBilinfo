@@ -1,9 +1,6 @@
 echo -e "Processing files from last build..."
 rm -r build/
-mkdir build/ \
-      build/tk/ \
-      build/tk/xhuoffice/ \
-      build/tk/xhuoffice/sessbilinfo/
+mkdir build/
 
 echo -e "Building..."
 javac -encoding utf-8 \
@@ -30,5 +27,4 @@ else
     echo -e "Build failed!"
     exit 1
 fi
-
 
