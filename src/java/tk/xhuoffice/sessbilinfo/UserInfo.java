@@ -33,12 +33,12 @@ public class UserInfo {
         String mid = getMid();
         // 获取并打印被查询的B站用户信息
         String usrinfo = "";
+        usrinfo += "\n";
+        usrinfo += "------------------------\n\n";
         usrinfo += card(mid);
         usrinfo += space(mid);
-        Logger.println("",1);
-        Logger.println("----------------\n",1);
-        Logger.print(usrinfo,1);
-        Logger.println("----------------",1);
+        usrinfo += "------------------------";
+        Logger.println(usrinfo);
     }
     
     public static String getMid() {
