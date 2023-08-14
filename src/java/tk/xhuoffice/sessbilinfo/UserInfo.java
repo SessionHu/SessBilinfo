@@ -77,7 +77,7 @@ public class UserInfo {
     
     public static String card(String mid) {
         // 向 API 发送 GET 请求
-        String rawJson = Http.get(USER_CARD+"?mid="+mid,"(1/2)");
+        String rawJson = Http.get(USER_CARD+"?mid="+mid,"(1/3)");
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -131,7 +131,7 @@ public class UserInfo {
     
     public static String spaceTop(String mid) {
         // 向 API 发送 GET 请求
-        String rawJson = Http.get(USER_SPACE_TOP+"?vmid="+mid,"(2/2)");
+        String rawJson = Http.get(USER_SPACE_TOP+"?vmid="+mid,"(2/3)");
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -168,7 +168,7 @@ public class UserInfo {
 
     public static String spaceMasterpiece(String mid) {
         // 向 API 发送 GET 请求
-        Http.get(USER_SPACE_MASTERPIECE+"?vmid="+mid);
+        String rawJson = Http.get(USER_SPACE_MASTERPIECE+"?vmid="+mid,"(3/3)");
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
