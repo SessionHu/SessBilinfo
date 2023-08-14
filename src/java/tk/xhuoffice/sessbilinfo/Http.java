@@ -49,7 +49,7 @@ public class Http {
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             String stackTrace = sw.toString();
-            Logger.println(starkTrace,4);
+            Logger.println(stackTrace,4);
         }
         System.exit(64);
         return ""; // 防止编译报错
