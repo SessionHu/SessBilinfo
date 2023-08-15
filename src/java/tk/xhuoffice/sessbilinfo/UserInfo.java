@@ -10,6 +10,7 @@ import tk.xhuoffice.sessbilinfo.OutFormat;
 // API来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md
 // 认证类型来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/official_role.md
 
+
 public class UserInfo {
     
     public static Scanner scan = new Scanner(System.in);
@@ -38,7 +39,7 @@ public class UserInfo {
         usrinfo += card(mid);
         usrinfo += space(mid);
         usrinfo += "------------------------";
-        Logger.println(usrinfo);
+        Logger.println(usrinfo,1);
     }
     
     public static String getMid() {
@@ -174,7 +175,35 @@ public class UserInfo {
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
-            // ...
+            // 定义变量
+            String result = "代表作\n";
+            String videoinfo = "";
+            String json = "";
+            // 提取返回信息
+            String[] jsons = JsonLib.getArrayObject(rawJson,"data");
+            // 依次处理信息
+            for(int i = 0; i < jsons.length; i++) {
+                videoinfo = "";
+                json = jsons[i];
+                // 解析信息
+                long aid = JsonLib.getLong(json,"aid"); // avid
+                String title = JsonLib.getString(json,"title"); // 标题
+                int allsec = JsonLib.getInt(rawJson,"duration"); // 总时长(s)
+                int view = JsonLib.getInt(rawJson,"stat","view"); // 播放
+                int danmaku = JsonLib.getInt(rawJson,"stat","danmaku"); // 弹幕
+                // 处理信息
+                String avid = "av"+aid; // avid
+                String playtime = OutFormat.time(allsec); // 总时长((hh:m)m:ss)
+                String strView = OutFormat.num(view); // 播放
+                String strDanmaku = OutFormat.num(danmaku); // 弹幕
+                // 输出信息
+                videoinfo += i + ". " + title + "\n";
+                videoinfo += "   播放 " + strView + "   弹幕 " + strDanmaku + "   " + playtime + "\n";
+                result += videoinfo;
+            }
+            // 返回处理结果
+            result += "\n";
+            return result;
         } else {
             Error.out(rawJson);
         }
