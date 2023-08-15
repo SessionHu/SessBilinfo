@@ -188,17 +188,17 @@ public class UserInfo {
                 // 解析信息
                 long aid = JsonLib.getLong(json,"aid"); // avid
                 String title = JsonLib.getString(json,"title"); // 标题
-                int allsec = JsonLib.getInt(rawJson,"duration"); // 总时长(s)
-                int view = JsonLib.getInt(rawJson,"stat","view"); // 播放
-                int danmaku = JsonLib.getInt(rawJson,"stat","danmaku"); // 弹幕
+                int allsec = JsonLib.getInt(json,"duration"); // 总时长(s)
+                int view = JsonLib.getInt(json,"stat","view"); // 播放
+                int danmaku = JsonLib.getInt(json,"stat","danmaku"); // 弹幕
                 // 处理信息
                 String avid = "av"+aid; // avid
                 String playtime = OutFormat.time(allsec); // 总时长((hh:m)m:ss)
                 String strView = OutFormat.num(view); // 播放
                 String strDanmaku = OutFormat.num(danmaku); // 弹幕
                 // 输出信息
-                videoinfo += i + ". " + title + "\n";
-                videoinfo += "   播放 " + strView + "   弹幕 " + strDanmaku + "   " + playtime + "\n";
+                videoinfo += (i+1) + ". " + title + "\n";
+                videoinfo += "   " + playtime + "   播放 " + strView + "   弹幕 " + strDanmaku + "\n";
                 result += videoinfo;
             }
             // 返回处理结果
