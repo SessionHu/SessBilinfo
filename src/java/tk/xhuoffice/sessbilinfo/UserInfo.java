@@ -8,6 +8,7 @@ import tk.xhuoffice.sessbilinfo.JsonLib;
 import tk.xhuoffice.sessbilinfo.OutFormat;
 
 // API来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md
+//          https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/space.md
 // 认证类型来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/official_role.md
 
 
@@ -21,6 +22,8 @@ public class UserInfo {
     public static final String USER_CARD = BASE_URL+"/web-interface/card";
     // 用户空间公告
     public static final String USER_SPACE_NOTICE = "/space/notice";
+    // 用户空间个人TAG
+    public static final String USER_SPACE_TAG = "/space/acc/tags";
     // 用户空间置顶视频
     public static final String USER_SPACE_TOP = BASE_URL+"/space/top/arc";
     // 用户空间代表作
@@ -80,7 +83,7 @@ public class UserInfo {
     
     public static String card(String mid) {
         // 向 API 发送 GET 请求
-        String rawJson = Http.get(USER_CARD+"?mid="+mid,"(1/4)");
+        String rawJson = Http.get(USER_CARD+"?mid="+mid,"(1/5)");
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -129,6 +132,7 @@ public class UserInfo {
     public static String space(String mid) {
         String space = "";
         space += spaceNotice(mid);
+        space += spaceTag(mid);
         space += spaceTop(mid);
         space += spaceMasterpiece(mid);
         return space;
@@ -136,7 +140,7 @@ public class UserInfo {
     
     public static String spaceNotice(String mid) {
         // 发送请求
-        String json = Http.get(USER_SPACE_NOTICE+"?mid="+mid,"(2/4)");
+        String json = Http.get(USER_SPACE_NOTICE+"?mid="+mid,"(2/5)");
         // 获取返回值
         int code = JsonLib.getInt(json,"code");
         if(code==0) {
@@ -157,9 +161,34 @@ public class UserInfo {
         return "";
     }
     
+    public static String spaceTag(String mid) {
+        // 发送请求
+        String rawJson = Http.get(USER_SPACE_TAG+"?mid="+mid,"(3/5)");
+        int code = JsonLib.getInt(rawJson,"code");
+        if(code==0) {
+            // 提取返回信息
+            String data = JsonLib.getArray(rawJson,"data")[0];
+            String[] tags = JsonLib.getArray(data,"tags");
+            if(tags.length>0) {
+                // 处理返回信息
+                String listag = "TAG: ";
+                for(int i = 0; i < tags.length; i++) {
+                    listag += tags[i]+" ";
+                }
+                listag += "\n\n";
+                // 输出处理信息
+                return listag;
+            }
+        } else {
+            // 输出错误
+            Error.out(rawJson);
+        }
+        return ""
+    }
+    
     public static String spaceTop(String mid) {
         // 向 API 发送 GET 请求
-        String rawJson = Http.get(USER_SPACE_TOP+"?vmid="+mid,"(3/4)");
+        String rawJson = Http.get(USER_SPACE_TOP+"?vmid="+mid,"(4/5)");
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -197,12 +226,12 @@ public class UserInfo {
 
     public static String spaceMasterpiece(String mid) {
         // 向 API 发送 GET 请求
-        String rawJson = Http.get(USER_SPACE_MASTERPIECE+"?vmid="+mid,"(4/4)");
+        String rawJson = Http.get(USER_SPACE_MASTERPIECE+"?vmid="+mid,"(5/5)");
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
             // 提取返回信息
-            String[] jsons = JsonLib.getArrayObject(rawJson,"data");
+            String[] jsons = JsonLib.getArray(rawJson,"data");
             // 处理返回信息
             if(jsons.length>0) {
                 // 定义变量
@@ -221,7 +250,7 @@ public class UserInfo {
                     int danmaku = JsonLib.getInt(json,"stat","danmaku"); // 弹幕
                     // 处理信息
                     String avid = "av"+aid; // avid
-                    String playtime = OutFormat.time(allsec); // 总时长((hh:m)m:ss)
+                    String playtime = OutFormat.time(allsec); // 总时长((hh:)mm:ss)
                     String strView = OutFormat.num(view); // 播放
                     String strDanmaku = OutFormat.num(danmaku); // 弹幕
                     // 输出信息
