@@ -58,8 +58,8 @@ public class UserInfo {
                 System.exit(1);
             }
             try {
-                // 将输入转换为 int
-                int mid = Integer.parseInt(input);
+                // 将输入转换为 long
+                long mid = Long.parseLong(input);
                 // 检测输入是否大于0
                 if(mid>0) {
                     // 提示并返回结果
