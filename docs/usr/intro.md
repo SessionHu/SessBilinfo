@@ -1,6 +1,6 @@
-# 入门
+## 入门
 
-## 配置环境
+### 配置环境
 
 - 安装 Java 8 环境
   - [Liberica OpenJDK](https://bell-sw.com/pages/downloads/) **推荐**
@@ -10,11 +10,11 @@
 
 > SessBilinfo(OpenBili.) 在 Liberica OpenJDK 8 上进心构建, 虽然能够在更高版本的 Java 上运行, 但我们更推荐您在 Java 8 上运行, 以防止意外错误的发生.
 
-## 下载
+### 下载
 
 - 访问[此页面](https://github.com/SessionHu/SessBilinfo/releases/)以下载
 - **latest** 为最新稳定版, **pre-release** 为最新版
 
-## 错误
+### 错误
 
 - [退出代码](./err.md)
