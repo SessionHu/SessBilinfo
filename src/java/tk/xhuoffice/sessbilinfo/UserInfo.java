@@ -183,7 +183,7 @@ public class UserInfo {
             // 输出错误
             Error.out(rawJson);
         }
-        return ""
+        return "";
     }
     
     public static String spaceTop(String mid) {
