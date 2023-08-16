@@ -7,7 +7,7 @@
   ```shell
   java -jar "SessBilinfo.jar"
   ```
-- 使用文档编写中...
+- [使用文档](https://openbili.xhustudio.eu.org/usr/)
 
 ## 开发
 - 本项目为使用 `Java 8` 的**控制台**应用程序, 请确认设备使用的 JDK 版本
