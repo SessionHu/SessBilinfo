@@ -4,7 +4,9 @@
 
 ### August
 
-- Aug 15 发布版本 `0.1.0`
+- Aug 16 [使用文档](https:/openbili.xhustudio.eu.org/usr/)发布
+
+- Aug 15 发布版本 [`0.1.0`](https://github.com/SessionHu/SessBilinfo/releases/v0.1.0)
 
 - Aug 13 停止使用 *PR合并功能* 方式开发
 
