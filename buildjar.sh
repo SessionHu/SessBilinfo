@@ -4,6 +4,7 @@ mkdir build/
 
 echo -e "Building..."
 javac -encoding utf-8 \
+      -Xlint:deprecation \
       -d build/ \
       -cp lib/gson-3.10.1.jar \
       -sourcepath src/java/tk/xhuoffice/sessbilinfo/ \
