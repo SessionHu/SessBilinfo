@@ -19,11 +19,13 @@ public class UserInfo {
     public static final String BASE_URL = "https://api.bilibili.com/x";
     // 用户名片信息
     public static final String USER_CARD = BASE_URL+"/web-interface/card";
-    // 用户置顶视频
+    // 用户空间公告
+    public static final String USER_SPACE_NOTICE = "/space/notice";
+    // 用户空间置顶视频
     public static final String USER_SPACE_TOP = BASE_URL+"/space/top/arc";
-    // 用户代表作
+    // 用户空间代表作
     public static final String USER_SPACE_MASTERPIECE = BASE_URL+"/space/masterpiece";
-
+    
     public static void getUserInfo() {
         // 提示输入信息
         Logger.println(
@@ -78,7 +80,7 @@ public class UserInfo {
     
     public static String card(String mid) {
         // 向 API 发送 GET 请求
-        String rawJson = Http.get(USER_CARD+"?mid="+mid,"(1/3)");
+        String rawJson = Http.get(USER_CARD+"?mid="+mid,"(1/4)");
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -126,14 +128,38 @@ public class UserInfo {
     
     public static String space(String mid) {
         String space = "";
+        space += spaceNotice(mid);
         space += spaceTop(mid);
         space += spaceMasterpiece(mid);
         return space;
     }
     
+    public static String spaceNotice(String mid) {
+        // 发送请求
+        String json = Http.get(USER_SPACE_NOTICE+"?mid="+mid,"(2/4)");
+        // 获取返回值
+        int code = JsonLib.getInt(json,"code");
+        if(code==0) {
+            // 解析返回信息
+            String data = JsonLib.getString(json,"data");
+            // 处理返回结果
+            if(data==null||data.trim().isEmpty()) {
+                // 返回结果为空时不输出
+                return "";
+            } else {
+                // 输出处理结果
+                return "空间公告\n"+data+"\n\n";
+            }
+        } else {
+            // 输出错误信息
+            Error.out(json);
+        }
+        return "";
+    }
+    
     public static String spaceTop(String mid) {
         // 向 API 发送 GET 请求
-        String rawJson = Http.get(USER_SPACE_TOP+"?vmid="+mid,"(2/3)");
+        String rawJson = Http.get(USER_SPACE_TOP+"?vmid="+mid,"(3/4)");
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -171,7 +197,7 @@ public class UserInfo {
 
     public static String spaceMasterpiece(String mid) {
         // 向 API 发送 GET 请求
-        String rawJson = Http.get(USER_SPACE_MASTERPIECE+"?vmid="+mid,"(3/3)");
+        String rawJson = Http.get(USER_SPACE_MASTERPIECE+"?vmid="+mid,"(4/4)");
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
