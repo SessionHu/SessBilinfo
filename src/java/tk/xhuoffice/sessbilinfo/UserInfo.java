@@ -21,9 +21,9 @@ public class UserInfo {
     // 用户名片信息
     public static final String USER_CARD = BASE_URL+"/web-interface/card";
     // 用户空间公告
-    public static final String USER_SPACE_NOTICE = "/space/notice";
+    public static final String USER_SPACE_NOTICE = BASE_URL+"/space/notice";
     // 用户空间个人TAG
-    public static final String USER_SPACE_TAG = "/space/acc/tags";
+    public static final String USER_SPACE_TAG = BASE_URL+"/space/acc/tags";
     // 用户空间置顶视频
     public static final String USER_SPACE_TOP = BASE_URL+"/space/top/arc";
     // 用户空间代表作
@@ -166,18 +166,24 @@ public class UserInfo {
         String rawJson = Http.get(USER_SPACE_TAG+"?mid="+mid,"(3/5)");
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
-            // 提取返回信息
-            String data = JsonLib.getArray(rawJson,"data")[0];
-            String[] tags = JsonLib.getArray(data,"tags");
-            if(tags.length>0) {
-                // 处理返回信息
-                String listag = "TAG: ";
-                for(int i = 0; i < tags.length; i++) {
-                    listag += tags[i]+" ";
+            try {
+                // 提取返回信息
+                String data = JsonLib.getArray(rawJson,"data")[0];
+                String[] tags = JsonLib.getArray(data,"tags");
+                if(tags.length>0) {
+                    // 处理返回信息
+                    String listag = "TAG: ";
+                    for(int i = 0; i < tags.length; i++) {
+                        listag += tags[i]+" ";
+                    }
+                    listag += "\n\n";
+                    // 输出处理信息
+                    return listag;
                 }
-                listag += "\n\n";
-                // 输出处理信息
-                return listag;
+            } catch(NullPointerException e) {
+                // 空指针异常
+                // 一般是 tags 为空导致的
+                // 不需要处理
             }
         } else {
             // 输出错误
