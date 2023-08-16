@@ -36,6 +36,9 @@ public class Http {
             Logger.println("请求完毕 "+msg,1);
             // 输出返回的数据
             return response.toString();
+        } catch(java.net.MalformedURLException e) {
+            // URL 不合法
+            Logger.println("非法的 URL "+inurl,4);
         } catch(java.net.UnknownHostException e) {
             // 域名解析错误
             Logger.println("域名解析失败, 请检查网络连接与hosts文件配置",4);
