@@ -45,14 +45,13 @@ public class JsonLib {
         return element.getAsLong();
     }
     
-    // 获取数组中的对象作为单独的 Json
-    public static String[] getArrayObject(String json, String arr) {
+    // 获取 Json Array 中的内容作为 String[]
+    public static String[] getArray(String json, String arr) {
         JsonParser parser = new JsonParser();
         JsonObject jsonObject = parser.parse(json).getAsJsonObject();
         JsonArray jsonArray = jsonObject.getAsJsonArray(arr);
         return StreamSupport.stream(jsonArray.spliterator(), false)
                 .map(GSON::toJson)
                 .toArray(String[]::new);
-    }
-    
+    }    
 }
