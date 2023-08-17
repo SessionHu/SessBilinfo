@@ -37,13 +37,16 @@ public class UserInfo {
                 ,1);
         // 向用户获取 Mid
         String mid = getMid();
-        // 获取并打印被查询的B站用户信息
+        // 获取数据
+        Logger.println("正在请求数据...",1);
         String usrinfo = "";
         usrinfo += "\n";
         usrinfo += "------------------------\n\n";
         usrinfo += card(mid);
         usrinfo += space(mid);
         usrinfo += "------------------------";
+        Logger.println("请求完毕",1);
+        // 输出数据
         Logger.println(usrinfo,1);
     }
     
@@ -83,7 +86,7 @@ public class UserInfo {
     
     public static String card(String mid) {
         // 向 API 发送 GET 请求
-        String rawJson = Http.get(USER_CARD+"?mid="+mid,"(1/5)");
+        String rawJson = Http.get(USER_CARD+"?mid="+mid);
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -140,7 +143,7 @@ public class UserInfo {
     
     public static String spaceNotice(String mid) {
         // 发送请求
-        String json = Http.get(USER_SPACE_NOTICE+"?mid="+mid,"(2/5)");
+        String json = Http.get(USER_SPACE_NOTICE+"?mid="+mid);
         // 获取返回值
         int code = JsonLib.getInt(json,"code");
         if(code==0) {
@@ -163,7 +166,7 @@ public class UserInfo {
     
     public static String spaceTag(String mid) {
         // 发送请求
-        String rawJson = Http.get(USER_SPACE_TAG+"?mid="+mid,"(3/5)");
+        String rawJson = Http.get(USER_SPACE_TAG+"?mid="+mid);
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
             try {
@@ -194,7 +197,7 @@ public class UserInfo {
     
     public static String spaceTop(String mid) {
         // 向 API 发送 GET 请求
-        String rawJson = Http.get(USER_SPACE_TOP+"?vmid="+mid,"(4/5)");
+        String rawJson = Http.get(USER_SPACE_TOP+"?vmid="+mid);
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -232,7 +235,7 @@ public class UserInfo {
 
     public static String spaceMasterpiece(String mid) {
         // 向 API 发送 GET 请求
-        String rawJson = Http.get(USER_SPACE_MASTERPIECE+"?vmid="+mid,"(5/5)");
+        String rawJson = Http.get(USER_SPACE_MASTERPIECE+"?vmid="+mid);
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
