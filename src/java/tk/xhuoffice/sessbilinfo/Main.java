@@ -16,12 +16,16 @@ public class Main {
         if(task==1) {
             // 获取用户信息
             UserInfo.getUserInfo();
+        } else if(task==2) {
+            // 检查昵称状态
+            Account.checkNickname();
         } else if(task==0) {
             // noting here...
         } else {
-            // 输出错误并退出
+            // 输出错误
             Logger.println("无效的操作编号",2);
         }
+        // 退出
         System.exit(0);
     }
     
@@ -31,6 +35,7 @@ public class Main {
         Logger.println(
                 "请输入操作编号\n"+
                 "1. 获取用户信息\n"+
+                "2. 检查昵称状态\n"
                 "0. 退出"
                 ,1);
         Logger.inputHere();
