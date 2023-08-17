@@ -13,7 +13,15 @@ public class Http {
     public static final String ANDROID_APP_UA = "Dalvik/2.1.0 (Linux; U; Android 12; MLD-AL00 Build/HUAWEIMLD-AL00) 7.38.0 os/android model/MLD-AL00 mobi_app/Ai4cCreatorAndroid build/7380300 channel/master innerVer/7380310 osVer/12 network/2 grpc-java-cronet/1.36.1";
     
     public static String get(String url) {
-        for(int t = 2; t < 5; t++) {
+        for(int t = 0; t < 3; t++) {
+            // 确定重试提示 log 级别
+            int l;
+            if(t<2) {
+                l = 2;
+            } else {
+                l = 4;
+            }
+            // 进行请求
             try {
                 // 请求数据
                 String data = getDataFromURL(url);
@@ -25,10 +33,10 @@ public class Http {
                 break;
             } catch(java.net.UnknownHostException e) {
                 // 域名解析错误
-                Logger.println("域名解析失败, 请检查网络连接与hosts文件配置",t);
+                Logger.println("域名解析失败, 请检查网络连接与hosts文件配置",l);
             } catch(javax.net.ssl.SSLHandshakeException e) {
                 // SSL 握手错误
-                Logger.println("SSL 握手失败, 请检查网络连接是否稳定",t);
+                Logger.println("SSL 握手失败, 请检查网络连接是否稳定",l);
             } catch(Exception e) {
                 // 异常报告
                 Logger.println("HTTP 请求发生未知错误",4);
