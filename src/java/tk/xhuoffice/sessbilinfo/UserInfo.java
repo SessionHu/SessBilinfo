@@ -134,8 +134,8 @@ public class UserInfo {
     
     public static String space(String mid) {
         String space = "";
-        space += spaceNotice(mid);
         space += spaceTag(mid);
+        space += spaceNotice(mid);
         space += spaceTop(mid);
         space += spaceMasterpiece(mid);
         return space;
@@ -177,8 +177,15 @@ public class UserInfo {
                     // 处理返回信息
                     String listag = "TAG: ";
                     for(int i = 0; i < tags.length; i++) {
-                        listag += tags[i]+" ";
+                        // 获取 tag
+                        String tag = tags[i];
+                        // 处理首尾引号
+                        tag = tag.substring(1, tag.length() - 1);
+                        // 将处理好的 tag 进行添加
+                        listag += tag + ", ";
                     }
+                    // 整理处理信息
+                    listag = listag.substring(0, listag.length() - 2);
                     listag += "\n\n";
                     // 输出处理信息
                     return listag;
