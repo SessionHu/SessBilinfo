@@ -45,6 +45,7 @@ public class Main {
             scan.nextLine(); // 消耗掉换行符
         } catch(Exception e) {
             // 送给不按套路出牌的用户
+            Logger.ln();
             return -1;
         }
         return task;
