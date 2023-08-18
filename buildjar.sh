@@ -9,6 +9,7 @@ javac -encoding utf-8 \
       -cp lib/gson-3.10.1.jar \
       -sourcepath src/java/tk/xhuoffice/sessbilinfo/ \
       src/java/tk/xhuoffice/sessbilinfo/Logger.java \
+      src/java/tk/xhuoffice/sessbilinfo/CookieFile.java \
       src/java/tk/xhuoffice/sessbilinfo/Http.java \
       src/java/tk/xhuoffice/sessbilinfo/JsonLib.java \
       src/java/tk/xhuoffice/sessbilinfo/OutFormat.java \
