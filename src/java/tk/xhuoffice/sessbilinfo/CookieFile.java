@@ -9,7 +9,7 @@ import tk.xhuoffice.sessbilinfo.OutFormat;
 
 public class CookieFile {
 
-    public static final long COOKIE_EXPIRE_TIME = 30 * 60 * 1000; // 30 min
+    public static final long COOKIE_EXPIRE_TIME = 24 * 60 * 60 * 1000; // 24 h
     
     public static String getCookieFilePath() {
         // 获取系统类型
@@ -30,9 +30,9 @@ public class CookieFile {
         }
     }
     
-    public static void save(String cookie) {
+    public static void save(String[] cookie) {
         // 验证获取的 Cookie
-        if(cookie==null||cookie.trim().isEmpty()) {
+        if(cookie.length==0) {
             // Cookie 为空
             Logger.println("Cookie 为空",2);
         } else {
@@ -47,7 +47,11 @@ public class CookieFile {
                 }
                 // 写入文件
                 try(FileWriter writer = new FileWriter(path)) {
-                    writer.write(System.currentTimeMillis() + "\n" + cookie);
+                    String cookies = "";
+                    for(int l = 0; l < cookie.length; l++) {
+                        cookies += cookie[l]+"\n";
+                    }
+                    writer.write(System.currentTimeMillis() + "\n" + cookies);
                 }
             } catch(Exception e) {
                 Logger.println("Cookie 文件写入失败",2);
@@ -61,27 +65,30 @@ public class CookieFile {
         Runtime.getRuntime().exec("attrib +H " + path);
     }
     
-    public static String load() throws IOException {
+    public static String[] load() throws IOException {
         // 输入文件
         File file = new File(getCookieFilePath());
         // 文件是否存在
         if(!file.exists()) {
-            return null;
+            return [];
         }
         // 读取文件
         FileReader reader = new FileReader(file);
         char[] buffer = new char[(int) file.length()];
         reader.read(buffer);
         reader.close();
-        // 处理文件
+        // 处理数据
         String[] lines = new String(buffer).split("\n");
         long timestamp = Long.parseLong(lines[0]);
-        String cookie = lines[1];
         // 验证文件
         if (System.currentTimeMillis() - timestamp > COOKIE_EXPIRE_TIME) {
             // 文件过期
-            return null;
+            return [];
         } else {
+            // 读取数据
+            for(int i = 1; i < lines.length; i++)
+            String[] cookie;
+            cookie[i-1] = lines[i];
             // 返回数据
             return cookie;
         }
