@@ -81,20 +81,25 @@ public class CookieFile {
         reader.read(buffer);
         reader.close();
         // 处理数据
-        String[] lines = new String(buffer).split("\n");
-        long timestamp = Long.parseLong(lines[0]);
-        // 验证文件
-        if (System.currentTimeMillis() - timestamp > COOKIE_EXPIRE_TIME) {
-            // 文件过期
-            return new String[0];
-        } else {
-            // 读取数据
-            String[] cookie = new String[lines.length-1];
-            for(int i = 1; i < lines.length; i++) {
-                cookie[i-1] = lines[i];
+        try {
+            String[] lines = new String(buffer).split("\n");
+            long timestamp = Long.parseLong(lines[0]);
+            // 验证文件
+            if(System.currentTimeMillis() - timestamp > COOKIE_EXPIRE_TIME) {
+                // 文件过期
+                return new String[0];
+            } else {
+                // 读取数据
+                String[] cookie = new String[lines.length-1];
+                for(int i = 1; i < lines.length; i++) {
+                    cookie[i-1] = lines[i];
+                }
+                // 返回数据
+                return cookie;
             }
-            // 返回数据
-            return cookie;
+        } catch(NumberFormatException e) {
+            Logger.println("Cookie 文件时间戳错误",3);
+            return new String[0];
         }
     }
     
