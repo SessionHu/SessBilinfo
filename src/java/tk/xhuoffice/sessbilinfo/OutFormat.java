@@ -1,5 +1,7 @@
 package tk.xhuoffice.sessbilinfo;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -72,6 +74,14 @@ public class OutFormat {
                 System.exit(1);
             }
         }
+    }
+    
+    public static void outException(Exception e, int l) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        String stackTrace = sw.toString();
+        Logger.println(stackTrace,l);
     }
     
 }
