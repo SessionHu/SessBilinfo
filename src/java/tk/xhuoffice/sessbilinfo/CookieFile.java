@@ -30,23 +30,25 @@ public class CookieFile {
         }
     }
     
-    public static void save(String cookie) throws IOException {
+    public static void save(String cookie) {
         // 验证获取的 Cookie
         if(cookie==null||cookie.trim().isEmpty()) {
             // Cookie 为空
             Logger.println("Cookie 为空",2);
         } else {
-            // 获取路径
-            String path = getCookieFilePath();
-            // 检查父目录
-            File parentDir = new File(path).getParentFile();
-            if(!parentDir.exists()) { // 当父目录不存在时
-                parentDir.mkdirs(); // 创建目录
-                hideWinDir(parentDir.getCanonicalPath()); // 隐藏目录
-            }
-            // 写入文件
-            try(FileWriter writer = new FileWriter(path)) {
-                writer.write(System.currentTimeMillis() + "\n" + cookie);
+            try {
+                // 获取路径
+                String path = getCookieFilePath();
+                // 检查父目录
+                File parentDir = new File(path).getParentFile();
+                if(!parentDir.exists()) { // 当父目录不存在时
+                    parentDir.mkdirs();
+                    hideWinDir(parentDir.getCanonicalPath());
+                }
+                // 写入文件
+                try(FileWriter writer = new FileWriter(path)) {
+                    writer.write(System.currentTimeMillis() + "\n" + cookie);
+                }
             } catch(Exception e) {
                 Logger.println("Cookie 文件写入失败",2);
                 OutFormat.outException(e,2);
