@@ -43,7 +43,10 @@ public class CookieFile {
                 File parentDir = new File(path).getParentFile();
                 if(!parentDir.exists()) { // 当父目录不存在时
                     parentDir.mkdirs();
-                    hideWinDir(parentDir.getCanonicalPath());
+                    if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+                        // 仅在 Windows 下隐藏目录  (类Unix无隐藏属性)
+                        hideWinDir(parentDir.getCanonicalPath());
+                    }
                 }
                 // 写入文件
                 try(FileWriter writer = new FileWriter(path)) {
