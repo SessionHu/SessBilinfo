@@ -25,17 +25,17 @@ public class Http {
             } else {
                 l = 4;
             }
+            // 处理传入参数
+            String url = "";
+            if(in.length>0) {
+                url = in[0];
+            }
+            String sessdata = "";
+            if(in.length==2) {
+                sessdata = in[1];
+            }
             // 进行请求
             try {
-                // 处理传入参数
-                String url = "";
-                if(in.length>0) {
-                    url = in[0];
-                }
-                String sessdata = "";
-                if(in.length==2) {
-                    sessdata = in[1];
-                }
                 // 请求数据
                 String data = getDataFromURL(url,sessdata);
                 // 输出返回的数据
