@@ -40,8 +40,9 @@ public class CookieFile {
             String path = getCookieFilePath();
             // 检查父目录
             File parentDir = new File(path).getParentFile();
-            if(!parentDir.exists()) {
-                parentDir.mkdirs();
+            if(!parentDir.exists()) { // 当父目录不存在时
+                parentDir.mkdirs(); // 创建目录
+                hideWinDir(parentDir.getCanonicalPath()); // 隐藏目录
             }
             // 写入文件
             try(FileWriter writer = new FileWriter(path)) {
@@ -52,7 +53,12 @@ public class CookieFile {
             }
         }
     }
-
+    
+    public static void hideWinDir(String path) throws Exception {
+        // 运行 attrib 命令来设置目录的隐藏属性
+        Runtime.getRuntime().exec("attrib +H " + path);
+    }
+    
     public static String load() throws IOException {
         // 输入文件
         File file = new File(getCookieFilePath());
