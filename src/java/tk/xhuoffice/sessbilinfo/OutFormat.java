@@ -11,6 +11,8 @@ import tk.xhuoffice.sessbilinfo.Logger;
 
 public class OutFormat {
     
+    public static Scanner scan = new Scanner(System.in);
+    
     public static final ZoneId ZONE_HK = ZoneId.of("Asia/Hong_Kong");
     
     public static String time(int seconds) {
@@ -50,8 +52,6 @@ public class OutFormat {
     }
     
     public static String getString(String typ) {
-        // 定义变量
-        String str = "";
         // 获取输入
         while(true) {
             try {
@@ -60,7 +60,7 @@ public class OutFormat {
                 // 读取控制台输入
                 String str = scan.nextLine();
                 // 为空时的处理
-                if(str=null||str.trim().isEmpty()) {
+                if(str==null||str.trim().isEmpty()) {
                     Logger.println(typ+"不能为空",2);
                 } else {
                     return str;

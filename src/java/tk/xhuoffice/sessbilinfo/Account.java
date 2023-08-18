@@ -12,8 +12,6 @@ import tk.xhuoffice.sessbilinfo.OutFormat;
 
 public class Account {
     
-    public static Scanner scan = new Scanner(System.in);
-    
     // 检查昵称是否可用
     public static final String CHECK_NICKNAME = "https://passport.bilibili.com/web/generic/check/nickname";
     
@@ -24,13 +22,13 @@ public class Account {
         Logger.println("请输入要检查的昵称",1);
         while(true) {
             // 获取输入
-            name = OutFormat.getString();
+            name = OutFormat.getString("昵称");
             // 检查输入是否合法
             if(iStandardNickname(name)) {
                 // 提示信息
-                Logger.println("正在检查...");
+                Logger.println("正在检查...",1);
                 // 输出信息
-                checkNicknameStatus(name);
+                outNicknameStatus(name);
                 // 跳出循环
                 break;
             }
