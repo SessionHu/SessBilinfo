@@ -16,7 +16,7 @@ public class Http {
     public static final String ANDROID_APP_UA = "Dalvik/2.1.0 (Linux; U; Android 12; MLD-AL00 Build/HUAWEIMLD-AL00) 7.38.0 os/android model/MLD-AL00 mobi_app/Ai4cCreatorAndroid build/7380300 channel/master innerVer/7380310 osVer/12 network/2 grpc-java-cronet/1.36.1";
     public static final String WIN10_EDGE_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/115.0.1901.203";
     
-    public static String get(String url, String sessdata) {
+    public static String get(String... in) {
         for(int t = 0; t < 3; t++) {
             // 确定重试提示 log 级别
             int l;
@@ -27,6 +27,15 @@ public class Http {
             }
             // 进行请求
             try {
+                // 处理传入参数
+                String url = "";
+                if(in.length>0) {
+                    url = in[0];
+                }
+                String sessdata = "";
+                if(in.length==2) {
+                    sessdata = in[1];
+                }
                 // 请求数据
                 String data = getDataFromURL(url,sessdata);
                 // 输出返回的数据
