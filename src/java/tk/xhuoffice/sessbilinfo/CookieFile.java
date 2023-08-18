@@ -70,7 +70,7 @@ public class CookieFile {
         File file = new File(getCookieFilePath());
         // 文件是否存在
         if(!file.exists()) {
-            return [];
+            return new String[0];
         }
         // 读取文件
         FileReader reader = new FileReader(file);
@@ -83,12 +83,13 @@ public class CookieFile {
         // 验证文件
         if (System.currentTimeMillis() - timestamp > COOKIE_EXPIRE_TIME) {
             // 文件过期
-            return [];
+            return new String[0];
         } else {
             // 读取数据
-            for(int i = 1; i < lines.length; i++)
             String[] cookie;
-            cookie[i-1] = lines[i];
+            for(int i = 1; i < lines.length; i++) {
+                cookie[i-1] = lines[i];
+            }
             // 返回数据
             return cookie;
         }
