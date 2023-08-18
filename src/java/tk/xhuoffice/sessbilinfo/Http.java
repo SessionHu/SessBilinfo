@@ -104,10 +104,10 @@ public class Http {
         return response.toString();
     }
     
-    public static String getDefaultCookie() throws Exception {
+    public static String[] getDefaultCookie() throws Exception {
         // 设置请求到 https://www.bilibili.com/
         String url = "https://www.bilibili.com/";
-        HttpURLConnection conn = setGetConnURL(url,WIN10_EDGE_UA,"");
+        HttpURLConnection conn = setGetConnURL(url, WIN10_EDGE_UA, new String[0]);
         conn.connect();
         // 从响应头中获取 Cookie
         Map<String, List<String>> headers = conn.getHeaderFields();

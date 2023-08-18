@@ -86,7 +86,7 @@ public class CookieFile {
             return new String[0];
         } else {
             // 读取数据
-            String[] cookie;
+            String[] cookie = new String[lines.length-1];
             for(int i = 1; i < lines.length; i++) {
                 cookie[i-1] = lines[i];
             }
