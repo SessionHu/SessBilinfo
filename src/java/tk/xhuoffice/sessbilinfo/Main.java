@@ -26,7 +26,7 @@ public class Main {
                 "请输入操作编号\n"+
                 "1. 获取用户信息\n"+
                 "2. 检查昵称状态\n"+
-                "3. 修改 Cookie\n"
+                "3. 修改 Cookie\n"+
                 "0. 退出"
                 ,1);
         Logger.inputHere();

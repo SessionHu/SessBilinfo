@@ -112,7 +112,7 @@ public class CookieFile {
         // 输出提示
         String tips = "";
         tips += "请输入新的 Cookie 内容\n";
-        tips += "行数限制 16"
+        tips += "行数限制 16";
         tips += "输入 :wq 并回车以退出";
         Logger.println("tips",1);
         // 等待输入
