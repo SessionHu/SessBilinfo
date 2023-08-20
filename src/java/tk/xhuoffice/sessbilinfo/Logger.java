@@ -31,8 +31,12 @@ public class Logger {
         System.out.println();
     }
     
-    public static void inputHere() {
-        System.out.print("> ");
+    public static void inputHere(String... tip) {
+        if(tip.length!=0) {
+            System.out.print(tip[0]+" > ");
+        } else {
+            System.out.print("> ");
+        }
     }
     
     public static void ln() {

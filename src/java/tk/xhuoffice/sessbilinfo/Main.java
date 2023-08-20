@@ -1,6 +1,7 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.util.Scanner;
+import tk.xhuoffice.sessbilinfo.CookieFile;
 import tk.xhuoffice.sessbilinfo.Logger;
 import tk.xhuoffice.sessbilinfo.UserInfo;
 
@@ -13,18 +14,7 @@ public class Main {
         // 显示菜单
         int task = menu();
         // 执行操作
-        if(task==1) {
-            // 获取用户信息
-            UserInfo.getUserInfo();
-        } else if(task==2) {
-            // 检查昵称状态
-            Account.checkNickname();
-        } else if(task==0) {
-            // noting here...
-        } else {
-            // 输出错误
-            Logger.println("无效的操作编号",2);
-        }
+        task(id);
         // 退出
         System.exit(0);
     }
@@ -36,6 +26,7 @@ public class Main {
                 "请输入操作编号\n"+
                 "1. 获取用户信息\n"+
                 "2. 检查昵称状态\n"+
+                "3. 修改 Cookie\n"
                 "0. 退出"
                 ,1);
         Logger.inputHere();
@@ -49,6 +40,24 @@ public class Main {
             return -1;
         }
         return task;
+    }
+    
+    public static void task(int id) {
+        if(id==1) {
+            // 获取用户信息
+            UserInfo.getUserInfo();
+        } else if(id==2) {
+            // 检查昵称状态
+            Account.checkNickname();
+        } else if(id==3) {
+            // 修改 Cookie
+            CookieFile.edit();
+        } else if(id==0) {
+            // noting here...
+        } else {
+            // 输出错误
+            Logger.println("无效的操作编号",2);
+        }
     }
     
 }

@@ -3,7 +3,6 @@ package tk.xhuoffice.sessbilinfo;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import tk.xhuoffice.sessbilinfo.Logger;
 import tk.xhuoffice.sessbilinfo.OutFormat;
 
@@ -37,29 +36,32 @@ public class CookieFile {
             Logger.println("Cookie 为空",2);
         } else {
             try {
-                // 获取路径
-                String path = getCookieFilePath();
-                // 检查父目录
-                File parentDir = new File(path).getParentFile();
-                if(!parentDir.exists()) { // 当父目录不存在时
-                    parentDir.mkdirs();
-                    if(System.getProperty("os.name").toLowerCase().contains("windows")) {
-                        // 仅在 Windows 下隐藏目录  (类Unix无隐藏属性)
-                        hideWinDir(parentDir.getCanonicalPath());
-                    }
-                }
                 // 写入文件
-                try(FileWriter writer = new FileWriter(path)) {
-                    String cookies = "";
-                    for(int l = 0; l < cookie.length; l++) {
-                        cookies += cookie[l]+"\n";
-                    }
-                    writer.write(System.currentTimeMillis() + "\n" + cookies);
-                }
+                writeTimeAndLines(getCookieFilePath(),cookie);
             } catch(Exception e) {
                 Logger.println("Cookie 文件写入失败",2);
                 OutFormat.outException(e,2);
             }
+        }
+    }
+    
+    public static void writeTimeAndLines(String path, String[] line) throws Exception {
+        // 检查父目录
+        File parentDir = new File(path).getParentFile();
+        if(!parentDir.exists()) { // 当父目录不存在时
+            parentDir.mkdirs();
+            if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+                // 仅在 Windows 下隐藏目录  (类Unix无隐藏属性)
+                hideWinDir(parentDir.getCanonicalPath());
+            }
+        }
+        // 写入文件
+        try(FileWriter writer = new FileWriter(path)) {
+            String lines = "";
+            for(int l = 0; l < line.length; l++) {
+                lines += line[l]+"\n";
+            }
+            writer.write(System.currentTimeMillis() + "\n" + cookies);
         }
     }
     
@@ -68,7 +70,7 @@ public class CookieFile {
         Runtime.getRuntime().exec("attrib +H " + path);
     }
     
-    public static String[] load() throws IOException {
+    public static String[] load() throws Exception {
         // 输入文件
         File file = new File(getCookieFilePath());
         // 文件是否存在
@@ -101,6 +103,33 @@ public class CookieFile {
             Logger.println("Cookie 文件时间戳错误",3);
             return new String[0];
         }
+    }
+    
+    public static void edit() {
+        // 初始化变量
+        String[] line = new String[16];
+        String current = "";
+        // 输出提示
+        String tips = "";
+        tips += "请输入新的 Cookie 内容\n";
+        tips += "行数限制 16"
+        tips += "输入 :wq 并回车以退出";
+        Logger.println("tips",1);
+        // 等待输入
+        for(int i = 0; i < 16; i++) {
+            // 行号提示
+            Logger.inputHere(i+1);
+            // 获取输入
+            current = OutFormat.getString("行");
+            // 验证行
+            if(!current.trim().equals(":wq")) {
+                line[i] = current;
+            } else {
+                break;
+            }
+        }
+        // 写入文件
+        save(line);
     }
     
 }
