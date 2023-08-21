@@ -93,7 +93,7 @@ public class Http {
     
     public static String readResponseData(HttpURLConnection conn) throws Exception {
         // 创建输入流并读取返回数据
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
         String inputLine;
         StringBuffer response = new StringBuffer();
         while((inputLine = in.readLine()) != null) {
