@@ -12,7 +12,7 @@ public class Main {
     
     public static void main(String[] args) {
         // 显示菜单
-        int task = menu();
+        int id = menu();
         // 执行操作
         task(id);
         // 退出
@@ -20,7 +20,7 @@ public class Main {
     }
     
     public static int menu() {
-        int task = 0;
+        int id = 0;
         // 提示输入信息
         Logger.println(
                 "请输入操作编号\n"+
@@ -39,7 +39,7 @@ public class Main {
             Logger.ln();
             return -1;
         }
-        return task;
+        return id;
     }
     
     public static void task(int id) {

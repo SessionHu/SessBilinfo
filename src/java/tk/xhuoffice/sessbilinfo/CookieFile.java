@@ -61,7 +61,7 @@ public class CookieFile {
             for(int l = 0; l < line.length; l++) {
                 lines += line[l]+"\n";
             }
-            writer.write(System.currentTimeMillis() + "\n" + cookies);
+            writer.write(System.currentTimeMillis() + "\n" + lines);
         }
     }
     
@@ -118,7 +118,7 @@ public class CookieFile {
         // 等待输入
         for(int i = 0; i < 16; i++) {
             // 行号提示
-            Logger.inputHere(i+1);
+            Logger.inputHere(String.valueOf(i+1));
             // 获取输入
             current = OutFormat.getString("行");
             // 验证行
