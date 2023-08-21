@@ -53,12 +53,16 @@ public class OutFormat {
         return origin.replaceAll("\\n","\n"+add);
     }
     
-    public static String getString(String typ) {
+    public static String getString(String typ, String... tip) {
         // 获取输入
         while(true) {
             try {
                 // 输出提示
-                Logger.inputHere();
+                if(tip.length!=0) {
+                    Logger.inputHere(tip[0]);
+                } else {
+                    Logger.inputHere();
+                }
                 // 读取控制台输入
                 String str = scan.nextLine();
                 // 为空时的处理

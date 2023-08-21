@@ -36,6 +36,13 @@ public class CookieFile {
             Logger.println("Cookie 为空",2);
         } else {
             try {
+                // 修改 Cookie
+                for(int l = 0; l < cookie.length; l++) {
+                    // 避免 null
+                    if(cookie[l]==null||cookie[l].trim().isEmpty()) {
+                        cookie[l] = "";
+                    }
+                }
                 // 写入文件
                 writeTimeAndLines(getCookieFilePath(),cookie);
             } catch(Exception e) {
@@ -112,15 +119,14 @@ public class CookieFile {
         // 输出提示
         String tips = "";
         tips += "请输入新的 Cookie 内容\n";
-        tips += "行数限制 16";
-        tips += "输入 :wq 并回车以退出";
-        Logger.println("tips",1);
+        tips += "行数限制 16\n";
+        tips += "输入 :wq 并回车以退出\n";
+        tips += "示例内容 SESSDATA=xxxx";
+        Logger.println(tips,1);
         // 等待输入
         for(int i = 0; i < 16; i++) {
-            // 行号提示
-            Logger.inputHere(String.valueOf(i+1));
             // 获取输入
-            current = OutFormat.getString("行");
+            current = OutFormat.getString("行",String.valueOf(i+1));
             // 验证行
             if(!current.trim().equals(":wq")) {
                 line[i] = current;
