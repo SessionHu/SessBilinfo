@@ -3,8 +3,10 @@ package tk.xhuoffice.sessbilinfo;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import tk.xhuoffice.sessbilinfo.Logger;
 import tk.xhuoffice.sessbilinfo.OutFormat;
+
 
 public class CookieFile {
 
@@ -118,29 +120,28 @@ public class CookieFile {
     
     public static void edit() {
         // 初始化变量
-        String[] line = new String[16];
+        ArrayList<String> lines = new ArrayList<>();
         String current = "";
         // 输出提示
         String tips = "";
         tips += "请输入新的 Cookie 内容\n";
-        tips += "行数限制 16\n";
+        tips += "一行一条 Cookie\n";
         tips += "输入 :wq 并回车以退出\n";
         tips += "示例内容 SESSDATA=xxxx";
         Logger.println(tips,1);
         // 等待输入
-        for(int i = 0; i < 16; i++) {
+        while(true) {
             // 获取输入
-            current = OutFormat.getString("行",String.valueOf(i+1));
+            current = OutFormat.getString("行",String.valueOf(lines.size()+1));
             // 验证行
             if(!current.trim().equals(":wq")) {
                 // 输入有效性检测
-                if(!current.trim().contains("=")) {
+                if(!current.trim().matches("^[^=]+=[^=]+$")) {
                     // 无效输入
                     Logger.println("无效的 Cookie "+current,2);
-                    i--;
                 } else {
                     // 有效输入
-                    line[i] = current;
+                    lines.add(current);
                 }
             } else {
                 // 保存并退出
@@ -148,7 +149,8 @@ public class CookieFile {
             }
         }
         // 写入文件
-        save(line);
+        save(lines.toArray(new String[0]));
     }
+
     
 }
