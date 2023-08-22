@@ -3,6 +3,7 @@ package tk.xhuoffice.sessbilinfo;
 import java.util.Scanner;
 import tk.xhuoffice.sessbilinfo.CookieFile;
 import tk.xhuoffice.sessbilinfo.Logger;
+import tk.xhuoffice.sessbilinfo.Search;
 import tk.xhuoffice.sessbilinfo.UserInfo;
 
 
@@ -25,8 +26,9 @@ public class Main {
         Logger.println(
                 "请输入操作编号\n"+
                 "1. 获取用户信息\n"+
-                "2. 检查昵称状态\n"+
-                "3. 修改 Cookie\n"+
+                "2. 进行综合搜索\n"+
+                "3. 检查昵称状态\n"+
+                "4. 修改 Cookie\n"+
                 "0. 退出"
                 ,1);
         Logger.inputHere();
@@ -47,9 +49,12 @@ public class Main {
             // 获取用户信息
             UserInfo.getUserInfo();
         } else if(id==2) {
+            // 进行综合搜索
+            Search.search();
+        } else if(id==3) {
             // 检查昵称状态
             Account.checkNickname();
-        } else if(id==3) {
+        } else if(id==4) {
             // 修改 Cookie
             CookieFile.edit();
         } else if(id==0) {

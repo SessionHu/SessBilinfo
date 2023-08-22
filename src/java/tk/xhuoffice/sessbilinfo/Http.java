@@ -40,6 +40,15 @@ public class Http {
             } catch(javax.net.ssl.SSLHandshakeException e) {
                 // SSL 握手错误
                 Logger.println("SSL 握手失败, 请检查网络连接是否稳定",l);
+            } catch(java.io.IOException e) {
+                // HTTP 412
+                if(e.getMessage().contains("412")) {
+                    Logger.println("请求被拦截, 请检测 Cookie 长度",3);
+                } else {
+                    Logger.println("HTTP 请求发生未知错误",4);
+                    OutFormat.outException(e,4);
+                }
+                break;
             } catch(Exception e) {
                 // 异常报告
                 Logger.println("HTTP 请求发生未知错误",4);
