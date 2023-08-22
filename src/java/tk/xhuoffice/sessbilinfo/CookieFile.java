@@ -129,7 +129,12 @@ public class CookieFile {
             current = OutFormat.getString("行",String.valueOf(i+1));
             // 验证行
             if(!current.trim().equals(":wq")) {
-                line[i] = current;
+                if(!current.trim().contains("=")) {
+                    Logger.println("无效的 Cookie "+current,2);
+                    i--;
+                } else {
+                    line[i] = current;
+                }
             } else {
                 break;
             }
