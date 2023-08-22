@@ -96,7 +96,8 @@ public class CookieFile {
             // 验证文件
             if(System.currentTimeMillis() - timestamp > COOKIE_EXPIRE_TIME) {
                 // 文件过期
-                return new String[0];
+            } else if(lines[1]==null||lines[1].trim().isEmpty()) {
+                // 正文第一行为空行
             } else {
                 // 读取数据
                 String[] cookie = new String[lines.length-1];
@@ -108,8 +109,11 @@ public class CookieFile {
             }
         } catch(NumberFormatException e) {
             Logger.println("Cookie 文件时间戳错误",3);
-            return new String[0];
+        } catch(ArrayIndexOutOfBoundsException e) {
+            Logger.println("Cookie 文件为空",2);
         }
+        // 返回空数据
+        return new String[0];
     }
     
     public static void edit() {
@@ -129,13 +133,17 @@ public class CookieFile {
             current = OutFormat.getString("行",String.valueOf(i+1));
             // 验证行
             if(!current.trim().equals(":wq")) {
+                // 输入有效性检测
                 if(!current.trim().contains("=")) {
+                    // 无效输入
                     Logger.println("无效的 Cookie "+current,2);
                     i--;
                 } else {
+                    // 有效输入
                     line[i] = current;
                 }
             } else {
+                // 保存并退出
                 break;
             }
         }
