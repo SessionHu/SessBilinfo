@@ -3,8 +3,8 @@ package tk.xhuoffice.sessbilinfo;
 import java.util.Scanner;
 import tk.xhuoffice.sessbilinfo.Error;
 import tk.xhuoffice.sessbilinfo.Http;
-import tk.xhuoffice.sessbilinfo.Logger;
 import tk.xhuoffice.sessbilinfo.JsonLib;
+import tk.xhuoffice.sessbilinfo.Logger;
 import tk.xhuoffice.sessbilinfo.OutFormat;
 
 // API来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md
@@ -58,7 +58,7 @@ public class UserInfo {
             Logger.inputHere();
             try {
                 // 获取输入
-                input = scan.nextLine();
+                input = scan.nextLine().trim();
             } catch(Exception e) {
                 // 异常处理
                 Logger.ln();
@@ -217,7 +217,6 @@ public class UserInfo {
             long pubdate= JsonLib.getLong(rawJson,"data","pubdate"); // 发布时间
             String desc = JsonLib.getString(rawJson,"data","desc"); // 简介
             // 处理返回信息
-            String avid = "av"+aid; // avid
             String playtime = OutFormat.time(allsec); // 总时长((hh:m)m:ss)
             String strView = OutFormat.num(view); // 播放
             String strDanmaku = OutFormat.num(danmaku); // 弹幕
@@ -227,7 +226,7 @@ public class UserInfo {
             String topinfo = "";
             topinfo += "置顶视频\n";
             topinfo += "标题 "+title+"\n";
-            topinfo += "AV号 "+avid+"   "+date+"   时长 "+playtime+"\n";
+            topinfo += "AV号 "+aid+"   "+date+"   时长 "+playtime+"\n";
             topinfo += "播放 "+strView+"   弹幕 "+strDanmaku+"\n";
             topinfo += "简介 "+dscpt+"\n";
             topinfo += "\n";
@@ -259,13 +258,11 @@ public class UserInfo {
                     videoinfo = "";
                     json = jsons[i];
                     // 解析信息
-                    long aid = JsonLib.getLong(json,"aid"); // avid
                     String title = JsonLib.getString(json,"title"); // 标题
                     int allsec = JsonLib.getInt(json,"duration"); // 总时长(s)
                     int view = JsonLib.getInt(json,"stat","view"); // 播放
                     int danmaku = JsonLib.getInt(json,"stat","danmaku"); // 弹幕
                     // 处理信息
-                    String avid = "av"+aid; // avid
                     String playtime = OutFormat.time(allsec); // 总时长((hh:)mm:ss)
                     String strView = OutFormat.num(view); // 播放
                     String strDanmaku = OutFormat.num(danmaku); // 弹幕
