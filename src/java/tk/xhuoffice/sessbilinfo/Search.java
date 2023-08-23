@@ -37,7 +37,7 @@ public class Search {
         Logger.println(result,1);
     }
     
-    public static String all(String keyword) throws Exception {
+    public static String all(String keyword) {
         // 初始化变量
         String results = "";
         // 发送请求
@@ -95,14 +95,18 @@ public class Search {
                         usrInfo += "共搜索到约 " + biliUserCount + " 个用户\n";
                         usrInfo += "1. Mid: " + usrMid + "\n";
                         usrInfo += "   " + usrName + "   Lv" + usrLevel + "\n";
-                        usrInfo += "   粉丝 " + usrFans + "   视频 " + usrVideos + "\n";
-                        usrInfo += "   " + usrOfficalMsg + "\n"; 
+                        usrInfo += "   粉丝 " + usrStrFans + "   视频 " + usrStrVideos + "\n";
+                        if(!usrOfficalMsg.trim().isEmpty()) {
+                            usrInfo += "   " + usrOfficalMsg + "\n";
+                        } else {
+                            usrInfo += "   " + usrSign + "\n";
+                        }
                         usrInfo += "\n";
                         results += usrInfo;
                     } catch(ArrayIndexOutOfBoundsException e) {
                         // 完全匹配的用户啥也没搜到
                         results += "共搜索到约 " + biliUserCount + " 个用户\n";
-                        results += "无详细结果, 请进行 用户搜索 或 直接搜索 Mid\n";
+                        results += "无详细结果, 请进行用户搜索\n";
                         results += "\n";
                     }
                 }
