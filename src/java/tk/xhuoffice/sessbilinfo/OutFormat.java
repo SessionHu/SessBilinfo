@@ -4,8 +4,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.NumberFormat;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Locale;
 import java.util.Scanner;
@@ -17,7 +17,7 @@ public class OutFormat {
     
     public static final ZoneId ZONE_HK = ZoneId.of("Asia/Hong_Kong");
     
-    public static String time(int seconds) {
+    public static String time(long seconds) {
         Duration duration = Duration.ofSeconds(seconds);
         String formattedTime;
         if (duration.toMinutes() >= 60) {
@@ -28,7 +28,7 @@ public class OutFormat {
         return formattedTime;
     }
     
-    public static String num(int num) {
+    public static String num(long num) {
         return NumberFormat.getInstance(Locale.US).format(num);
     }
     
