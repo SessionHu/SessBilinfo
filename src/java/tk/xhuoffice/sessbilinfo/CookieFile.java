@@ -3,6 +3,7 @@ package tk.xhuoffice.sessbilinfo;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import tk.xhuoffice.sessbilinfo.Logger;
 import tk.xhuoffice.sessbilinfo.OutFormat;
@@ -54,7 +55,7 @@ public class CookieFile {
         }
     }
     
-    public static void writeTimeAndLines(String path, String[] line) throws Exception {
+    public static void writeTimeAndLines(String path, String[] line) throws IOException {
         // 检查父目录
         File parentDir = new File(path).getParentFile();
         if(!parentDir.exists()) { // 当父目录不存在时
@@ -74,12 +75,13 @@ public class CookieFile {
         }
     }
     
-    public static void hideWinDir(String path) throws Exception {
+    public static void hideWinDir(String path) throws IOException {
         // 运行 attrib 命令来设置目录的隐藏属性
-        Runtime.getRuntime().exec("attrib +H " + path);
+        String[] cmd = {"attrib", "+H", path};
+        Runtime.getRuntime().exec(cmd);
     }
     
-    public static String[] load() throws Exception {
+    public static String[] load() {
         // 输入文件
         File file = new File(getCookieFilePath());
         // 文件是否存在
