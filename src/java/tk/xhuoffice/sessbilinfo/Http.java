@@ -43,7 +43,7 @@ public class Http {
             } catch(java.io.IOException e) {
                 // HTTP 412
                 if(e.getMessage().contains("412")) {
-                    Logger.println("请求被拦截, 请检测 Cookie 长度",3);
+                    return "{\"code\":-412,\"message\":\"请求被拦截\",\"ttl\":1,\"data\":null}";
                 } else {
                     Logger.println("HTTP 请求发生未知错误",4);
                     OutFormat.outException(e,4);
