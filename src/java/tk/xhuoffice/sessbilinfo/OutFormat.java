@@ -88,4 +88,11 @@ public class OutFormat {
         Logger.println(stackTrace,l);
     }
     
+    public static String xmlTagToANSI(String text) {
+        // <em>CONTENT</em> -> \033[0;1mCONTENT\033[0m
+        text = text.replaceAll("\u003cem.*?\u003e", "\033[0;1m");
+        text = text.replaceAll("\u003c/em\u003e", "\033[0m");
+        return text;
+    }
+    
 }
