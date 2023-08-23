@@ -46,9 +46,12 @@ public class JsonLib {
     }
     
     // 获取 Json Array 中的内容作为 String[]
-    public static String[] getArray(String json, String arr) {
-        JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-        JsonArray jsonArray = jsonObject.getAsJsonArray(arr);
+    public static String[] getArray(String json, String... arr) {
+        JsonElement element = GSON.fromJson(json, JsonObject.class);
+        for(String key : arr) {
+            element = element.getAsJsonObject().get(key);
+        }
+        JsonArray jsonArray = element.getAsJsonArray();
         return StreamSupport.stream(jsonArray.spliterator(), false)
                 .map(GSON::toJson)
                 .toArray(String[]::new);
