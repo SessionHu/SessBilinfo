@@ -146,13 +146,22 @@ public class Search {
                         // 获取当前视频 JSON
                         String vJson = videoJson[v];
                         // 解析数据
-                        long aid = JsonLib.getLong(vJson,"id");
-                        String title = JsonLib.getString(vJson,"title");
+                        long aid = JsonLib.getLong(vJson,"id"); // avid
+                        long play = JsonLib.getLong(vJson,"play"); // 播放
+                        long videoReview = JsonLib.getLong(vJson,"video_review"); // 弹幕
+                        long senddate = JsonLib.getLong(vJson,"senddate"); // 发布时间
+                        String title = JsonLib.getString(vJson,"title"); // 标题
+                        String duration = JsonLib.getString(vJson,"duration"); // 时长((HH:)MM:SS)
+                        String author = JsonLib.getString(vJson,"author"); // UP主昵称
                         // 处理数据
-                        title = OutFormat.xmlTagToANSI(title);
+                        String view = OutFormat.num(play); // 播放
+                        String danmaku = OutFormat.num(videoReview); // 弹幕
+                        String date = OutFormat.date(senddate); // 发布日期
+                        title = OutFormat.xmlTagToANSI(title); // 标题
                         // 输出数据
                         vInfo += String.format("%02d.",v+1) + " " + title + "\n";
-                        vInfo += "    AV号 " + aid + "\n";
+                        vInfo += "    " + duration + "    播放 " + view + "   弹幕 " + danmaku + "\n";
+                        vInfo += "    AV号 " + aid + "   UP主 " + author + "   " + date + "\n";
                     }
                     vInfo += "\n";
                     results += vInfo; 
