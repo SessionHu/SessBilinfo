@@ -1,9 +1,12 @@
 package tk.xhuoffice.sessbilinfo;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import tk.xhuoffice.sessbilinfo.Http;
 import tk.xhuoffice.sessbilinfo.JsonLib;
 import tk.xhuoffice.sessbilinfo.Logger;
 import tk.xhuoffice.sessbilinfo.OutFormat;
+import tk.xhuoffice.sessbilinfo.UserInfo;
 
 // API来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_request.md
 
@@ -40,6 +43,26 @@ public class Search {
     public static String all(String keyword) {
         // 初始化变量
         String results = "";
+        // 用户输入是否为mid
+        if(keyword.matches(".*uid.*|.*mid.*") || keyword.length()==16) {
+            // 获取字符串中的mid
+            Pattern pattern = Pattern.compile("\\d+");
+            Matcher matcher = pattern.matcher(keyword);
+            if(matcher.find()) {
+                // 提取出mid
+                String mid = matcher.group(); 
+                // 验证mid是否有效
+                if(Long.parseLong(mid) > 0){
+                    // 提示信息
+                    Logger.println("检测到您的输入为 Mid, 操作变为获取用户信息",1);
+                    // 获取并返回信息   
+                    String usrInfo = "";
+                    usrInfo += UserInfo.card(mid);
+                    usrInfo += UserInfo.space(mid);
+                    return usrInfo;
+                }
+            }
+        }
         // 发送请求
         String rawJson = Http.get(SEARCH_ALL+"?keyword="+Http.encode(keyword));
         // 获取返回值
