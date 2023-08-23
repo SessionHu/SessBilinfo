@@ -71,7 +71,10 @@ public class Search {
             // 获取分类结果数目信息 (信息分类依赖API文档)
             // int liveRoomCount = JsonLib.getInt(rawJson,"data","top_tlist","live_room"); // 直播
             // int topicCount = JsonLib.getInt(rawJson,"data","top_tlist","topic"); // 话题
-            // int videoCount = JsonLib.getInt(rawJson,"data","top_tlist","video"); // 视频
+            String videoCount = null; { // 视频
+                int video = JsonLib.getInt(rawJson,"data","top_tlist","video");
+                videoCount = OutFormat.num(video);
+            }
             String biliUserCount = null; { // 用户
                 int biliUser = JsonLib.getInt(rawJson,"data","top_tlist","bili_user");
                 biliUserCount = OutFormat.num(biliUser);
@@ -132,6 +135,27 @@ public class Search {
                         results += "无详细结果, 请进行用户搜索\n";
                         results += "\n";
                     }
+                }
+                if(JsonLib.getString(json,"result_type").equals("video")) {
+                    // 获取 data 数组作为 JSON
+                    String[] videoJson = JsonLib.getArray(json,"data");
+                    // 初始化变量
+                    String vInfo = "";
+                    vInfo += "共搜索到约 " + videoCount + " 个视频\n";
+                    for(int v = 0; v < videoJson.length; v++) {
+                        // 获取当前视频 JSON
+                        String vJson = videoJson[v];
+                        // 解析数据
+                        long aid = JsonLib.getLong(vJson,"id");
+                        String title = JsonLib.getString(vJson,"title");
+                        // 处理数据
+                        title = OutFormat.xmlTagToANSI(title);
+                        // 输出数据
+                        vInfo += String.format("%02d.",v+1) + " " + title + "\n";
+                        vInfo += "    AV号 " + aid + "\n";
+                    }
+                    vInfo += "\n";
+                    results += vInfo; 
                 }
             }
         } else if(code==-412) {
