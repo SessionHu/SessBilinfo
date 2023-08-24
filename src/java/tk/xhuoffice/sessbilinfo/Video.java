@@ -2,6 +2,7 @@ package tk.xhuoffice.sessbilinfo;
 
 import java.util.HashMap;
 import java.util.Map;
+import tk.xhuoffice.sessbilinfo.Http;
 import tk.xhuoffice.sessbilinfo.Logger;
 import tk.xhuoffice.sessbilinfo.OutFormat;
 import tk.xhuoffice.sessbilinfo.util.AvBv;
@@ -21,8 +22,16 @@ public class Video {
         Logger.println("请输入视频AV或BV号",1);
         // 获取AV号
         String aid = getAid();
-        // 输出信息(暂时)
-        Logger.println(getDetail(aid),1);
+        // 获取数据
+        Logger.println("正在请求数据...",1);
+        String videoInfo = "";
+        videoInfo += "\n";
+        videoInfo += "------------------------\n\n";
+        videoInfo += getDetail(aid);
+        videoInfo += "------------------------";
+        Logger.println("请求完毕",1);
+        // 输出信息
+        Logger.println(videoInfo,1);
     }
 
     public static String getAid() {
@@ -84,8 +93,16 @@ public class Video {
     }
     
     public static String getDetail(String aid) {
-        // ...(暂时)
-        return aid;
+        // 发送请求
+        String rawJson = Http.get(VIEW_DETAIL+"?aid="+aid);
+        // 获取返回值
+        int code = JsonLib.getInt(rawJson,"code");
+        if(code==0){
+            // ...
+        } else {
+            Error.out(rawJson);
+        }
+        return JsonLib.formatJson(rawJson)+"\n\n";
     }
     
     public static String tidSubToMain(int tid) {
