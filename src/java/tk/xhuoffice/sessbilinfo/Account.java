@@ -3,8 +3,8 @@ package tk.xhuoffice.sessbilinfo;
 import java.util.regex.Pattern;
 import tk.xhuoffice.sessbilinfo.Error;
 import tk.xhuoffice.sessbilinfo.Http;
-import tk.xhuoffice.sessbilinfo.Logger;
 import tk.xhuoffice.sessbilinfo.JsonLib;
+import tk.xhuoffice.sessbilinfo.Logger;
 import tk.xhuoffice.sessbilinfo.OutFormat;
 
 // API来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/check_nickname.md
@@ -57,7 +57,7 @@ public class Account {
     public static void outNicknameStatus(String name) {
         // 请求数据
         Logger.println("API处理昵称",0);
-        String json = Http.get(CHECK_NICKNAME+"?nickName="+name);
+        String json = Http.get(CHECK_NICKNAME+"?nickName="+Http.encode(name));
         // 获取返回值
         int code = JsonLib.getInt(json,"code");
         // 输出信息
