@@ -36,7 +36,7 @@ public class UserInfo {
                 "示例: 645769214"
                 ,1);
         // 向用户获取 Mid
-        String mid = getMid();
+        String mid = OutFormat.getPositiveLongAsString("Mid");
         // 获取数据
         Logger.println("正在请求数据...",1);
         String usrinfo = "";
@@ -48,40 +48,6 @@ public class UserInfo {
         Logger.println("请求完毕",1);
         // 输出数据
         Logger.println(usrinfo,1);
-    }
-    
-    public static String getMid() {
-        // 定义并初始化变量
-        String input = "";
-        while(true) {
-            // 提示输入
-            Logger.inputHere();
-            try {
-                // 获取输入
-                input = scan.nextLine().trim();
-            } catch(Exception e) {
-                // 异常处理
-                Logger.ln();
-                Logger.println("无效的 Mid",4);
-                System.exit(1);
-            }
-            try {
-                // 将输入转换为 long
-                long mid = Long.parseLong(input);
-                // 检测输入是否大于0
-                if(mid>0) {
-                    // 提示并返回结果
-                    Logger.println("Mid: "+mid,1);
-                    return input;
-                } else {
-                    // 输出警告
-                    Logger.println("无效的 Mid "+input,2);
-                }
-            } catch(Exception e) {
-                // 输出警告
-                Logger.println("过大或非数字不能作为 Mid",2);
-            }
-        }
     }
     
     public static String card(String mid) {

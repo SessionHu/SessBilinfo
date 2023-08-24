@@ -79,6 +79,40 @@ public class OutFormat {
             }
         }
     }
+
+    public static String getPositiveLongAsString(String typ) {
+        // 定义并初始化变量
+        String input = "";
+        while(true) {
+            // 提示输入
+            Logger.inputHere();
+            try {
+                // 获取输入
+                input = scan.nextLine().trim();
+            } catch(Exception e) {
+                // 异常处理
+                Logger.ln();
+                Logger.println("无效的 "+typ,4);
+                System.exit(1);
+            }
+            try {
+                // 将输入转换为 long
+                long mid = Long.parseLong(input);
+                // 检测输入是否大于0
+                if(mid>0) {
+                    // 提示并返回结果
+                    Logger.println(typ+": "+mid,1);
+                    return input;
+                } else {
+                    // 输出警告
+                    Logger.println("无效的 "+typ+""+input,2);
+                }
+            } catch(Exception e) {
+                // 输出警告
+                Logger.println("过大或非数字不能作为 "+typ,2);
+            }
+        }
+    }
     
     public static void outException(Exception e, int l) {
         StringWriter sw = new StringWriter();
