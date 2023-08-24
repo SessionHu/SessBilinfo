@@ -177,5 +177,13 @@ public class CookieFile {
         save(lines.toArray(new String[0]));
     }
 
+    public static void rm() throws IOException {
+        File file = new File(getCookieFilePath());
+        if(file.delete()) {
+            Logger.println("Cookie 文件已删除",1);
+        } else {
+            Logger.println("Cookie 文件删除失败",1);
+        }
+    }
     
 }
