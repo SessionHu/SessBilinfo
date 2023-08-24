@@ -13,13 +13,17 @@ public class Main {
     
     public static void main(String[] args) {
         // DEBUG 输出是否启用
-        if(System.getenv("OPEN_BILI_DEBUG").trim().equals("true")) {
-            Logger.debug = true;
-            Logger.println("DEBUG 输出已开启",0);
-        }
-        if(args.length>0&&args[0].equals("--debug")) {
-            Logger.debug = true;
-            Logger.println("DEBUG 输出已开启",0);
+        try{
+            if(args.length>0&&args[0].equals("--debug")) {
+                Logger.debug = true;
+                Logger.println("DEBUG 输出已开启",0);
+            }
+            if(System.getenv("OPEN_BILI_DEBUG").trim().equals("true")) {
+                Logger.debug = true;
+                Logger.println("DEBUG 输出已开启",0);
+            }
+        } catch(NullPointerException e) {
+            // nothing here...
         }
         // 显示菜单
         int id = menu();
