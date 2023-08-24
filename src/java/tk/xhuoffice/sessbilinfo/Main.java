@@ -68,22 +68,26 @@ public class Main {
     }
 
     public static void cmdArgs(String... args) {
+        // 检测环境变量中是否应该启用 DEBUG 输出
+        try {
+            if(System.getenv("OPEN_BILI_DEBUG").trim().equals("true")) {
+                Logger.debug = true;
+                Logger.println("DEBUG 输出已开启",0);
+            }
+        } catch(NullPointerException e) {
+            // nothing here...
+        }
+        // 判断命令行参数
         if(args.length==0) {
             return;
         }
         for(int i = 0; i < args.length; i++) {
             // DEBUG 输出是否启用
-            try {
+            {
                 if(args[i].equals("--debug")) {
                     Logger.debug = true;
                     Logger.println("DEBUG 输出已开启",0);
                 }
-                if(System.getenv("OPEN_BILI_DEBUG").trim().equals("true")) {
-                    Logger.debug = true;
-                    Logger.println("DEBUG 输出已开启",0);
-                }
-            } catch(NullPointerException e) {
-                // nothing here...
             }
             // Cookie 处理
             try {
@@ -91,7 +95,7 @@ public class Main {
                     CookieFile.rm();
                 }
             } catch(Exception e) {
-                Logger.println("文件删除异常: "+e.getMessage(),0);
+                Logger.println("文件删除异常: "+e.getMessage(),3);
             }
         }
     }
