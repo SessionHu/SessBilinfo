@@ -23,21 +23,27 @@ public class Search {
         Logger.println("请输入关键词 (不区分大小写)",1);
         String keyword = OutFormat.getString("关键词").trim();
         // 进行搜索
-        Logger.println("正在请求数据...",1);
-        String result = "";
         try {
+            // 输出提示
+            Logger.println("正在请求数据...",1);
+            // 获取数据
+            String result = "";
             result += "\n";
             result += "------------------------\n\n";
             result += all(keyword);
             result += "------------------------";
+            Logger.println("请求完毕",1);
+            // 输出结果
+            Logger.println(result,1);
+            // 返回
+            return;
+        } catch(RuntimeException e) {
+            Logger.println(e.getMessage(),3);
         } catch(Exception e) {
             Logger.println("搜索发生未知异常",4);
             OutFormat.outException(e,4);
-            System.exit(2);
         }
-        Logger.println("请求完毕",1);
-        // 输出结果
-        Logger.println(result,1);
+        System.exit(2);
     }
     
     public static String all(String keyword) {
@@ -157,18 +163,17 @@ public class Search {
                         String view = OutFormat.num(play); // 播放
                         String danmaku = OutFormat.num(videoReview); // 弹幕
                         String date = OutFormat.date(senddate); // 发布日期
-                        title = OutFormat.xmlTagToANSI(title); // 标题
                         // 输出数据
                         vInfo += String.format("%02d.",v+1) + " " + title + "\n";
                         vInfo += "    " + duration + "    播放 " + view + "   弹幕 " + danmaku + "\n";
                         vInfo += "    AV号 " + aid + "   UP主 " + author + "   " + date + "\n";
                     }
                     vInfo += "\n";
-                    results += vInfo; 
+                    results += OutFormat.xmlToANSI(vInfo); 
                 }
             }
         } else if(code==-412) {
-            Logger.println("请求被拦截, 请检测 Cookie 长度",3);
+            throw new RuntimeException("请求被拦截, 请检测 Cookie 长度");
         } else {
             Error.out(rawJson);
         }
