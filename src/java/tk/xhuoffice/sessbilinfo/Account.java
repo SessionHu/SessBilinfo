@@ -36,6 +36,7 @@ public class Account {
     }
     
     public static boolean iStandardNickname(String name) {
+        Logger.println("本地处理昵称",0);
         // 检查字符串长度
         int length = name.length();
         if(length<2||length>16) {
@@ -55,6 +56,7 @@ public class Account {
     
     public static void outNicknameStatus(String name) {
         // 请求数据
+        Logger.println("API处理昵称",0);
         String json = Http.get(CHECK_NICKNAME+"?nickName="+name);
         // 获取返回值
         int code = JsonLib.getInt(json,"code");

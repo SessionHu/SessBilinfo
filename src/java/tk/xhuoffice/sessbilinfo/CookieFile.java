@@ -12,11 +12,12 @@ import tk.xhuoffice.sessbilinfo.OutFormat;
 
 public class CookieFile {
 
-    public static final long COOKIE_EXPIRE_TIME = 24 * 60 * 60 * 1000; // 24 h
+    public static final long COOKIE_EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000; // 24 h
     
     public static String getCookieFilePath() {
         // 获取系统类型
         String osName = System.getProperty("os.name").toLowerCase();
+        Logger.println("系统 "+osName,0);
         // 根据系统选择路径
         if(osName.contains("windows")) {
             // Windows
@@ -60,6 +61,7 @@ public class CookieFile {
         // 检查父目录
         File parentDir = new File(path).getParentFile();
         if(!parentDir.exists()) { // 当父目录不存在时
+            Logger.println("正在创建 Cookie 父目录",0);
             parentDir.mkdirs();
             if(System.getProperty("os.name").toLowerCase().contains("windows")) {
                 // 仅在 Windows 下隐藏目录  (类Unix无隐藏属性)
@@ -68,6 +70,7 @@ public class CookieFile {
         }
         // 写入文件
         try(FileWriter writer = new FileWriter(path)) {
+            Logger.println("正在写入 Cookie",0);
             String lines = "";
             for(int l = 0; l < line.length; l++) {
                 lines += line[l]+"\n";
@@ -78,6 +81,7 @@ public class CookieFile {
     
     public static void hideWinDir(String path) throws IOException {
         // 运行 attrib 命令来设置目录的隐藏属性
+        Logger.println("正在设置隐藏属性",0);
         String[] cmd = {"attrib", "+H", path};
         Runtime.getRuntime().exec(cmd);
     }
@@ -103,8 +107,10 @@ public class CookieFile {
                 // 验证文件
                 if(System.currentTimeMillis() - timestamp > COOKIE_EXPIRE_TIME) {
                     // 文件过期
+                    Logger.println("文件过期",0);
                 } else if(lines[1]==null||lines[1].trim().isEmpty()) {
                     // 正文第一行为空行
+                    Logger.println("文件首行为空",0);
                 } else {
                     // 读取数据
                     String[] cookie = new String[lines.length-1];
@@ -119,6 +125,7 @@ public class CookieFile {
                             cookieIndex++;
                         } else {
                             // 无效留空
+                            Logger.println("行 "+1+" 无效",0);
                         }
                     }
                     // 返回数据

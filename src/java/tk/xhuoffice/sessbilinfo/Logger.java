@@ -1,6 +1,8 @@
 package tk.xhuoffice.sessbilinfo;
 
 public class Logger {
+
+    public static boolean debug = false;
     
     public static void print(String str, int lv) {
         if(lv==1) {
@@ -21,14 +23,20 @@ public class Logger {
             System.err.print("[FATAL] "+str);
         } else {
             // 调试(默认)
-            str = str.replaceAll("\\n","\n[DEBUG] ");
-            System.err.print("[DEBUG] "+str);
+            if(debug) {
+                str = str.replaceAll("\\n","\n[DEBUG] ");
+                System.err.print("[DEBUG] "+str);
+            }
         }
     }
     
     public static void println(String str, int lv) {
+        // 打印信息
         print(str,lv);
-        System.out.println();
+        // 根据情况确定换行符
+        if((lv>0&&lv<5)||(!(lv>0&&lv<5)&&debug)) {
+            System.out.println();
+        }
     }
     
     public static void inputHere(String... tip) {

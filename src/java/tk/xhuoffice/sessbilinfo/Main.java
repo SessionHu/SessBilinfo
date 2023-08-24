@@ -12,6 +12,15 @@ public class Main {
     public static Scanner scan = new Scanner(System.in);
     
     public static void main(String[] args) {
+        // DEBUG 输出是否启用
+        if(System.getenv("OPEN_BILI_DEBUG").trim().equals("true")) {
+            Logger.debug = true;
+            Logger.println("DEBUG 输出已开启",0);
+        }
+        if(args.length>0&&args[0].equals("--debug")) {
+            Logger.debug = true;
+            Logger.println("DEBUG 输出已开启",0);
+        }
         // 显示菜单
         int id = menu();
         // 执行操作

@@ -37,6 +37,7 @@ public class Http {
             // 进行请求
             try {
                 // 请求数据
+                Logger.println("请求数据中",0);
                 String data = getDataFromURL(url);
                 // 输出返回的数据
                 return data;
@@ -89,6 +90,7 @@ public class Http {
     }
     
     public static HttpURLConnection setGetConnURL(String inurl, String ua, String[] cookie) throws Exception {
+        Logger.println("设置请求",0);
         // 创建 URL 对象
         URL url = new URL(inurl);
         // 打开连接
@@ -114,6 +116,7 @@ public class Http {
     }
     
     public static String readResponseData(HttpURLConnection conn) throws Exception {
+        Logger.println("读取返回数据",0);
         // 创建输入流并读取返回数据
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
         String inputLine;
@@ -127,6 +130,7 @@ public class Http {
     }
     
     public static String[] getDefaultCookie() throws Exception {
+        Logger.println("获取默认 Cookie",0);
         // 设置请求到 https://www.bilibili.com/
         String url = "https://www.bilibili.com/";
         HttpURLConnection conn = setGetConnURL(url, WIN10_EDGE_UA, new String[0]);
@@ -140,7 +144,7 @@ public class Http {
         }
         // 保存 Cookie
         CookieFile.save(cookie);
-        // 返回 SESSDATA
+        // 返回 Cookie
         return cookie;
     }
     
