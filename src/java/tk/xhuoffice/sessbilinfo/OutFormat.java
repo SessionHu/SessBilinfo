@@ -88,10 +88,59 @@ public class OutFormat {
         Logger.println(stackTrace,l);
     }
     
-    public static String xmlTagToANSI(String text) {
+    public static String xmlToANSI(String text) {
+        // 获取系统类型
+        String osName = System.getProperty("os.name").toLowerCase();
+        // Windows 环境
+        if (osName.contains("windows")) {
+            // 是否使用 Windows Terminal
+            String wts = System.getenv("WT_SESSION");
+            if (wts != null && !wts.trim().isEmpty()) {
+                // 转换为富文本
+                text = xmlToRichText(text);
+            } else {
+                // 转换为纯文本
+                text = xmlToPlainText(text, true);
+            }
+        } else {
+            // 其他系统直接转换
+            text = xmlToRichText(text);
+        }
+        return text;
+    }    
+
+    public static String xmlToRichText(String text) {
         // <em>CONTENT</em> -> \033[0;1mCONTENT\033[0m
         text = text.replaceAll("\u003cem.*?\u003e", "\033[0;1m");
         text = text.replaceAll("\u003c/em\u003e", "\033[0m");
+        // &amp; -> &
+        text = text.replaceAll("&amp;", "&");
+        // 返回结果
+        return text;
+    }
+
+    public static String xmlToPlainText(String text, boolean tipSwitch) {
+        // 输出提示
+        if(tipSwitch) {
+            // 打印文字提示
+            Logger.println("当前终端似乎不支持 ANSI 转义序列",2);
+            Logger.println("当前系统环境仅支持 Windows Terminal",2);
+            // 等待以让用户注意到提示
+            try {
+                // 等待 0.667 秒
+                Thread.sleep(667);
+            } catch (InterruptedException e) {
+                // 处理中断异常
+                // nothing here...
+            }
+            
+        }
+        // <em>CONTENT</em> -> \033[0;1mCONTENT\033[0m
+        text = text.replaceAll("\u003cem.*?\u003e", "");
+        text = text.replaceAll("\u003c/em\u003e", "");
+        // &amp; -> &
+        text = text.replaceAll("&amp;", "&");
+        // 返回结果
         return text;
     }
     
