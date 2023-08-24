@@ -14,6 +14,8 @@ javac -encoding utf-8 \
       src/java/tk/xhuoffice/sessbilinfo/JsonLib.java \
       src/java/tk/xhuoffice/sessbilinfo/OutFormat.java \
       src/java/tk/xhuoffice/sessbilinfo/Error.java \
+      src/java/tk/xhuoffice/sessbilinfo/util/AvBv.java \
+      src/java/tk/xhuoffice/sessbilinfo/Video.java \
       src/java/tk/xhuoffice/sessbilinfo/Search.java \
       src/java/tk/xhuoffice/sessbilinfo/Account.java \
       src/java/tk/xhuoffice/sessbilinfo/UserInfo.java \

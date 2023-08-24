@@ -80,15 +80,20 @@ public class OutFormat {
         }
     }
 
-    public static String getPositiveLongAsString(String typ) {
+    public static String getPositiveLongAsString(String typ, String... num) throws NumberFormatException {
         // 定义并初始化变量
         String input = "";
         while(true) {
-            // 提示输入
-            Logger.inputHere();
             try {
-                // 获取输入
-                input = scan.nextLine().trim();
+                if(num.length!=0) {
+                    // 读取参数
+                    input = num[0];
+                } else {
+                    // 提示输入
+                    Logger.inputHere();
+                    // 获取输入
+                    input = scan.nextLine().trim();
+                }
             } catch(Exception e) {
                 // 异常处理
                 Logger.ln();
@@ -105,11 +110,15 @@ public class OutFormat {
                     return input;
                 } else {
                     // 输出警告
-                    Logger.println("无效的 "+typ+""+input,2);
+                    Logger.println("无效的 "+typ+" "+input,2);
                 }
             } catch(Exception e) {
                 // 输出警告
                 Logger.println("过大或非数字不能作为 "+typ,2);
+            }
+            if(num.length!=0) {
+                Logger.println("抛出异常",0);
+                throw new NumberFormatException("无效的 "+typ+" "+input);
             }
         }
     }
