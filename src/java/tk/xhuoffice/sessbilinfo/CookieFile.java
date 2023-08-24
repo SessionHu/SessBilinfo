@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.ArrayList;
 import tk.xhuoffice.sessbilinfo.Logger;
 import tk.xhuoffice.sessbilinfo.OutFormat;
@@ -17,11 +18,11 @@ public class CookieFile {
         // 获取系统类型
         String osName = System.getProperty("os.name").toLowerCase();
         // 根据系统选择路径
-        if (osName.contains("windows")) {
+        if(osName.contains("windows")) {
             // Windows
             String usrdir = System.getenv("USERPROFILE");
             return usrdir + "\\.openbili\\cookie.txt";
-        } else if (osName.contains("mac") || osName.contains("linux")) {
+        } else if(osName.contains("mac") || osName.contains("linux")) {
             // 类 Unix
             String usrHome = System.getProperty("user.home");
             return usrHome + "/.openbili/cookie.txt";
@@ -90,13 +91,14 @@ public class CookieFile {
         }
         try {
             // 读取文件
-            FileReader reader = new FileReader(file);
-            char[] buffer = new char[(int) file.length()];
-            reader.read(buffer);
-            reader.close();
+            String[] lines;
+            try(FileReader reader = new FileReader(file)) {
+                char[] buffer = new char[(int) file.length()];
+                reader.read(buffer);
+                lines = new String(buffer).split("\n");
+            }
             // 处理数据
             try {
-                String[] lines = new String(buffer).split("\n");
                 long timestamp = Long.parseLong(lines[0]);
                 // 验证文件
                 if(System.currentTimeMillis() - timestamp > COOKIE_EXPIRE_TIME) {
@@ -106,8 +108,18 @@ public class CookieFile {
                 } else {
                     // 读取数据
                     String[] cookie = new String[lines.length-1];
+                    int cookieIndex = 0;
                     for(int i = 1; i < lines.length; i++) {
-                        cookie[i-1] = lines[i];
+                        // 读取行
+                        String line = lines[i];
+                        // 判断行是否有效
+                        if(line.contains("=")) {
+                            // 有效载入
+                            cookie[cookieIndex] = line;
+                            cookieIndex++;
+                        } else {
+                            // 无效留空
+                        }
                     }
                     // 返回数据
                     return cookie;
