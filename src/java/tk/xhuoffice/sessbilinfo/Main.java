@@ -91,7 +91,7 @@ public class Main {
                     CookieFile.rm();
                 }
             } catch(Exception e) {
-                // nothing here...
+                Logger.println("文件删除异常: "+e.getMessage(),0);
             }
         }
     }

@@ -8,7 +8,8 @@ import tk.xhuoffice.sessbilinfo.Logger;
 import tk.xhuoffice.sessbilinfo.OutFormat;
 import tk.xhuoffice.sessbilinfo.UserInfo;
 
-// API来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_request.md
+// API来源:  https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_request.md
+// 信息来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_response.md
 
 
 public class Search {
@@ -174,6 +175,9 @@ public class Search {
                         vInfo += String.format("%02d.",v+1) + " " + title + "\n";
                         vInfo += "    " + duration + "    播放 " + view + "   弹幕 " + danmaku + "\n";
                         vInfo += "    AV号 " + aid + "   UP主 " + author + "   " + date + "\n";
+                    }
+                    if(videoJson.length==0) {
+                        vInfo += "无结果, 请检查关键词\n";
                     }
                     vInfo += "\n";
                     results += OutFormat.xmlToANSI(vInfo); 
