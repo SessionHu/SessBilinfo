@@ -109,17 +109,19 @@ public class OutFormat {
         return text;
     }    
 
-    public static String xmlToRichText(String text) {
+    private static String xmlToRichText(String text) {
         // <em>CONTENT</em> -> \033[0;1mCONTENT\033[0m
         text = text.replaceAll("\u003cem.*?\u003e", "\033[0;1m");
         text = text.replaceAll("\u003c/em\u003e", "\033[0m");
         // &amp; -> &
         text = text.replaceAll("&amp;", "&");
+        // &quot; -> "
+        text = text.replaceAll("&quot;", "\"");
         // 返回结果
         return text;
     }
 
-    public static String xmlToPlainText(String text, boolean tipSwitch) {
+    private static String xmlToPlainText(String text, boolean tipSwitch) {
         // 输出提示
         if(tipSwitch) {
             // 打印文字提示
@@ -140,6 +142,8 @@ public class OutFormat {
         text = text.replaceAll("\u003c/em\u003e", "");
         // &amp; -> &
         text = text.replaceAll("&amp;", "&");
+        // &quot; -> "
+        text = text.replaceAll("&quot;", "\"");
         // 返回结果
         return text;
     }
