@@ -1,4 +1,4 @@
-package tk.xhuoffice.sessbilinfo;
+package tk.xhuoffice.sessbilinfo.util;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Locale;
 import java.util.Scanner;
-import tk.xhuoffice.sessbilinfo.Logger;
+import tk.xhuoffice.sessbilinfo.util.Logger;
 
 public class OutFormat {
     

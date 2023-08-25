@@ -1,9 +1,9 @@
-package tk.xhuoffice.sessbilinfo;
+package tk.xhuoffice.sessbilinfo.util;
 
 import java.util.Map;
 import java.util.HashMap;
-import tk.xhuoffice.sessbilinfo.Logger;
-import tk.xhuoffice.sessbilinfo.JsonLib;
+import tk.xhuoffice.sessbilinfo.util.Logger;
+import tk.xhuoffice.sessbilinfo.util.JsonLib;
 
 // 信息来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/errcode.md
 

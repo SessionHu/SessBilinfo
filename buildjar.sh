@@ -8,12 +8,12 @@ javac -encoding utf-8 \
       -d build/ \
       -cp lib/gson-3.10.1.jar \
       -sourcepath src/java/tk/xhuoffice/sessbilinfo/ \
-      src/java/tk/xhuoffice/sessbilinfo/Logger.java \
-      src/java/tk/xhuoffice/sessbilinfo/CookieFile.java \
-      src/java/tk/xhuoffice/sessbilinfo/Http.java \
-      src/java/tk/xhuoffice/sessbilinfo/JsonLib.java \
-      src/java/tk/xhuoffice/sessbilinfo/OutFormat.java \
-      src/java/tk/xhuoffice/sessbilinfo/Error.java \
+      src/java/tk/xhuoffice/sessbilinfo/util/Logger.java \
+      src/java/tk/xhuoffice/sessbilinfo/util/CookieFile.java \
+      src/java/tk/xhuoffice/sessbilinfo/util/Http.java \
+      src/java/tk/xhuoffice/sessbilinfo/util/JsonLib.java \
+      src/java/tk/xhuoffice/sessbilinfo/util/OutFormat.java \
+      src/java/tk/xhuoffice/sessbilinfo/util/Error.java \
       src/java/tk/xhuoffice/sessbilinfo/util/AvBv.java \
       src/java/tk/xhuoffice/sessbilinfo/Video.java \
       src/java/tk/xhuoffice/sessbilinfo/Search.java \

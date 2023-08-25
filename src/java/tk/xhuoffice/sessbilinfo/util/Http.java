@@ -1,4 +1,4 @@
-package tk.xhuoffice.sessbilinfo;
+package tk.xhuoffice.sessbilinfo.util;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -7,9 +7,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
-import tk.xhuoffice.sessbilinfo.CookieFile;
-import tk.xhuoffice.sessbilinfo.Logger;
-import tk.xhuoffice.sessbilinfo.OutFormat;
+import tk.xhuoffice.sessbilinfo.util.CookieFile;
+import tk.xhuoffice.sessbilinfo.util.Logger;
+import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 public class Http {
 

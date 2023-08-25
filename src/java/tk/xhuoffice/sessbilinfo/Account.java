@@ -1,11 +1,11 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.util.regex.Pattern;
-import tk.xhuoffice.sessbilinfo.Error;
-import tk.xhuoffice.sessbilinfo.Http;
-import tk.xhuoffice.sessbilinfo.JsonLib;
-import tk.xhuoffice.sessbilinfo.Logger;
-import tk.xhuoffice.sessbilinfo.OutFormat;
+import tk.xhuoffice.sessbilinfo.util.Error;
+import tk.xhuoffice.sessbilinfo.util.Http;
+import tk.xhuoffice.sessbilinfo.util.JsonLib;
+import tk.xhuoffice.sessbilinfo.util.Logger;
+import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 // API来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/check_nickname.md
 

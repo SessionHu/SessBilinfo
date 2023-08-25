@@ -1,4 +1,4 @@
-package tk.xhuoffice.sessbilinfo;
+package tk.xhuoffice.sessbilinfo.util;
 
 import java.io.File;
 import java.io.FileReader;
@@ -6,8 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.ArrayList;
-import tk.xhuoffice.sessbilinfo.Logger;
-import tk.xhuoffice.sessbilinfo.OutFormat;
+import tk.xhuoffice.sessbilinfo.util.Logger;
+import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 
 public class CookieFile {

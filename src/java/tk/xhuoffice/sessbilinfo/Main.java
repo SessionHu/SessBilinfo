@@ -1,11 +1,12 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.util.Scanner;
-import tk.xhuoffice.sessbilinfo.CookieFile;
-import tk.xhuoffice.sessbilinfo.Logger;
 import tk.xhuoffice.sessbilinfo.Search;
 import tk.xhuoffice.sessbilinfo.UserInfo;
 import tk.xhuoffice.sessbilinfo.Video;
+import tk.xhuoffice.sessbilinfo.util.CookieFile;
+import tk.xhuoffice.sessbilinfo.util.Logger;
+
 
 
 public class Main {
