@@ -2,12 +2,12 @@ package tk.xhuoffice.sessbilinfo;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import tk.xhuoffice.sessbilinfo.UserInfo;
 import tk.xhuoffice.sessbilinfo.util.Error;
 import tk.xhuoffice.sessbilinfo.util.Http;
 import tk.xhuoffice.sessbilinfo.util.JsonLib;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
-import tk.xhuoffice.sessbilinfo.UserInfo;
 
 // API来源:  https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_request.md
 // 信息来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_response.md
