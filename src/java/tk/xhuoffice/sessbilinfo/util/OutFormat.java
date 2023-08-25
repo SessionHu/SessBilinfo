@@ -130,27 +130,31 @@ public class OutFormat {
         String stackTrace = sw.toString();
         Logger.println(stackTrace,l);
     }
-    
-    public static String xmlToANSI(String text) {
+
+    private static boolean isSupportRichText() {
         // 获取系统类型
         String osName = System.getProperty("os.name").toLowerCase();
         // Windows 环境
-        if (osName.contains("windows")) {
+        if(osName.contains("windows")) {
             // 是否使用 Windows Terminal
             String wts = System.getenv("WT_SESSION");
-            if (wts != null && !wts.trim().isEmpty()) {
-                // 转换为富文本
-                text = xmlToRichText(text);
+            if(wts != null && !wts.trim().isEmpty()) {
+                return true;
             } else {
-                // 转换为纯文本
-                text = xmlToPlainText(text, true);
+                return false;
             }
         } else {
-            // 其他系统直接转换
-            text = xmlToRichText(text);
+            return true;
         }
-        return text;
-    }    
+    }
+
+    public static String xmlToANSI(String text) {
+        if(isSupportRichText()) {
+            return xmlToRichText(text);
+        } else {
+            return xmlToPlainText(text,true);
+        }
+    }
 
     private static String xmlToRichText(String text) {
         // <em>CONTENT</em> -> \033[0;1mCONTENT\033[0m
