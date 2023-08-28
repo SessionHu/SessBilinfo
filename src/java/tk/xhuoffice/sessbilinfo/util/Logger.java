@@ -54,6 +54,10 @@ public class Logger {
     public static void fataln(String str) {
         println(str,4); // 致命
     }
+
+    public static void debugln(String str) {
+        println(str,0); // 调试
+    }
     
     public static void inputHere(String... tip) {
         if(tip.length!=0) {
