@@ -34,8 +34,7 @@ public class Main {
                 "3. 进行综合搜索\n"+
                 "4. 检查昵称状态\n"+
                 "5. 修改 Cookie\n"+
-                "0. 退出"
-                ,1);
+                "0. 退出");
         Logger.inputHere();
         // 获取输入信息
         try {
@@ -69,7 +68,7 @@ public class Main {
             // noting here...
         } else {
             // 输出错误
-            Logger.println("无效的操作编号",2);
+            Logger.warnln("无效的操作编号");
         }
     }
 
@@ -88,20 +87,36 @@ public class Main {
             return;
         }
         for(int i = 0; i < args.length; i++) {
-            // DEBUG 输出是否启用
-            {
-                if(args[i].equals("--debug")) {
-                    Logger.debug = true;
-                    Logger.println("DEBUG 输出已开启",0);
-                }
-            }
-            // Cookie 处理
-            try {
-                if(args[i].equals("--nocookie")) {
-                    CookieFile.rm();
-                }
-            } catch(Exception e) {
-                Logger.println("文件删除异常: "+e.getMessage(),3);
+            switch(args[i]) {
+                case "-v":
+                case "--version":
+                    // 输出版本信息
+                    Logger.println(
+                            "SessBilinfo v0.2.0-gh.main\n"+
+                            "Copyright (C) 2023 SessionHu\n"+
+                            "Cookie Path:  "+CookieFile.getCookieFilePath()+"\n"+
+                            "Current Time: "+String.valueOf(System.currentTimeMillis()));
+                    System.exit(0);
+                    break;
+                case "-d":
+                case "--debug":
+                    // DEBUG 输出是否启用
+                    if(!Logger.debug) {
+                        Logger.debug = true;
+                        Logger.println("DEBUG 输出已开启",0);
+                    }
+                    break;
+                case "-n":
+                case "--nocookie":
+                    // Cookie 处理
+                    try {
+                        CookieFile.rm();
+                    } catch(Exception e) {
+                        Logger.errln("文件删除异常: "+e.getMessage());
+                    }
+                    break;
+                default:
+                    // nothing here...
             }
         }
     }
