@@ -67,14 +67,14 @@ public class OutFormat {
                 String str = scan.nextLine();
                 // 为空时的处理
                 if(str==null||str.trim().isEmpty()) {
-                    Logger.println(typ+"不能为空",2);
+                    Logger.warnln(typ+"不能为空");
                 } else {
                     return str;
                 }
             } catch(Exception e) {
                 // 异常处理(退出)
                 Logger.ln();
-                Logger.println("非法的输入",4);
+                Logger.fataln("非法的输入");
                 System.exit(1);
             }
         }
@@ -97,7 +97,7 @@ public class OutFormat {
             } catch(Exception e) {
                 // 异常处理
                 Logger.ln();
-                Logger.println("无效的 "+typ,4);
+                Logger.fataln("无效的 "+typ);
                 System.exit(1);
             }
             try {
@@ -106,18 +106,18 @@ public class OutFormat {
                 // 检测输入是否大于0
                 if(mid>0) {
                     // 提示并返回结果
-                    Logger.println(typ+": "+mid,1);
+                    Logger.warnln(typ+": "+mid);
                     return input;
                 } else {
                     // 输出警告
-                    Logger.println("无效的 "+typ+" "+input,2);
+                    Logger.warnln("无效的 "+typ+" "+input);
                 }
             } catch(Exception e) {
                 // 输出警告
-                Logger.println("过大或非数字不能作为 "+typ,2);
+                Logger.warnln("过大或非数字不能作为 "+typ);
             }
             if(num.length!=0) {
-                Logger.println("抛出异常",0);
+                Logger.debugln("抛出异常");
                 throw new NumberFormatException("无效的 "+typ+" "+input);
             }
         }
@@ -138,11 +138,7 @@ public class OutFormat {
         if(osName.contains("windows")) {
             // 是否使用 Windows Terminal
             String wts = System.getenv("WT_SESSION");
-            if(wts != null && !wts.trim().isEmpty()) {
-                return true;
-            } else {
-                return false;
-            }
+            return wts != null && !wts.trim().isEmpty();
         } else {
             return true;
         }
@@ -164,6 +160,10 @@ public class OutFormat {
         text = text.replaceAll("&amp;", "&");
         // &quot; -> "
         text = text.replaceAll("&quot;", "\"");
+        // &lt; -> <
+        text = text.replaceAll("&lt;", "<");
+        // &gt; -> >
+        text = text.replaceAll("&gt;", ">");
         // 返回结果
         return text;
     }
@@ -172,12 +172,12 @@ public class OutFormat {
         // 输出提示
         if(tipSwitch) {
             // 打印文字提示
-            Logger.println("当前终端似乎不支持 ANSI 转义序列",2);
-            Logger.println("当前系统环境仅支持 Windows Terminal",2);
+            Logger.warnln("当前终端似乎不支持 ANSI 转义序列");
+            Logger.warnln("当前系统环境仅支持 Windows Terminal");
             // 等待以让用户注意到提示
             try {
-                // 等待 0.667 秒
-                Thread.sleep(667);
+                // 等待 1 秒
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 // 处理中断异常
                 // nothing here...
@@ -191,6 +191,10 @@ public class OutFormat {
         text = text.replaceAll("&amp;", "&");
         // &quot; -> "
         text = text.replaceAll("&quot;", "\"");
+        // &lt; -> <
+        text = text.replaceAll("&lt;", "<");
+        // &gt; -> >
+        text = text.replaceAll("&gt;", ">");
         // 返回结果
         return text;
     }
