@@ -56,31 +56,34 @@ public class OutFormat {
     public static String getString(String typ, String... tip) {
         // 获取输入
         while(true) {
+            // 定义变量
+            String str = null;
+            // 输出提示
+            if(tip.length!=0) {
+                Logger.inputHere(tip[0]);
+            } else {
+                Logger.inputHere();
+            }
+            // 读取控制台输入
             try {
-                // 输出提示
-                if(tip.length!=0) {
-                    Logger.inputHere(tip[0]);
-                } else {
-                    Logger.inputHere();
-                }
-                // 读取控制台输入
-                String str = scan.nextLine();
-                // 为空时的处理
-                if(str==null||str.trim().isEmpty()) {
-                    Logger.warnln(typ+"不能为空");
-                } else {
-                    return str;
-                }
-            } catch(Exception e) {
+                str = scan.nextLine();
+            } catch(java.util.NoSuchElementException e) {
                 // 异常处理(退出)
                 Logger.ln();
                 Logger.fataln("非法的输入");
+                outException(e,0);
                 System.exit(1);
+            }
+            // 为空时的处理
+            if(str==null||str.trim().isEmpty()) {
+                Logger.warnln(typ+"不能为空");
+            } else {
+                return str;
             }
         }
     }
 
-    public static String getPositiveLongAsString(String typ, String... num) throws NumberFormatException {
+    public static String getPositiveLongAsString(String typ, String... num) {
         // 定义并初始化变量
         String input = "";
         while(true) {
@@ -94,10 +97,11 @@ public class OutFormat {
                     // 获取输入
                     input = scan.nextLine().trim();
                 }
-            } catch(Exception e) {
+            } catch(java.util.NoSuchElementException e) {
                 // 异常处理
                 Logger.ln();
-                Logger.fataln("无效的 "+typ);
+                Logger.fataln("非法的输入");
+                outException(e,0);
                 System.exit(1);
             }
             try {

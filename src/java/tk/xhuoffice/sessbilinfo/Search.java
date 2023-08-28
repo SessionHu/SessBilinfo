@@ -9,9 +9,10 @@ import tk.xhuoffice.sessbilinfo.util.JsonLib;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
-// API来源:  https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_request.md
-// 信息来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_response.md
-
+/**
+ * API来源:  https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_request.md
+ * 信息来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_response.md
+ */
 
 public class Search {
     
@@ -22,27 +23,27 @@ public class Search {
     
     public static void search() {
         // 获取搜索内容
-        Logger.println("请输入关键词 (不区分大小写)",1);
+        Logger.println("请输入关键词 (不区分大小写)");
         String keyword = OutFormat.getString("关键词").trim();
         // 进行搜索
         try {
             // 输出提示
-            Logger.println("正在请求数据...",1);
+            Logger.println("正在请求数据...");
             // 获取数据
             String result = "";
             result += "\n";
             result += "------------------------\n\n";
             result += all(keyword);
             result += "------------------------";
-            Logger.println("请求完毕",1);
+            Logger.println("请求完毕");
             // 输出结果
-            Logger.println(result,1);
+            Logger.println(result);
             // 返回
             return;
         } catch(RuntimeException e) {
-            Logger.println(e.getMessage(),3);
+            Logger.errln(e.getMessage());
         } catch(Exception e) {
-            Logger.println("搜索发生未知异常",4);
+            Logger.fataln("搜索发生未知异常");
             OutFormat.outException(e,4);
         }
         System.exit(2);
@@ -54,17 +55,16 @@ public class Search {
         // 用户输入是否为mid
         if(keyword.matches(".*uid.*|.*mid.*") || keyword.length()==16) {
             // 获取字符串中的mid
-            Logger.println("尝试获取字符串中 Mid",0);
-            Pattern pattern = Pattern.compile("\\d+");
-            Matcher matcher = pattern.matcher(keyword);
+            Logger.debugln("尝试获取字符串中 Mid");
+            Matcher matcher = Pattern.compile("\\d+").matcher(keyword);
             if(matcher.find()) {
                 // 提取出mid
                 String mid = matcher.group(); 
-                Logger.println("尝试提取 Mid",0);
+                Logger.debugln("尝试提取 Mid");
                 // 验证mid是否有效
                 if(Long.parseLong(mid) > 0){
                     // 提示信息
-                    Logger.println("检测到您的输入为 Mid, 操作变为获取用户信息",1);
+                    Logger.println("检测到您的输入为 Mid, 操作变为获取用户信息");
                     // 获取并返回信息   
                     String usrInfo = "";
                     usrInfo += UserInfo.card(mid);
