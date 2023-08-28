@@ -101,93 +101,105 @@ public class Search {
             for(int i = 0; i < result.length; i++) {
                 String json = result[i];
                 // 用户
-                if(JsonLib.getString(json,"result_type").equals("bili_user")) {
-                    Logger.println("获取用户信息",0);
-                    try {
-                        // 获取 data 数组作为 JSON
-                        String usrJson = JsonLib.getArray(json,"data")[0]; // 默认仅使用第一个结果
-                        // 解析数据
-                        String usrMid = JsonLib.getString(usrJson,"mid"); // mid
-                        String usrName = JsonLib.getString(usrJson,"uname"); // 昵称
-                        String usrSign = JsonLib.getString(usrJson,"usign"); // 签名
-                        int usrLevel = JsonLib.getInt(usrJson,"level"); // 等级
-                        int usrFans = JsonLib.getInt(usrJson,"fans"); // 粉丝数
-                        int usrVideos = JsonLib.getInt(usrJson,"videos"); // 视频数
-                        int usrOfficalType = JsonLib.getInt(usrJson,"official_verify","type"); // 认证类型
-                        // 处理数据
-                        String usrStrFans = OutFormat.num(usrFans); // 粉丝数
-                        String usrStrVideos = OutFormat.num(usrVideos); // 视频数
-                        String usrOfficalMsg = ""; { // 认证信息
-                            if(usrOfficalType==0) {
-                                // 个人认证
-                                usrOfficalMsg += "个人认证: ";
-                                usrOfficalMsg += JsonLib.getString(usrJson,"official_verify","desc");
-                            } else if(usrOfficalType==1) {
-                                // 组织认证
-                                usrOfficalMsg += "组织认证";
-                                usrOfficalMsg += JsonLib.getString(usrJson,"official_verify","desc");
-                            }
-                        }
-                        // 输出数据
-                        String usrInfo = "";
-                        usrInfo += "共搜索到约 " + biliUserCount + " 个用户\n";
-                        usrInfo += "1. Mid: " + usrMid + "\n";
-                        usrInfo += "   " + usrName + "   Lv" + usrLevel + "\n";
-                        usrInfo += "   粉丝 " + usrStrFans + "   视频 " + usrStrVideos + "\n";
-                        if(!usrOfficalMsg.trim().isEmpty()) {
-                            usrInfo += "   " + usrOfficalMsg + "\n";
-                        } else {
-                            usrInfo += "   " + usrSign + "\n";
-                        }
-                        usrInfo += "\n";
-                        results += usrInfo;
-                    } catch(ArrayIndexOutOfBoundsException e) {
-                        // 完全匹配的用户啥也没搜到
-                        results += "共搜索到约 " + biliUserCount + " 个用户\n";
-                        results += "无详细结果, 请进行用户搜索\n";
-                        results += "\n";
-                    }
-                }
+                results += getUserSearchResult(json,biliUserCount);
                 // 视频
-                if(JsonLib.getString(json,"result_type").equals("video")) {
-                    Logger.println("获取视频信息",0);
-                    // 获取 data 数组作为 JSON
-                    String[] videoJson = JsonLib.getArray(json,"data");
-                    // 初始化变量
-                    String vInfo = "";
-                    vInfo += "共搜索到约 " + videoCount + " 个视频\n";
-                    for(int v = 0; v < videoJson.length; v++) {
-                        Logger.println("读取第 "+(v+1)+" 个视频",0);
-                        // 获取当前视频 JSON
-                        String vJson = videoJson[v];
-                        // 解析数据
-                        long aid = JsonLib.getLong(vJson,"id"); // avid
-                        long play = JsonLib.getLong(vJson,"play"); // 播放
-                        long videoReview = JsonLib.getLong(vJson,"video_review"); // 弹幕
-                        long senddate = JsonLib.getLong(vJson,"senddate"); // 发布时间
-                        String title = JsonLib.getString(vJson,"title"); // 标题
-                        String duration = JsonLib.getString(vJson,"duration"); // 时长((HH:)MM:SS)
-                        String author = JsonLib.getString(vJson,"author"); // UP主昵称
-                        // 处理数据
-                        String view = OutFormat.num(play); // 播放
-                        String danmaku = OutFormat.num(videoReview); // 弹幕
-                        String date = OutFormat.date(senddate); // 发布日期
-                        // 输出数据
-                        vInfo += String.format("%02d.",v+1) + " " + title + "\n";
-                        vInfo += "    " + duration + "    播放 " + view + "   弹幕 " + danmaku + "\n";
-                        vInfo += "    AV号 " + aid + "   UP主 " + author + "   " + date + "\n";
-                    }
-                    if(videoJson.length==0) {
-                        vInfo += "无结果, 请检查关键词\n";
-                    }
-                    vInfo += "\n";
-                    results += OutFormat.xmlToANSI(vInfo); 
-                }
+                results += getVideoSearchResult(json,videoCount);
             }
         } else if(code==-412) {
             throw new RuntimeException("请求被拦截, 请检测 Cookie 长度");
         } else {
             Error.out(rawJson);
+        }
+        return results;
+    }
+
+    private static String getUserSearchResult(String json, String biliUserCount) {
+        String results = "";
+        if(JsonLib.getString(json,"result_type").equals("bili_user")) {
+            Logger.println("获取用户信息",0);
+            try {
+                // 获取 data 数组作为 JSON
+                String usrJson = JsonLib.getArray(json,"data")[0]; // 默认仅使用第一个结果
+                // 解析数据
+                String usrMid = JsonLib.getString(usrJson,"mid"); // mid
+                String usrName = JsonLib.getString(usrJson,"uname"); // 昵称
+                String usrSign = JsonLib.getString(usrJson,"usign"); // 签名
+                int usrLevel = JsonLib.getInt(usrJson,"level"); // 等级
+                int usrFans = JsonLib.getInt(usrJson,"fans"); // 粉丝数
+                int usrVideos = JsonLib.getInt(usrJson,"videos"); // 视频数
+                int usrOfficalType = JsonLib.getInt(usrJson,"official_verify","type"); // 认证类型
+                // 处理数据
+                String usrStrFans = OutFormat.num(usrFans); // 粉丝数
+                String usrStrVideos = OutFormat.num(usrVideos); // 视频数
+                String usrOfficalMsg = ""; { // 认证信息
+                    if(usrOfficalType==0) {
+                        // 个人认证
+                        usrOfficalMsg += "个人认证: ";
+                        usrOfficalMsg += JsonLib.getString(usrJson,"official_verify","desc");
+                    } else if(usrOfficalType==1) {
+                        // 组织认证
+                        usrOfficalMsg += "组织认证";
+                        usrOfficalMsg += JsonLib.getString(usrJson,"official_verify","desc");
+                    }
+                }
+                // 输出数据
+                String usrInfo = "";
+                usrInfo += "共搜索到约 " + biliUserCount + " 个用户\n";
+                usrInfo += "1. Mid: " + usrMid + "\n";
+                usrInfo += "   " + usrName + "   Lv" + usrLevel + "\n";
+                usrInfo += "   粉丝 " + usrStrFans + "   视频 " + usrStrVideos + "\n";
+                if(!usrOfficalMsg.trim().isEmpty()) {
+                    usrInfo += "   " + usrOfficalMsg + "\n";
+                } else {
+                    usrInfo += "   " + usrSign + "\n";
+                }
+                usrInfo += "\n";
+                results += usrInfo;
+            } catch(ArrayIndexOutOfBoundsException e) {
+                // 完全匹配的用户啥也没搜到
+                results += "共搜索到约 " + biliUserCount + " 个用户\n";
+                results += "无详细结果, 请进行用户搜索\n";
+                results += "\n";
+            }
+        }
+        return results;
+    }
+
+    private static String getVideoSearchResult(String json, String videoCount) {
+        String results = "";
+        if(JsonLib.getString(json,"result_type").equals("video")) {
+            Logger.println("获取视频信息",0);
+            // 获取 data 数组作为 JSON
+            String[] videoJson = JsonLib.getArray(json,"data");
+            // 初始化变量
+            String vInfo = "";
+            vInfo += "共搜索到约 " + videoCount + " 个视频\n";
+            for(int v = 0; v < videoJson.length; v++) {
+                Logger.println("读取第 "+(v+1)+" 个视频",0);
+                // 获取当前视频 JSON
+                String vJson = videoJson[v];
+                // 解析数据
+                long aid = JsonLib.getLong(vJson,"id"); // avid
+                long play = JsonLib.getLong(vJson,"play"); // 播放
+                long videoReview = JsonLib.getLong(vJson,"video_review"); // 弹幕
+                long senddate = JsonLib.getLong(vJson,"senddate"); // 发布时间
+                String title = JsonLib.getString(vJson,"title"); // 标题
+                String duration = JsonLib.getString(vJson,"duration"); // 时长((HH:)MM:SS)
+                String author = JsonLib.getString(vJson,"author"); // UP主昵称
+                // 处理数据
+                String view = OutFormat.num(play); // 播放
+                String danmaku = OutFormat.num(videoReview); // 弹幕
+                String date = OutFormat.date(senddate); // 发布日期
+                // 输出数据
+                vInfo += String.format("%02d.",v+1) + " " + title + "\n";
+                vInfo += "    " + duration + "    播放 " + view + "   弹幕 " + danmaku + "\n";
+                vInfo += "    AV号 " + aid + "   UP主 " + author + "   " + date + "\n";
+            }
+            if(videoJson.length==0) {
+                vInfo += "无结果, 请检查关键词\n";
+            }
+            vInfo += "\n";
+            results += OutFormat.xmlToANSI(vInfo); 
         }
         return results;
     }
