@@ -202,5 +202,12 @@ public class OutFormat {
         // 返回结果
         return text;
     }
+
+    public static String[] getLang() {
+        Locale locale = Locale.getDefault();
+        String lang = locale.getLanguage();
+        String country = locale.getCountry();
+        return new String[] {lang, country};
+    }
     
 }

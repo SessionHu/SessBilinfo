@@ -6,6 +6,7 @@ import tk.xhuoffice.sessbilinfo.UserInfo;
 import tk.xhuoffice.sessbilinfo.Video;
 import tk.xhuoffice.sessbilinfo.util.CookieFile;
 import tk.xhuoffice.sessbilinfo.util.Logger;
+import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 
 
@@ -77,7 +78,6 @@ public class Main {
         try {
             if(System.getenv("OPEN_BILI_DEBUG").trim().equals("true")) {
                 Logger.debug = true;
-                Logger.println("DEBUG 输出已开启",0);
             }
         } catch(NullPointerException e) {
             // nothing here...
@@ -88,9 +88,54 @@ public class Main {
         }
         for(int i = 0; i < args.length; i++) {
             switch(args[i]) {
+                case "-h":
+                case "--help":
+                    // 帮助信息
+                    {
+                        // 获取 JAR 包 文件名
+                        String jarFileName;
+                        try {
+                            jarFileName = new java.io.File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getName();
+                        } catch(java.net.URISyntaxException e) {
+                            jarFileName = "SessBilinfo.jar";
+                        }
+                        // 帮助信息内容
+                        String helpMsg = "SessBilinfo v0.2.0-gh.main\n";
+                        String helpMsgEnUs = "Usage:\n"+
+                                "    java -jar \""+jarFileName+"\"\n"+
+                                "Command arguments:\n"+
+                                "    -d, --debug      Enable DEBUG output\n"+
+                                "    -n, --nocookie   Run the program after deleting the Cookie file\n"+
+                                "Environment variables:\n"+
+                                "    OPEN_BILI_DEBUG  The same as '-d' or '--debug' when the value is \"true\"\n"+
+                                "Help information:\n"+
+                                "    -h, --help       Output this help information\n"+
+                                "    -v, --version    Output version and other information";
+                        String helpMsgZhCn = "用法:\n"+
+                                "	java -jar \""+jarFileName+"\"\n"+
+                                "命令参数:\n"+
+                                "	-d, --debug		启用 DEBUG 输出\n"+
+                                "	-n, --nocookie	删除 Cookie 文件后运行程序\n"+
+                                "环境变量:\n"+
+                                "	OPEN_BILI_DEBUG	当值为 \"true\" 时, 与 '-d' 或 '-debug' 相同\n"+
+                                "帮助及信息:\n"+
+                                "	-h, --help		输出本帮助信息\n"+
+                                "	-v, --version	输出版本和其她信息";
+                        // 根据语言输出帮助信息
+                        if(OutFormat.getLang()[0].equals("zh")) {
+                            helpMsg += helpMsgZhCn;
+                        } else {
+                            helpMsg += helpMsgEnUs;
+                        }
+                        Logger.println(helpMsg);
+                        // 退出
+                        System.exit(0);
+                    }
+                    break;
                 case "-v":
                 case "--version":
                     // 输出版本信息
+                    Logger.debug = false;
                     Logger.println(
                             "SessBilinfo v0.2.0-gh.main\n"+
                             "Copyright (C) 2023 SessionHu\n"+
@@ -103,7 +148,7 @@ public class Main {
                     // DEBUG 输出是否启用
                     if(!Logger.debug) {
                         Logger.debug = true;
-                        Logger.println("DEBUG 输出已开启",0);
+                        Logger.debugln("DEBUG 输出已开启");
                     }
                     break;
                 case "-n":
