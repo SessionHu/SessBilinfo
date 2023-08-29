@@ -8,9 +8,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
-import tk.xhuoffice.sessbilinfo.util.CookieFile;
-import tk.xhuoffice.sessbilinfo.util.Logger;
-import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 public class Http {
 

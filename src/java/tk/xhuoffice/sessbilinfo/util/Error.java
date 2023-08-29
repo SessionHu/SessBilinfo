@@ -2,8 +2,6 @@ package tk.xhuoffice.sessbilinfo.util;
 
 import java.util.Map;
 import java.util.HashMap;
-import tk.xhuoffice.sessbilinfo.util.Logger;
-import tk.xhuoffice.sessbilinfo.util.JsonLib;
 
 // 信息来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/errcode.md
 
@@ -14,8 +12,8 @@ public class Error {
         int code = JsonLib.getInt(rawJson,"code");
         String msg = JsonLib.getString(rawJson,"message");
         // 输出错误信息
-        Logger.println("返回值: "+code+" "+code(code),3);
-        Logger.println("错误信息: "+msg,3);
+        Logger.errln("返回值: "+code+" "+code(code));
+        Logger.errln("错误信息: "+msg);
     }
     
     public static String code(int code) {

@@ -33,26 +33,25 @@ public class UserInfo {
         // 提示输入信息
         Logger.println(
                 "请输入被查询用户的 Mid 信息\n"+
-                "示例: 645769214"
-                ,1);
+                "示例: 645769214");
         // 向用户获取 Mid
         String mid = OutFormat.getPositiveLongAsString("Mid");
         // 获取数据
-        Logger.println("正在请求数据...",1);
+        Logger.println("正在请求数据...");
         String usrinfo = "";
         usrinfo += "\n";
         usrinfo += "------------------------\n\n";
         usrinfo += card(mid);
         usrinfo += space(mid);
         usrinfo += "------------------------";
-        Logger.println("请求完毕",1);
+        Logger.println("请求完毕");
         // 输出数据
-        Logger.println(usrinfo,1);
+        Logger.println(usrinfo);
     }
     
     public static String card(String mid) {
         // 向 API 发送 GET 请求
-        Logger.println("获取用户名片信息",0);
+        Logger.debugln("获取用户名片信息");
         String rawJson = Http.get(USER_CARD+"?mid="+mid);
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
@@ -110,7 +109,7 @@ public class UserInfo {
     
     public static String spaceNotice(String mid) {
         // 发送请求
-        Logger.println("获取用户空间公告",0);
+        Logger.debugln("获取用户空间公告");
         String json = Http.get(USER_SPACE_NOTICE+"?mid="+mid);
         // 获取返回值
         int code = JsonLib.getInt(json,"code");
@@ -134,7 +133,7 @@ public class UserInfo {
     
     public static String spaceTag(String mid) {
         // 发送请求
-        Logger.println("获取用户空间TAG",0);
+        Logger.debugln("获取用户空间TAG");
         String rawJson = Http.get(USER_SPACE_TAG+"?mid="+mid);
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -173,7 +172,7 @@ public class UserInfo {
     
     public static String spaceTop(String mid) {
         // 向 API 发送 GET 请求
-        Logger.println("获取用户置顶视频",0);
+        Logger.debugln("获取用户置顶视频");
         String rawJson = Http.get(USER_SPACE_TOP+"?vmid="+mid);
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
@@ -211,7 +210,7 @@ public class UserInfo {
 
     public static String spaceMasterpiece(String mid) {
         // 向 API 发送 GET 请求
-        Logger.println("获取用户代表作",0);
+        Logger.debugln("获取用户代表作");
         String rawJson = Http.get(USER_SPACE_MASTERPIECE+"?vmid="+mid);
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
@@ -253,7 +252,7 @@ public class UserInfo {
     }
     
     public static String offical(int typ) {
-        Logger.println("处理用户认证信息",0);
+        Logger.debugln("处理用户认证信息");
         String offical_tag = "";
         switch(typ) {
             // 个人认证
@@ -284,8 +283,8 @@ public class UserInfo {
                 break;
             default:
                 // 我也不知道 role 为 8 时是什么
-                Logger.println("未知的认证类型 "+typ,3);
-                Logger.println("请向 SocialSisterYi/bilibili-API-collect 与 SessionHu/SessBilinfo 提交 Issue, 内容请包含 有关请求的 Mid 的信息 与 上一行认证类型输出 的截图",3);
+                Logger.errln("未知的认证类型 "+typ);
+                Logger.errln("请向 SocialSisterYi/bilibili-API-collect 与 SessionHu/SessBilinfo 提交 Issue, 内容请包含 有关请求的 Mid 的信息 与 上一行认证类型输出 的截图");
         }
         return offical_tag;
     }

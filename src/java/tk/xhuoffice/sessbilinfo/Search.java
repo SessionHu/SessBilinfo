@@ -2,7 +2,6 @@ package tk.xhuoffice.sessbilinfo;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import tk.xhuoffice.sessbilinfo.UserInfo;
 import tk.xhuoffice.sessbilinfo.util.Error;
 import tk.xhuoffice.sessbilinfo.util.Http;
 import tk.xhuoffice.sessbilinfo.util.JsonLib;
@@ -79,7 +78,7 @@ public class Search {
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
             // 获取分类结果数目信息 (信息分类依赖API文档)
-            Logger.println("获取分类结果数目信息",0);
+            Logger.debugln("获取分类结果数目信息");
             // int liveRoomCount = JsonLib.getInt(rawJson,"data","top_tlist","live_room"); // 直播
             // int topicCount = JsonLib.getInt(rawJson,"data","top_tlist","topic"); // 话题
             String videoCount = null; { // 视频
@@ -116,7 +115,7 @@ public class Search {
     private static String getUserSearchResult(String json, String biliUserCount) {
         String results = "";
         if(JsonLib.getString(json,"result_type").equals("bili_user")) {
-            Logger.println("获取用户信息",0);
+            Logger.debugln("获取用户信息");
             try {
                 // 获取 data 数组作为 JSON
                 String usrJson = JsonLib.getArray(json,"data")[0]; // 默认仅使用第一个结果
@@ -168,14 +167,14 @@ public class Search {
     private static String getVideoSearchResult(String json, String videoCount) {
         String results = "";
         if(JsonLib.getString(json,"result_type").equals("video")) {
-            Logger.println("获取视频信息",0);
+            Logger.debugln("获取视频信息");
             // 获取 data 数组作为 JSON
             String[] videoJson = JsonLib.getArray(json,"data");
             // 初始化变量
             String vInfo = "";
             vInfo += "共搜索到约 " + videoCount + " 个视频\n";
             for(int v = 0; v < videoJson.length; v++) {
-                Logger.println("读取第 "+(v+1)+" 个视频",0);
+                Logger.debugln("读取第 "+(v+1)+" 个视频");
                 // 获取当前视频 JSON
                 String vJson = videoJson[v];
                 // 解析数据
