@@ -21,19 +21,19 @@ public class Video {
     
     public static void getVideoInfo() {
         // 提示信息
-        Logger.println("请输入视频AV或BV号",1);
+        Logger.println("请输入视频AV或BV号");
         // 获取AV号
         String aid = getAid();
         // 获取数据
-        Logger.println("正在请求数据...",1);
+        Logger.println("正在请求数据...");
         String videoInfo = "";
         videoInfo += "\n";
         videoInfo += "------------------------\n\n";
         videoInfo += getDetail(aid);
         videoInfo += "------------------------";
-        Logger.println("请求完毕",1);
+        Logger.println("请求完毕");
         // 输出信息
-        Logger.println(videoInfo,1);
+        Logger.println(videoInfo);
     }
 
     public static String getAid() {
@@ -49,8 +49,8 @@ public class Video {
                     aid = verifyAid(vid);
                 } else if(vid.toLowerCase().startsWith("bv")&&vid.length()==12) {
                     // BV号(标准12位)
-                    Logger.println("转换BV号为AV号",0);
-                    aid = String.valueOf(AvBv.bvidToAid(vid));
+                    Logger.debugln("转换BV号为AV号");
+                    aid = String.valueOf(new AvBv().bvidToAid(vid));
                     if(Integer.valueOf(aid)>0) {
                         aid = verifyAid(aid);
                     } else {
@@ -58,25 +58,25 @@ public class Video {
                     }
                 } else if(vid.length()==10) {
                     // BV号(无bv头)
-                    Logger.println("转换BV号为AV号",0);
-                    aid = String.valueOf(AvBv.bvidToAid("bv"+vid));
+                    Logger.debugln("转换BV号为AV号");
+                    aid = String.valueOf(new AvBv().bvidToAid("bv"+vid));
                     if(Integer.valueOf(aid)>0) {
                         aid = verifyAid(aid);
                     } else {
                         throw new NullPointerException();
                     }
                 } else {
-                    Logger.println("无效的输入",2);
+                    Logger.warnln("无效的输入");
                     aid = "";
                 }
             } catch(NullPointerException e) {
-                Logger.println("无效的输入",2);
+                Logger.warnln("无效的输入");
                 aid = "";
             }
             if(aid==null||aid.trim().isEmpty()) {
                 // nothing here...
             } else {
-                Logger.println("返回 aid",0);
+                Logger.debugln("返回 aid");
                 return aid;
             }
         }
@@ -86,7 +86,7 @@ public class Video {
         // AV号
         try {
             // 验证AV号
-            Logger.println("验证AV号",0);
+            Logger.debugln("验证AV号");
             return OutFormat.getPositiveLongAsString("AV号",aid);
         } catch(NumberFormatException e) {
             // AV号无效

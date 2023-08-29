@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Locale;
 import java.util.Scanner;
-import tk.xhuoffice.sessbilinfo.util.Logger;
 
 public class OutFormat {
     
@@ -110,7 +109,7 @@ public class OutFormat {
                 // 检测输入是否大于0
                 if(mid>0) {
                     // 提示并返回结果
-                    Logger.warnln(typ+": "+mid);
+                    Logger.println(typ+": "+mid);
                     return input;
                 } else {
                     // 输出警告
