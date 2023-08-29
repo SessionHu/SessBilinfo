@@ -1,6 +1,7 @@
 package tk.xhuoffice.sessbilinfo.util;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -15,12 +16,13 @@ public class Http {
 
     public static final String ANDROID_APP_UA = "Dalvik/2.1.0 (Linux; U; Android 12; MLD-AL00 Build/HUAWEIMLD-AL00) 7.38.0 os/android model/MLD-AL00 mobi_app/Ai4cCreatorAndroid build/7380300 channel/master innerVer/7380310 osVer/12 network/2 grpc-java-cronet/1.36.1";
     public static final String WIN10_EDGE_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/115.0.1901.203";
+    public static final String DEFAULT_COOKIE = "b_ut=7; i-wanna-go-back=-1; b_nut=1693285885; buvid3=88FDE25E-30BA-1D47-62B8-FAA9D96069D785506infoc; innersign=0";
     
     public static String encode(String str){
         try {
             return URLEncoder.encode(str,"utf-8");
         } catch(java.io.UnsupportedEncodingException e) {
-            Logger.println("URL 编码失败 "+e.getMessage(),2);
+            Logger.warnln("URL 编码失败: "+e.getMessage());
             return str;
         }
     }
@@ -37,13 +39,13 @@ public class Http {
             // 进行请求
             try {
                 // 请求数据
-                Logger.println("请求数据中",0);
+                Logger.debugln("请求数据中");
                 String data = getDataFromURL(url);
                 // 输出返回的数据
                 return data;
             } catch(java.net.MalformedURLException e) {
                 // URL 不合法
-                Logger.println("非法的 URL "+url,4);
+                Logger.fataln("非法的 URL "+url);
                 break;
             } catch(java.net.UnknownHostException e) {
                 // 域名解析错误
@@ -59,13 +61,13 @@ public class Http {
                     // HTTP 400
                     return "{\"code\":-400,\"message\":\"请求错误\",\"ttl\":1}";
                 } else {
-                    Logger.println("HTTP 请求发生未知错误",4);
+                    Logger.fataln("HTTP 请求发生未知错误");
                     OutFormat.outException(e,4);
                 }
                 break;
             } catch(Exception e) {
                 // 异常报告
-                Logger.println("HTTP 请求发生未知错误",4);
+                Logger.fataln("HTTP 请求发生未知错误");
                 OutFormat.outException(e,4);
                 break;
             }
@@ -74,7 +76,7 @@ public class Http {
         return ""; // 防止编译报错
     }
     
-    public static String getDataFromURL(String inurl) throws Exception {
+    public static String getDataFromURL(String inurl) throws IOException {
         // 使用本地 Cookie (有效期 24 h)
         String[] cookie = CookieFile.load();
         // 当本地 Cookie 不可用时重新获取
@@ -89,8 +91,8 @@ public class Http {
         return data;
     }
     
-    public static HttpURLConnection setGetConnURL(String inurl, String ua, String[] cookie) throws Exception {
-        Logger.println("设置请求",0);
+    public static HttpURLConnection setGetConnURL(String inurl, String ua, String[] cookie) throws IOException {
+        Logger.debugln("设置请求");
         // 创建 URL 对象
         URL url = new URL(inurl);
         // 打开连接
@@ -104,19 +106,25 @@ public class Http {
             // do nothing...
         } else {
             String cookies = "";
-            for(int i = 0; i < cookie.length; i++) {
-                String[] parts = cookie[i].split(";");
-                String cookieVal = parts[0];
-                cookies += cookieVal + "; ";
+            try {
+                for(int i = 0; i < cookie.length; i++) {
+                    String[] parts = cookie[i].split(";");
+                    String cookieVal = parts[0];
+                    cookies += cookieVal + "; ";
+                }
+                cookies = cookies.substring(0, cookies.length() - 2);
+            } catch(NullPointerException e) {
+                Logger.debugln("Cookie 为空, 使用内置 Cookie");
+                cookies = DEFAULT_COOKIE;
             }
-            cookies = cookies.substring(0, cookies.length() - 2);
+            Logger.debugln("Cookies: "+cookies);
             conn.setRequestProperty("Cookie", cookies);
         }
         return conn;
     }
     
-    public static String readResponseData(HttpURLConnection conn) throws Exception {
-        Logger.println("读取返回数据",0);
+    public static String readResponseData(HttpURLConnection conn) throws IOException {
+        Logger.debugln("读取返回数据");
         // 创建输入流并读取返回数据
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
         String inputLine;
@@ -129,8 +137,8 @@ public class Http {
         return response.toString();
     }
     
-    public static String[] getDefaultCookie() throws Exception {
-        Logger.println("获取默认 Cookie",0);
+    public static String[] getDefaultCookie() throws IOException {
+        Logger.debugln("联机获取默认 Cookie");
         // 设置请求到 https://www.bilibili.com/
         String url = "https://www.bilibili.com/";
         HttpURLConnection conn = setGetConnURL(url, WIN10_EDGE_UA, new String[0]);
