@@ -89,7 +89,7 @@ public class Http {
     }
     
     public static HttpURLConnection setGetConnURL(String inurl, String ua, String[] cookie) throws IOException {
-        Logger.debugln("设置请求");
+        Logger.debugln("设置请求到 "+OutFormat.shorterString(inurl));
         // 创建 URL 对象
         URL url = new URL(inurl);
         // 打开连接
@@ -103,6 +103,7 @@ public class Http {
             // do nothing...
         } else {
             String cookies = "";
+            // 提取 Cookie
             try {
                 for(int i = 0; i < cookie.length; i++) {
                     String[] parts = cookie[i].split(";");
@@ -114,14 +115,20 @@ public class Http {
                 Logger.debugln("Cookie 为空, 使用内置 Cookie");
                 cookies = DEFAULT_COOKIE;
             }
-            Logger.debugln("Cookies: "+cookies);
+            // 设置 Cookie 内容
             conn.setRequestProperty("Cookie", cookies);
+            // 打印 Cookie (加密)
+            cookies = cookies.replaceAll("(?<=\\=)[^;]+", "xxx");
+            Logger.debugln("Cookies: "+cookies);
         }
         return conn;
     }
     
     public static String readResponseData(HttpURLConnection conn) throws IOException {
-        Logger.debugln("读取返回数据");
+        // 打印调试日志
+        String connStr = conn.toString();
+        String url = connStr.substring(connStr.indexOf(":")+1);
+        Logger.debugln("读取返回数据从 "+OutFormat.shorterString(url));
         // 创建输入流并读取返回数据
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
         String inputLine;

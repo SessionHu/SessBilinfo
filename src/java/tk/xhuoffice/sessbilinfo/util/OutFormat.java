@@ -208,5 +208,21 @@ public class OutFormat {
         String country = locale.getCountry();
         return new String[] {lang, country};
     }
+
+    public static String shorterString(String str) {
+        int length = str.length();
+        if(length>55) {
+            return str.substring(0,24)+"......"+str.substring(length-24);
+        } else if(length>39) {
+            return str.substring(0,16)+"......"+str.substring(length-16);
+        } else if(length>31) {
+            return str.substring(0,12)+"......"+str.substring(length-12);
+        } else if(length>23) {
+            return str.substring(0,8)+"......"+str.substring(length-8);
+        } else {
+            Logger.debugln("无法缩短字符串 "+str);
+            return str;
+        }
+    }
     
 }
