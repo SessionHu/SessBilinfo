@@ -4,46 +4,41 @@ public class Logger {
 
     public static boolean debug;
     
-    public static void print(String str, int lv, String... nn) {
-        if(lv==1) {
-            // 信息
-            str = str.replaceAll("\\n","\n[INFO] ");
-            System.out.print("[INFO] "+str);
-        } else if(lv==2) {
-            // 警告
-            str = str.replaceAll("\\n","\n[WARN] ");
-            System.out.print("[WARN] "+str);
-        } else if(lv==3) {
-            // 错误
-            str = str.replaceAll("\\n","\n[ERROR] ");
-            System.err.print("[ERROR] "+str);
-        } else if(lv==4) {
-            // 致命
-            str = str.replaceAll("\\n","\n[FATAL] ");
-            System.err.print("[FATAL] "+str);
-        } else {
-            // 调试(默认)
-            if(debug) {
-                if(nn.length==2) {
-                    String className = nn[0];
-                    String methodName = nn[1];
-                    str = str.replaceAll("\\n","\n[DEBUG] ["+className+"] ["+methodName+"] ");
-                    System.err.print("[DEBUG] ["+className+"] ["+methodName+"] "+str);
-                } else {
-                    str = str.replaceAll("\\n","\n[DEBUG] ");
-                    System.err.print("[DEBUG] "+str);
-                }
+    private static void print(String str, int lv, String cN, String mN) {
+        String[] levels = {"DEBUG","INFO","WARN","ERROR","FATAL"};
+        if(lv>=1&&lv<=4) {
+            String formatted = String.format("[%s] [%s] [%s] ", levels[lv], cN, mN);
+            str = str.replaceAll("\\n", "\n"+formatted);
+            if(lv>=3) {
+                System.err.print(formatted+str);
+            } else {
+                System.out.print(formatted+str);
             }
+        } else if(debug) {
+            str = str.replaceAll("\\n", "\n[DEBUG] ["+cN+"] ["+mN+"] ");
+            System.out.format("[DEBUG] [%s] [%s] %s", cN, mN, str);
         }
     }
     
-    public static void println(String str, int lv, String... nn) {
-        // 打印信息
-        print(str,lv,nn);
-        // 根据情况确定换行符
-        if((lv>0&&lv<5)||debug) {
+    private static void println(String str, int lv) {
+        synchronized(Logger.class) {
+            // 获取完整类名
+            String fullClassName = Thread.currentThread().getStackTrace()[3].getClassName();
+            // 获取最后一个 '.' 位置
+            int lastDotIndex = fullClassName.lastIndexOf('.');
+            // 仅获取类名
+            String cN = fullClassName.substring(lastDotIndex + 1);
+            // 获取方法名
+            String mN = Thread.currentThread().getStackTrace()[3].getMethodName();
+            // 打印信息
+            print(str,lv,cN,mN);
+            // 换行
             System.out.println();
         }
+    }
+
+    public static void println(String str, long lv) {
+        println(str,(int)lv);
     }
 
     public static void println(String str) {
@@ -63,16 +58,9 @@ public class Logger {
     }
 
     public static void debugln(String str) {
-        // 获取完整类名
-        String fullClassName = Thread.currentThread().getStackTrace()[2].getClassName();
-        // 获取最后一个 '.' 位置
-        int lastDotIndex = fullClassName.lastIndexOf('.');
-        // 仅获取类名
-        String className = fullClassName.substring(lastDotIndex + 1);
-        // 获取方法名
-        String methodName = Thread.currentThread().getStackTrace()[2].getMethodName();
-        // 打印调试信息
-        println(str,0,className,methodName);
+        if(debug) {
+            println(str,0); // 调试
+        }
     }
     
     public static void inputHere(String... tip) {
