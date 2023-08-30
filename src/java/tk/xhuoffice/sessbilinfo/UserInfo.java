@@ -1,6 +1,9 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import tk.xhuoffice.sessbilinfo.util.Error;
 import tk.xhuoffice.sessbilinfo.util.Http;
 import tk.xhuoffice.sessbilinfo.util.JsonLib;
@@ -99,12 +102,22 @@ public class UserInfo {
     }
     
     public static String space(String mid) {
-        String space = "";
-        space += spaceTag(mid);
-        space += spaceNotice(mid);
-        space += spaceTop(mid);
-        space += spaceMasterpiece(mid);
-        return space;
+        ExecutorService executor = Executors.newFixedThreadPool(4);
+        Future<String> spaceTag = executor.submit(() -> spaceTag(mid));
+        Future<String> spaceNotice = executor.submit(() -> spaceNotice(mid));
+        Future<String> spaceTop = executor.submit(() -> spaceTop(mid));
+        Future<String> spaceMasterpiece = executor.submit(() -> spaceMasterpiece(mid));
+        String result = "";
+        try {
+            result += spaceTag.get();
+            result += spaceNotice.get();
+            result += spaceTop.get();
+            result += spaceMasterpiece.get();
+        } catch (InterruptedException | java.util.concurrent.ExecutionException e) {
+            OutFormat.outException(e,3);
+        }
+        executor.shutdown();
+        return result;
     }
     
     public static String spaceNotice(String mid) {
