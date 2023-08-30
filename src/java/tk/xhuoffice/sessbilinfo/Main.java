@@ -1,15 +1,23 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.util.Scanner;
+import sun.misc.Signal;
 import tk.xhuoffice.sessbilinfo.util.CookieFile;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 
-
 public class Main {
     
     public static Scanner scan = new Scanner(System.in);
+    
+    static {
+        Signal.handle(new Signal("INT"), signal -> {
+            Logger.ln();
+            Logger.debugln("SIGINT signal received, exit!");
+            System.exit(0);
+        });
+    }
     
     public static void main(String... args) {
         // 命令行参数处理
