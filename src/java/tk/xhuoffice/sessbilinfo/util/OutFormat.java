@@ -167,6 +167,8 @@ public class OutFormat {
         text = text.replaceAll("&lt;", "<");
         // &gt; -> >
         text = text.replaceAll("&gt;", ">");
+        // &apos; &#39; -> '
+        text = text.replaceAll("(&quot;|&#39;)", "'");
         // 返回结果
         return text;
     }
@@ -198,6 +200,8 @@ public class OutFormat {
         text = text.replaceAll("&lt;", "<");
         // &gt; -> >
         text = text.replaceAll("&gt;", ">");
+        // &apos; &#39; -> '
+        text = text.replaceAll("(&quot;|&#39;)", "'");
         // 返回结果
         return text;
     }
