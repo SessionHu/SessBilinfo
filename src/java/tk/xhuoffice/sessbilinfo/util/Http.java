@@ -36,7 +36,6 @@ public class Http {
             // 进行请求
             try {
                 // 请求数据
-                Logger.debugln("请求数据中");
                 String data = getDataFromURL(url);
                 // 输出返回的数据
                 return data;
@@ -68,6 +67,7 @@ public class Http {
                 OutFormat.outException(e,4);
                 break;
             }
+            Logger.debugln("第 "+(t+1)+" 次重试");
         }
         System.exit(64);
         return ""; // 防止编译报错
