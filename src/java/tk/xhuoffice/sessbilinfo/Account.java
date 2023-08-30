@@ -36,7 +36,7 @@ public class Account {
     }
     
     public static boolean iStandardNickname(String name) {
-        Logger.println("本地处理昵称");
+        Logger.debugln("本地处理昵称");
         // 检查字符串长度
         int length = name.length();
         if(length<2||length>16) {
