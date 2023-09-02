@@ -49,7 +49,7 @@ public class OutFormat {
     }
     
     public static String fullDateTime(long timestamp) {
-        return new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(Long.parseLong(String.valueOf(timestamp))));
+        return new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date(Long.parseLong(String.valueOf(timestamp))));
     }
     
     public static String formatString(String origin, String add) {
