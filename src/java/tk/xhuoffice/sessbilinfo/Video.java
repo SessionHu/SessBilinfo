@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import tk.xhuoffice.sessbilinfo.util.AvBv;
 import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
+import tk.xhuoffice.sessbilinfo.util.BiliException;
 import tk.xhuoffice.sessbilinfo.util.Http;
 import tk.xhuoffice.sessbilinfo.util.JsonLib;
 import tk.xhuoffice.sessbilinfo.util.Logger;
@@ -22,10 +23,14 @@ public class Video {
         // 获取数据
         Logger.println("正在请求数据...");
         String videoInfo = "";
-        videoInfo += "\n";
-        videoInfo += "------------------------\n\n";
-        videoInfo += getDetail(aid);
-        videoInfo += "------------------------";
+        try {
+            videoInfo += "\n";
+            videoInfo += "------------------------\n\n";
+            videoInfo += getDetail(aid);
+            videoInfo += "------------------------";
+        } catch(BiliException e) {
+            return; // 返回
+        }
         Logger.println("请求完毕");
         // 输出信息
         Logger.println(videoInfo);
@@ -95,11 +100,112 @@ public class Video {
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0){
-            // ...
+            // 解析返回数据
+            Video video = new Video(rawJson);
+            // 处理解析数据
+            String cprt = ""; { // 视频类型
+                if(video.original) {
+                    cprt = "原创";
+                } else {
+                    cprt = "转载";
+                }
+            }
+            String date = OutFormat.fullDateTime(video.pubdate); // 发布日期
+            String alltime = OutFormat.time(video.duration); // 总时长
+            String view = OutFormat.num(video.view); // 播放量
+            String danmaku = OutFormat.num(video.danmaku); // 弹幕数
+            String reply = OutFormat.num(video.reply); // 评论数
+            String fav = OutFormat.num(video.fav); // 收藏数
+            String coin = OutFormat.num(video.coin); // 投币数
+            String share = OutFormat.num(video.share); // 分享数
+            String like = OutFormat.num(video.like); // 点赞数
+            String tags = ""; { // TAG
+                for(int i = 0; i < video.tag.length; i++) {
+                    tags += video.tag[i]+", ";
+                }
+                tags = tags.substring(1,tags.length()-2);
+            }
+            // 格式化处理数据
+            String formatted = "";
+            formatted += String.format("%s", video.title);
+            formatted += String.format("%s-%s  %s   UP主 %s", video.mtname, video.tname, cprt, video.uploader);
+            formatted += String.format("播放 %s   弹幕 %s   %s", view, danmaku, date);
+            formatted += String.format("点赞 %s   投币 %s   收藏 %s   分享 %s", like, coin, fav, share);
+            formatted += String.format("TAG: %s", tags);
+            formatted += String.format("总时长 %s   评论 %s", alltime, reply);
+            // 返回数据
+            return formatted+"\n\n";
+        } else if(code==62002) {
+            return "稿件不可见";
+        } else if(code==62004) {
+            return "稿件审核中";
         } else {
-            BiliAPIs.outCodeErr(rawJson);
+            // 抛出异常
+            throw new BiliException(BiliAPIs.outCodeErr(rawJson));
         }
-        return JsonLib.formatJson(rawJson)+"\n\n";
+    }
+    
+    private String bvid;
+    private long aid;
+    private String tname; // 子分区名
+    private String mtname; // 主分区名
+    private boolean original; // 视频类型
+    private String title;
+    private long pubdate; // 发布时间
+    private String desc; // 视频简介
+    private long duration; // 总时长
+    private long view;
+    private long danmaku;
+    private long reply; // 评论数
+    private long fav; // 收藏数
+    private long coin; // 投币数
+    private long share; // 分享数
+    private long like; // 点赞数
+    private String uploader; // UP主
+    private long mid; // UP主Mid
+    private String[] tag;
+    
+    public Video(String json) {
+        // .data.View
+        {
+            // .
+            bvid = JsonLib.getString(json,"data","View","bvid");
+            aid = JsonLib.getLong(json,"data","View","aid");
+            tname = JsonLib.getString(json,"data","View","tname");
+            mtname = tidSubToMain(JsonLib.getInt(json,"data","View","tid"));
+            original = JsonLib.getInt(json,"data","View","copyright") == 1;
+            title = JsonLib.getString(json,"data","View","title");
+            pubdate = JsonLib.getLong(json,"data","View","pubdate");
+            desc = JsonLib.getString(json,"data","View","desc");
+            duration = JsonLib.getLong(json,"data","View","duration");
+            // ..stat
+            {
+                view = JsonLib.getLong(json,"data","View","stat","view");
+                danmaku = JsonLib.getLong(json,"data","View","stat","danmaku");
+                reply = JsonLib.getLong(json,"data","View","stat","reply");
+                fav = JsonLib.getLong(json,"data","View","stat","favorite");
+                coin = JsonLib.getLong(json,"data","View","stat","coin");
+                share = JsonLib.getLong(json,"data","View","stat","share");
+                like = JsonLib.getLong(json,"data","View","stat","like");
+            }
+        }
+        // .data.Card
+        {
+            // ..card
+            {
+                mid = JsonLib.getLong(json,"data","Card","card","mid");
+                uploader = JsonLib.getString(json,"data","Card","card","name");
+            }
+        }
+        // .data.Tags
+        {
+            String[] tagJson = JsonLib.getArray(json,"data","Tags");
+            String[] tagName = new String[tagJson.length];
+            for(int i = 0; i < tagJson.length; i++) {
+                tagName[i] = JsonLib.getString(tagJson[i],"tag_name");
+            }
+            tag = tagName;
+        }
     }
     
     public static String tidSubToMain(int tid) {
