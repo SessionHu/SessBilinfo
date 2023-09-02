@@ -136,9 +136,9 @@ public class Video {
             // 返回数据
             return formatted+"\n\n";
         } else if(code==62002) {
-            return "稿件不可见";
+            return "稿件不可见\n\n";
         } else if(code==62004) {
-            return "稿件审核中";
+            return "稿件审核中\n\n";
         } else {
             // 抛出异常
             throw new BiliException(BiliAPIs.outCodeErr(rawJson));
