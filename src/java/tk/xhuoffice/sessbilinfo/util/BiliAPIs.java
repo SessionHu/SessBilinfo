@@ -36,13 +36,16 @@ public class BiliAPIs {
     // 视频超详细信息
     public static final String VIEW_DETAIL = BASE_URL+"/web-interface/view/detail";
     
-    public static void outCodeErr(String rawJson) {
+    public static String outCodeErr(String rawJson) {
         // 获取错误
         int code = JsonLib.getInt(rawJson,"code");
         String msg = JsonLib.getString(rawJson,"message");
         // 输出错误信息
-        Logger.errln("返回值: "+code+" "+codeErr(code));
+        String summary = code+" "+codeErr(code);
+        Logger.errln("返回值: "+summary);
         Logger.errln("错误信息: "+msg);
+        // 返回code
+        return summary;
     }
     
     public static String codeErr(int code) {
