@@ -69,7 +69,7 @@ public class OutFormat {
             } catch(java.util.NoSuchElementException e) {
                 // 异常处理(退出)
                 Logger.ln();
-                outException(e,0);
+                outThrowable(e,0);
                 Logger.fataln("非法的输入");
                 System.exit(1);
             }
@@ -116,12 +116,12 @@ public class OutFormat {
         }
     }
     
-    public static void outException(Exception e, int l) {
+    public static void outThrowable(Throwable e, int l) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         String stackTrace = sw.toString();
-        Logger.println(stackTrace,l);
+        Logger.throwabln(stackTrace,l);
     }
 
     private static boolean isSupportRichText() {

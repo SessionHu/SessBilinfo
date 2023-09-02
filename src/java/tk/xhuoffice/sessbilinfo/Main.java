@@ -29,7 +29,17 @@ public class Main {
         // 显示菜单
         int id = menu();
         // 执行操作
-        task(id);
+        try {
+            task(id);
+        } catch(Exception e) {
+            Logger.fataln("发生未知异常");
+            OutFormat.outThrowable(e,4);
+            System.exit(127);
+        } catch(Error e) {
+            Logger.fataln("发生未知错误");
+            OutFormat.outThrowable(e,4);
+            System.exit(127);
+        }
         // 退出
         System.exit(0);
     }

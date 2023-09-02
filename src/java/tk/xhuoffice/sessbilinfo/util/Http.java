@@ -58,13 +58,13 @@ public class Http {
                     return "{\"code\":-400,\"message\":\"请求错误\",\"ttl\":1}";
                 } else {
                     Logger.fataln("HTTP 请求发生未知错误");
-                    OutFormat.outException(e,4);
+                    OutFormat.outThrowable(e,4);
                 }
                 break;
             } catch(Exception e) {
                 // 异常报告
                 Logger.fataln("HTTP 请求发生未知错误");
-                OutFormat.outException(e,4);
+                OutFormat.outThrowable(e,4);
                 break;
             }
             Logger.debugln("第 "+(t+1)+" 次重试");

@@ -61,11 +61,11 @@ public class CookieFile {
                     break;
                 } catch(Exception e) {
                     if(i==0) {
-                        OutFormat.outException(e,0);
+                        OutFormat.outThrowable(e,0);
                         Logger.warnln("Cookie 文件写入失败, 将在当前目录下保存");
                         CookieFilePath = getCookieFilePath("os");
                     } else {
-                        OutFormat.outException(e,0);
+                        OutFormat.outThrowable(e,0);
                         Logger.errln("Cookie 文件写入失败");
                     }
                 }
@@ -162,7 +162,7 @@ public class CookieFile {
             CookieFilePath = getCookieFilePath("os");
             return load();
         } catch(Exception e) {
-            OutFormat.outException(e,0);
+            OutFormat.outThrowable(e,0);
             Logger.warnln("Cookie 文件加载失败");
         }
         // 返回空数据

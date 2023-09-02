@@ -36,7 +36,7 @@ public class Search {
             Logger.errln(e.getMessage());
         } catch(Exception e) {
             Logger.fataln("搜索发生未知异常");
-            OutFormat.outException(e,4);
+            OutFormat.outThrowable(e,4);
         }
         System.exit(2);
     }

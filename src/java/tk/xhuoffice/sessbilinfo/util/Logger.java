@@ -74,5 +74,21 @@ public class Logger {
     public static void ln() {
         System.out.println();
     }
-
+    
+    public static void throwabln(String str, int l) {
+        String[] levels = {"DEBUG","INFO","WARN","ERROR","FATAL"};
+        if(l>=1&&l<=4) {
+            String formatted = String.format("[%s] ",levels[l]);
+            str = str.replaceAll("\\n", "\n"+formatted);
+            if(l>=3) {
+                System.err.println(formatted+str);
+            } else {
+                System.out.println(formatted+str);
+            }
+        } else if(debug) {
+            str = str.replaceAll("\\n", "\n[DEBUG] ");
+            System.out.println("[DEBUG] "+str);
+        }
+    }
+    
 }

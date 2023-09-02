@@ -99,7 +99,7 @@ public class UserInfo {
             result += spaceTop.get();
             result += spaceMasterpiece.get();
         } catch (InterruptedException | java.util.concurrent.ExecutionException e) {
-            OutFormat.outException(e,3);
+            OutFormat.outThrowable(e,3);
         }
         executor.shutdown();
         return result;
