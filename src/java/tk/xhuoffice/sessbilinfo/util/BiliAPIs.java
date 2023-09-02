@@ -3,20 +3,49 @@ package tk.xhuoffice.sessbilinfo.util;
 import java.util.Map;
 import java.util.HashMap;
 
-// 信息来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/errcode.md
+/**
+ * API来源:
+ *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md
+ *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/space.md
+ *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_request.md
+ *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/check_nickname.md
+ *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/info.md
+ * 信息来源:
+ *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/errcode.md
+ */
 
-public class Error {
+
+public class BiliAPIs {
     
-    public static void out(String rawJson) {
+    // 基本API
+    public static final String BASE_URL = "https://api.bilibili.com/x";
+    // 用户名片信息
+    public static final String USER_CARD = BASE_URL+"/web-interface/card";
+    // 用户空间公告
+    public static final String USER_SPACE_NOTICE = BASE_URL+"/space/notice";
+    // 用户空间个人TAG
+    public static final String USER_SPACE_TAG = BASE_URL+"/space/acc/tags";
+    // 用户空间置顶视频
+    public static final String USER_SPACE_TOP = BASE_URL+"/space/top/arc";
+    // 用户空间代表作
+    public static final String USER_SPACE_MASTERPIECE = BASE_URL+"/space/masterpiece";
+    // 搜索综合
+    public static final String SEARCH_ALL = BASE_URL+"/web-interface/search/all/v2";
+    // 检查昵称是否可用
+    public static final String ACCOUNT_CHECK_NICKNAME = "https://passport.bilibili.com/web/generic/check/nickname";
+    // 视频超详细信息
+    public static final String VIEW_DETAIL = BASE_URL+"/web-interface/view/detail";
+    
+    public static void outCodeErr(String rawJson) {
         // 获取错误
         int code = JsonLib.getInt(rawJson,"code");
         String msg = JsonLib.getString(rawJson,"message");
         // 输出错误信息
-        Logger.errln("返回值: "+code+" "+code(code));
+        Logger.errln("返回值: "+code+" "+codeErr(code));
         Logger.errln("错误信息: "+msg);
     }
     
-    public static String code(int code) {
+    public static String codeErr(int code) {
         Map<Integer,String> errMsg = new HashMap<>();
         // -1 ~ -115 的 code 多半用不上
         // 权限类

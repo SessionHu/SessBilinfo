@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class CookieFile {
 
-    public static final long COOKIE_EXPIRE_TIME = 14 * 24 * 60 * 60 * 1000; // 14 days
+    public static final long COOKIE_EXPIRE_TIME = 2 * 30 * 24 * 60 * 60 * 1000; // 2 months
 
     public static String CookieFilePath = getCookieFilePath();
     
@@ -113,33 +113,33 @@ public class CookieFile {
         }
         try {
             // 读取文件
-            String[] lines;
+            String[] line;
             try(FileReader reader = new FileReader(file)) {
                 char[] buffer = new char[(int) file.length()];
                 reader.read(buffer);
-                lines = new String(buffer).split("\n");
+                line = new String(buffer).split("\n");
             }
             // 处理数据
             try {
-                long timestamp = Long.parseLong(lines[0]);
+                long timestamp = Long.parseLong(line[0]);
                 // 验证文件
                 if(System.currentTimeMillis() - timestamp > COOKIE_EXPIRE_TIME) {
                     // 文件过期
                     Logger.debugln("文件过期");
-                } else if(lines[1]==null||lines[1].trim().isEmpty()) {
+                } else if(line[1]==null||line[1].trim().isEmpty()) {
                     // 正文第一行为空行
                     Logger.debugln("文件首行为空");
                 } else {
                     // 读取数据
-                    String[] cookie = new String[lines.length-1];
+                    String[] cookie = new String[line.length-1];
                     int cookieIndex = 0;
-                    for(int i = 1; i < lines.length; i++) {
+                    for(int i = 1; i < line.length; i++) {
                         // 读取行
-                        String line = lines[i];
+                        String current = line[i];
                         // 判断行是否有效
-                        if(line.contains("=")) {
+                        if(current.contains("=")) {
                             // 有效载入
-                            cookie[cookieIndex] = line;
+                            cookie[cookieIndex] = current;
                             cookieIndex++;
                         } else {
                             // 无效留空
@@ -157,6 +157,7 @@ public class CookieFile {
                 Logger.warnln("Cookie 文件为空");
             }
         } catch(java.io.FileNotFoundException e) {
+            // 重新更换路径加载
             Logger.debugln("java.io.FileNotFoundException: "+e.getMessage());
             CookieFilePath = getCookieFilePath("os");
             return load();

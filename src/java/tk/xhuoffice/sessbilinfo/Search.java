@@ -2,23 +2,16 @@ package tk.xhuoffice.sessbilinfo;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import tk.xhuoffice.sessbilinfo.util.Error;
+import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
 import tk.xhuoffice.sessbilinfo.util.Http;
 import tk.xhuoffice.sessbilinfo.util.JsonLib;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
-/**
- * API来源:  https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_request.md
- * 信息来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_response.md
- */
+// 信息来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_response.md
+
 
 public class Search {
-    
-    // 基本API
-    public static final String BASE_URL = "https://api.bilibili.com/x";
-    // 综合搜索
-    public static final String SEARCH_ALL = BASE_URL+"/web-interface/search/all/v2";
     
     public static void search() {
         // 获取搜索内容
@@ -73,7 +66,7 @@ public class Search {
             }
         }
         // 发送请求
-        String rawJson = Http.get(SEARCH_ALL+"?keyword="+Http.encode(keyword));
+        String rawJson = Http.get(BiliAPIs.SEARCH_ALL+"?keyword="+Http.encode(keyword));
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -107,7 +100,7 @@ public class Search {
         } else if(code==-412) {
             throw new RuntimeException("请求被拦截, 请检测 Cookie 长度");
         } else {
-            Error.out(rawJson);
+            BiliAPIs.outCodeErr(rawJson);
         }
         return results;
     }

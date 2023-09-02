@@ -74,7 +74,7 @@ public class Http {
     }
     
     public static String getDataFromURL(String inurl) throws IOException {
-        // 使用本地 Cookie (有效期 24 h)
+        // 加载本地 Cookie
         String[] cookie = CookieFile.load();
         // 当本地 Cookie 不可用时重新获取
         if(cookie.length==0) {
@@ -88,7 +88,7 @@ public class Http {
         return data;
     }
     
-    public static HttpURLConnection setGetConnURL(String inurl, String ua, String[] cookie) throws IOException {
+    public static HttpURLConnection setGetConnURL(String inurl, String ua, String... cookie) throws IOException {
         Logger.debugln("设置请求到 "+OutFormat.shorterString(inurl));
         // 创建 URL 对象
         URL url = new URL(inurl);
@@ -141,23 +141,28 @@ public class Http {
         return response.toString();
     }
     
-    public static String[] getDefaultCookie() throws IOException {
-        Logger.debugln("联机获取默认 Cookie");
-        // 设置请求到 https://www.bilibili.com/
-        String url = "https://www.bilibili.com/";
-        HttpURLConnection conn = setGetConnURL(url, WIN10_EDGE_UA, new String[0]);
-        conn.connect();
-        // 从响应头中获取 Cookie
-        Map<String, List<String>> headers = conn.getHeaderFields();
-        List<String> cookies = headers.get("Set-Cookie");
-        String[] cookie = new String[cookies.size()];
-        for(int i = 0; i < cookies.size(); i++) {
-            cookie[i] = cookies.get(i);
+    public static String[] getDefaultCookie() {
+        try {
+            Logger.debugln("联机获取默认 Cookie");
+            // 设置请求到 https://www.bilibili.com/
+            String url = "https://www.bilibili.com/";
+            HttpURLConnection conn = setGetConnURL(url, WIN10_EDGE_UA);
+            conn.connect();
+            // 从响应头中获取 Cookie
+            Map<String, List<String>> headers = conn.getHeaderFields();
+            List<String> cookies = headers.get("Set-Cookie");
+            String[] cookie = new String[cookies.size()];
+            for(int i = 0; i < cookies.size(); i++) {
+                cookie[i] = cookies.get(i);
+            }
+            // 保存 Cookie
+            CookieFile.save(cookie);
+            // 返回 Cookie
+            return cookie;
+        } catch(IOException e) {
+            Logger.warnln("联机获取 Cookie 发生异常, 使用内置 Cookie");
+            return DEFAULT_COOKIE.split(";") ;
         }
-        // 保存 Cookie
-        CookieFile.save(cookie);
-        // 返回 Cookie
-        return cookie;
     }
     
 }

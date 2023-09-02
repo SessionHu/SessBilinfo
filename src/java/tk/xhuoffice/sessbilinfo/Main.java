@@ -9,6 +9,10 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 public class Main {
     
+    public static final String SOFT_NAME = "SessBilinfo";
+    public static final String SOFT_VERSION = "1.0.0-alpha-gh.main";
+    public static final String SOFT_TITLE  = SOFT_NAME+" "+SOFT_VERSION;
+    
     public static Scanner scan = new Scanner(System.in);
     
     static {
@@ -41,7 +45,7 @@ public class Main {
                 "4. 检查昵称状态\n"+
                 "5. 修改 Cookie\n"+
                 "0. 退出");
-        Logger.inputHere();
+        Logger.prompt();
         // 获取输入信息
         try {
             id = scan.nextInt();
@@ -105,7 +109,7 @@ public class Main {
                             jarFileName = "SessBilinfo.jar";
                         }
                         // 帮助信息内容
-                        String helpMsg = "SessBilinfo v0.2.0-gh.main\n";
+                        String helpMsg = SOFT_TITLE+"\n";
                         String helpMsgEnUs = "Usage:\n"+
                                 "    java -jar \""+jarFileName+"\"\n"+
                                 "Command arguments:\n"+
@@ -142,10 +146,10 @@ public class Main {
                     // 输出版本信息
                     Logger.debug = false;
                     Logger.println(
-                            "SessBilinfo v0.2.0-gh.main\n"+
+                            SOFT_TITLE+"\n"+
                             "Copyright (C) 2023 SessionHu\n"+
                             "Cookie Path:  "+CookieFile.getCookieFilePath()+"\n"+
-                            "Current Time: "+String.valueOf(System.currentTimeMillis()));
+                            "Current Time: "+System.currentTimeMillis());
                     System.exit(0);
                     break;
                 case "-d":

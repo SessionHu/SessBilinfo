@@ -3,21 +3,16 @@ package tk.xhuoffice.sessbilinfo;
 import java.util.HashMap;
 import java.util.Map;
 import tk.xhuoffice.sessbilinfo.util.AvBv;
-import tk.xhuoffice.sessbilinfo.util.Error;
+import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
 import tk.xhuoffice.sessbilinfo.util.Http;
 import tk.xhuoffice.sessbilinfo.util.JsonLib;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
-// API来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/info.md
 // 视频分区来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/video_zone.md
 
+
 public class Video {
-    
-    // 基本URL
-    public static final String BASE_URL = "https://api.bilibili.com/x";
-    // 视频超详细信息
-    public static final String VIEW_DETAIL = BASE_URL + "/web-interface/view/detail";
     
     public static void getVideoInfo() {
         // 提示信息
@@ -96,13 +91,13 @@ public class Video {
     
     public static String getDetail(String aid) {
         // 发送请求
-        String rawJson = Http.get(VIEW_DETAIL+"?aid="+aid);
+        String rawJson = Http.get(BiliAPIs.VIEW_DETAIL+"?aid="+aid);
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0){
             // ...
         } else {
-            Error.out(rawJson);
+            BiliAPIs.outCodeErr(rawJson);
         }
         return JsonLib.formatJson(rawJson)+"\n\n";
     }

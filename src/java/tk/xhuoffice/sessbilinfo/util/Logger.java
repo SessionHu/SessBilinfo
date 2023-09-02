@@ -63,12 +63,12 @@ public class Logger {
         }
     }
     
-    public static void inputHere(String... tip) {
-        if(tip.length!=0) {
-            System.out.print(tip[0]+" > ");
-        } else {
-            System.out.print("> ");
-        }
+    public static void prompt() {
+        System.out.print("> ");
+    }
+    
+    public static void prompt(String str) {
+        System.out.print(str+" > ");
     }
     
     public static void ln() {

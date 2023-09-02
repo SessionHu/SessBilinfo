@@ -1,19 +1,14 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.util.regex.Pattern;
-import tk.xhuoffice.sessbilinfo.util.Error;
+import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
 import tk.xhuoffice.sessbilinfo.util.Http;
 import tk.xhuoffice.sessbilinfo.util.JsonLib;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
-// API来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/check_nickname.md
-
 
 public class Account {
-    
-    // 检查昵称是否可用
-    public static final String CHECK_NICKNAME = "https://passport.bilibili.com/web/generic/check/nickname";
     
     public static void checkNickname() {
         // 定义变量
@@ -57,7 +52,7 @@ public class Account {
     public static void outNicknameStatus(String name) {
         // 请求数据
         Logger.debugln("API处理昵称");
-        String json = Http.get(CHECK_NICKNAME+"?nickName="+Http.encode(name));
+        String json = Http.get(BiliAPIs.ACCOUNT_CHECK_NICKNAME+"?nickName="+Http.encode(name));
         // 获取返回值
         int code = JsonLib.getInt(json,"code");
         // 输出信息
@@ -74,7 +69,7 @@ public class Account {
         } else if(code==40006) {
             Logger.println("昵称过短");
         } else {
-            Error.out(json);
+            BiliAPIs.outCodeErr(json);
         }
     }
     
