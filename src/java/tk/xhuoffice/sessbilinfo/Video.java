@@ -120,10 +120,16 @@ public class Video {
             String share = OutFormat.num(video.share); // 分享数
             String like = OutFormat.num(video.like); // 点赞数
             String tags = ""; { // TAG
-                for(int i = 0; i < video.tag.length; i++) {
-                    tags += video.tag[i]+", ";
+                try {
+                    for(int i = 0; i < video.tag.length; i++) {
+                        Logger.debugln("第 "+i+" 个 TAG");
+                        tags += video.tag[i]+", ";
+                    }
+                    tags = tags.substring(0,tags.length()-2);
+                } catch(StringIndexOutOfBoundsException e) {
+                    // 看起来似乎没有TAG
+                    tags = "无";
                 }
-                tags = tags.substring(0,tags.length()-2);
             }
             // 格式化处理数据
             String formatted = "";
