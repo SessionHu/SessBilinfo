@@ -10,7 +10,7 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 public class Main {
     
     public static final String SOFT_NAME = "SessBilinfo";
-    public static final String SOFT_VERSION = "1.0.0-alpha-gh.main";
+    public static final String SOFT_VERSION = "1.0.0-rc";
     public static final String SOFT_TITLE  = SOFT_NAME+" "+SOFT_VERSION;
     
     public static Scanner scan = new Scanner(System.in);
