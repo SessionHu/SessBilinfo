@@ -7,7 +7,7 @@ public class Logger {
     private static void print(String str, int lv, String cN, String mN) {
         String[] levels = {"DEBUG","INFO","WARN","ERROR","FATAL"};
         if(lv>=1&&lv<=4) {
-            String formatted = String.format("[%s] [%s] [%s] ", levels[lv], cN, mN);
+            String formatted = String.format("[%s] [%s.%s] ", levels[lv], cN, mN);
             str = str.replaceAll("\\n", "\n"+formatted);
             if(lv>=3) {
                 System.err.print(formatted+str);
@@ -16,7 +16,7 @@ public class Logger {
             }
         } else if(debug) {
             str = str.replaceAll("\\n", "\n[DEBUG] ["+cN+"] ["+mN+"] ");
-            System.out.format("[DEBUG] [%s] [%s] %s", cN, mN, str);
+            System.out.format("[DEBUG] [%s.%s] %s", cN, mN, str);
         }
     }
     
