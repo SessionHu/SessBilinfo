@@ -123,15 +123,15 @@ public class Video {
                 for(int i = 0; i < video.tag.length; i++) {
                     tags += video.tag[i]+", ";
                 }
-                tags = tags.substring(1,tags.length()-2);
+                tags = tags.substring(0,tags.length()-2);
             }
             // 格式化处理数据
             String formatted = "";
-            formatted += String.format("%s", video.title);
-            formatted += String.format("%s-%s  %s   UP主 %s", video.mtname, video.tname, cprt, video.uploader);
-            formatted += String.format("播放 %s   弹幕 %s   %s", view, danmaku, date);
-            formatted += String.format("点赞 %s   投币 %s   收藏 %s   分享 %s", like, coin, fav, share);
-            formatted += String.format("TAG: %s", tags);
+            formatted += String.format("%s\n", video.title);
+            formatted += String.format("%s-%s  %s   UP主 %s\n", video.mtname, video.tname, cprt, video.uploader);
+            formatted += String.format("播放 %s   弹幕 %s   %s\n", view, danmaku, date);
+            formatted += String.format("点赞 %s   投币 %s   收藏 %s   分享 %s\n", like, coin, fav, share);
+            formatted += String.format("TAG: %s\n", tags);
             formatted += String.format("总时长 %s   评论 %s", alltime, reply);
             // 返回数据
             return formatted+"\n\n";
