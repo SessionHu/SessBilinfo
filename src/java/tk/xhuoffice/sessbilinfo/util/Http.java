@@ -49,28 +49,29 @@ public class Http {
             } catch(javax.net.ssl.SSLHandshakeException e) {
                 // SSL 握手错误
                 Logger.println("SSL 握手失败, 请检查网络连接是否稳定",l);
-            } catch(java.io.IOException e) {
-                if(e.getMessage().contains("412")) {
-                    // HTTP 412
-                    return "{\"code\":-412,\"message\":\"请求被拦截\",\"ttl\":1,\"data\":null}";
-                } else if(e.getMessage().contains("400")) {
-                    // HTTP 400
-                    return "{\"code\":-400,\"message\":\"请求错误\",\"ttl\":1}";
+            } catch(java.net.ConnectException e) {
+                String msg = e.getMessage();
+                if(msg.contains("timed out")) {
+                    // 连接超时
+                    Logger.println("连接超时, 请检查网络连接是否稳定",l);
                 } else {
-                    Logger.fataln("HTTP 请求发生未知错误");
-                    OutFormat.outThrowable(e,4);
+                    handleUnknownException(e);
+                    break;
                 }
-                break;
             } catch(Exception e) {
                 // 异常报告
-                Logger.fataln("HTTP 请求发生未知错误");
-                OutFormat.outThrowable(e,4);
+                handleUnknownException(e);
                 break;
             }
             Logger.debugln("第 "+(t+1)+" 次重试");
         }
         System.exit(64);
         return ""; // 防止编译报错
+    }
+    
+    private static void handleUnknownException(Exception e) {
+        Logger.fataln("HTTP 请求发生未知异常");
+        OutFormat.outThrowable(e,4);
     }
     
     public static String getDataFromURL(String inurl) throws IOException {
@@ -129,8 +130,18 @@ public class Http {
         String connStr = conn.toString();
         String url = connStr.substring(connStr.indexOf(":")+1);
         Logger.debugln("读取返回数据从 "+OutFormat.shorterString(url));
-        // 创建输入流并读取返回数据
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        // 读取 HTTP 状态码
+        int responseCode = conn.getResponseCode();
+        Logger.debugln("HTTP 状态码: "+conn);
+        // 读取返回数据
+        BufferedReader in;
+        if(responseCode==200) {
+            // 正常读取返回数据
+            in = new BufferedReader(new InputStreamReader(conn.getInputStream(),"UTF-8"));
+        } else {
+            // HTTP 状态码不正常时
+            in = new BufferedReader(new InputStreamReader(conn.getErrorStream(),"UTF-8"));
+        }
         String inputLine;
         StringBuffer response = new StringBuffer();
         while((inputLine = in.readLine()) != null) {
@@ -147,7 +158,6 @@ public class Http {
             // 设置请求到 https://www.bilibili.com/
             String url = "https://www.bilibili.com/";
             HttpURLConnection conn = setGetConnURL(url, WIN10_EDGE_UA);
-            conn.connect();
             // 从响应头中获取 Cookie
             Map<String, List<String>> headers = conn.getHeaderFields();
             List<String> cookies = headers.get("Set-Cookie");
