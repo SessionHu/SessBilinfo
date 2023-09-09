@@ -105,65 +105,69 @@ public class CookieFile {
     }
     
     public static String[] load() {
+        // 加载文件
+        for(int t = 0; t < 2; t++) {
+            try {
+                return readCookie();
+            } catch(java.io.FileNotFoundException e) {
+                // 重新更换路径加载
+                Logger.debugln("java.io.FileNotFoundException: "+e.getMessage());
+                CookieFilePath = getCookieFilePath("os");
+            } catch(Exception e) {
+                OutFormat.outThrowable(e,0);
+                Logger.warnln("Cookie 文件加载失败");
+            }
+        }
+        // 返回空数据
+        return new String[0];
+    }
+    
+    private static String[] readCookie() throws IOException {
         // 输入文件
         File file = new File(CookieFilePath);
-        // 文件是否存在
-        if(!file.exists()) {
-            return new String[0];
+        // 读取文件
+        String[] line;
+        try(FileReader reader = new FileReader(file)) {
+            char[] buffer = new char[(int)file.length()];
+            reader.read(buffer);
+            line = new String(buffer).split("\n");
         }
+        // 处理数据
         try {
-            // 读取文件
-            String[] line;
-            try(FileReader reader = new FileReader(file)) {
-                char[] buffer = new char[(int) file.length()];
-                reader.read(buffer);
-                line = new String(buffer).split("\n");
-            }
-            // 处理数据
-            try {
-                long timestamp = Long.parseLong(line[0]);
-                // 验证文件
-                if(System.currentTimeMillis() - timestamp > COOKIE_EXPIRE_TIME) {
-                    // 文件过期
-                    Logger.debugln("文件过期");
-                } else if(line[1]==null||line[1].trim().isEmpty()) {
-                    // 正文第一行为空行
-                    Logger.debugln("文件首行为空");
-                } else {
-                    // 读取数据
-                    String[] cookie = new String[line.length-1];
-                    int cookieIndex = 0;
-                    for(int i = 1; i < line.length; i++) {
-                        // 读取行
-                        String current = line[i];
-                        // 判断行是否有效
-                        if(current.contains("=")) {
-                            // 有效载入
-                            cookie[cookieIndex] = current;
-                            cookieIndex++;
-                        } else {
-                            // 无效留空
-                            Logger.debugln("文件行 "+i+" 无效");
-                        }
+            long timestamp = Long.parseLong(line[0]);
+            // 验证文件
+            if(System.currentTimeMillis() - timestamp > COOKIE_EXPIRE_TIME) {
+                // 文件过期
+                Logger.debugln("文件过期");
+            } else if(line[1]==null||line[1].trim().isEmpty()) {
+                // 正文第一行为空行
+                Logger.debugln("文件首行为空");
+            } else {
+                // 读取数据
+                String[] cookie = new String[line.length-1];
+                int cookieIndex = 0;
+                for(int i = 1; i < line.length; i++) {
+                    // 读取行
+                    String current = line[i];
+                    // 判断行是否有效
+                    if(current.contains("=")) {
+                        // 有效载入
+                        cookie[cookieIndex] = current;
+                        cookieIndex++;
+                    } else {
+                        // 无效留空
+                        Logger.debugln("文件行 "+i+" 无效");
                     }
-                    // 返回数据
-                    return cookie;
                 }
-            } catch(NumberFormatException e) {
-                Logger.debugln("NumberFormatException: "+e.getMessage());
-                Logger.errln("Cookie 文件时间戳错误");
-            } catch(ArrayIndexOutOfBoundsException e) {
-                Logger.debugln("ArrayIndexOutOfBoundsException: "+e.getMessage());
-                Logger.warnln("Cookie 文件为空");
+                // 返回数据
+                return cookie;
             }
-        } catch(java.io.FileNotFoundException e) {
-            // 重新更换路径加载
-            Logger.debugln("java.io.FileNotFoundException: "+e.getMessage());
-            CookieFilePath = getCookieFilePath("os");
-            return load();
-        } catch(Exception e) {
-            OutFormat.outThrowable(e,0);
-            Logger.warnln("Cookie 文件加载失败");
+        } catch(NumberFormatException e) {
+            Logger.debugln("NumberFormatException: "+e.getMessage());
+            Logger.errln("Cookie 文件时间戳错误");
+        } catch(ArrayIndexOutOfBoundsException e) {
+            Logger.debugln("ArrayIndexOutOfBoundsException: "+e.getMessage());
+            Logger.warnln("Cookie 文件为空");
         }
         // 返回空数据
         return new String[0];
