@@ -132,7 +132,7 @@ public class Http {
         Logger.debugln("读取返回数据从 "+OutFormat.shorterString(url));
         // 读取 HTTP 状态码
         int responseCode = conn.getResponseCode();
-        Logger.debugln("HTTP 状态码: "+conn);
+        Logger.debugln("HTTP 状态码: "+responseCode);
         // 读取返回数据
         BufferedReader in;
         if(responseCode==200) {
