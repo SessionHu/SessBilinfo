@@ -7,7 +7,7 @@ public class Logger {
     private static void print(String str, int lv, String cN, String mN) {
         String[] levels = {"DEBUG","INFO","WARN","ERROR","FATAL"};
         if(lv>=1&&lv<=4) {
-            String formatted = String.format("[%s] [%s.%s] ", levels[lv], cN, mN);
+            String formatted = String.format("[%s][%s.%s] ", levels[lv], cN, mN);
             str = str.replaceAll("\\n", "\n"+formatted);
             if(lv>=3) {
                 System.err.print(formatted+str);
@@ -15,13 +15,13 @@ public class Logger {
                 System.out.print(formatted+str);
             }
         } else if(debug) {
-            str = str.replaceAll("\\n", "\n[DEBUG] ["+cN+"] ["+mN+"] ");
-            System.out.format("[DEBUG] [%s.%s] %s", cN, mN, str);
+            str = str.replaceAll("\\n", "\n[DEBUG]["+cN+"] ["+mN+"] ");
+            System.out.format("[DEBUG][%s.%s] %s", cN, mN, str);
         }
     }
     
-    private static void println(String str, int lv) {
-        synchronized(Logger.class) {
+    private static synchronized void println(String str, int lv) {
+        //synchronized(Logger.class) {
             // 获取完整类名
             String fullClassName = Thread.currentThread().getStackTrace()[3].getClassName();
             // 获取最后一个 '.' 位置
@@ -34,7 +34,7 @@ public class Logger {
             print(str,lv,cN,mN);
             // 换行
             System.out.println();
-        }
+        //}
     }
 
     public static void println(String str, long lv) {
