@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -32,10 +33,8 @@ public class OutFormat {
     }
     
     public static String date(long timestamp) {
-        // 读取时间戳
-        Instant instant = Instant.ofEpochSecond(timestamp);
         // 转换为日期
-        LocalDateTime date = LocalDateTime.ofInstant(instant,ZONE_HK);
+        LocalDateTime date = LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp),ZONE_HK);
         int y = date.getYear(); // 年
         int m = date.getMonthValue(); // 月
         int d = date.getDayOfMonth(); // 日
@@ -49,7 +48,7 @@ public class OutFormat {
     }
     
     public static String fullDateTime(long timestamp) {
-        return new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date(Long.parseLong(String.valueOf(timestamp))));
+        return LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp),ZONE_HK).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
     
     public static String formatString(String origin, String add) {
