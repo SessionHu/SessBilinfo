@@ -9,12 +9,22 @@ import java.util.Map;
  */
 
 public class AvBv {
-
+    
+    public int aid;
+    public String bvid;
+    
     public AvBv() {
         Logger.debugln("AvBv转换实用工具");
-        for (int i = 0; i < 58; i++) {
-            MAP.put(TABLE.charAt(i), i);
-        }
+    }
+
+    public AvBv(int aid) {
+        this.aid = aid;
+        this.bvid = aidToBvid(aid);
+    }
+
+    public AvBv(String bvid) {
+        this.bvid = bvid;
+        this.aid = bvidToAid(bvid);
     }
     
     private final String TABLE = "fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF";
@@ -23,10 +33,16 @@ public class AvBv {
     private final long ADD = 8728348608L;
     private final Map<Character, Integer> MAP = new HashMap<>();
     
+    {
+        for(int i = 0; i < 58; i++) {
+            MAP.put(TABLE.charAt(i), i);
+        }
+    }
+    
     public String aidToBvid(int aid) {
         long x = (aid ^ XOR) + ADD;
         char[] chars = new char[]{'B', 'V', '1', ' ', ' ', '4', ' ', '1', ' ', '7', ' ', ' '};
-        for (int i = 0; i < 6; i++) {
+        for(int i = 0; i < 6; i++) {
             int pow = (int) Math.pow(58, i);
             long i1 = x / pow;
             int index = (int) (i1 % 58);
@@ -39,10 +55,10 @@ public class AvBv {
     
     public int bvidToAid(String bvid) {
         long r = 0;
-        for (int i = 0; i < 6; i++) {
+        for(int i = 0; i < 6; i++) {
             r += MAP.get(bvid.charAt(S[i])) * Math.pow(58, i);
         }
-        int result = (int) ((r - ADD) ^ XOR);
+        int result = (int)((r - ADD) ^ XOR);
         Logger.debugln("aid "+result);
         return result;
     }

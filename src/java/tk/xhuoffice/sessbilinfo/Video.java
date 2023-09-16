@@ -50,7 +50,7 @@ public class Video {
                 } else if(vid.toLowerCase().startsWith("bv")&&vid.length()==12) {
                     // BV号(标准12位)
                     Logger.debugln("转换BV号为AV号");
-                    aid = String.valueOf(new AvBv().bvidToAid(vid));
+                    aid = String.valueOf(new AvBv(vid).aid);
                     if(Integer.valueOf(aid)>0) {
                         aid = verifyAid(aid);
                     } else {
@@ -59,7 +59,7 @@ public class Video {
                 } else if(vid.length()==10) {
                     // BV号(无bv头)
                     Logger.debugln("转换BV号为AV号");
-                    aid = String.valueOf(new AvBv().bvidToAid("bv"+vid));
+                    aid = String.valueOf(new AvBv("bv"+vid).aid);
                     if(Integer.valueOf(aid)>0) {
                         aid = verifyAid(aid);
                     } else {
