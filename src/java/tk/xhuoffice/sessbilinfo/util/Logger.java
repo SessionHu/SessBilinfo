@@ -21,20 +21,18 @@ public class Logger {
     }
     
     private static synchronized void println(String str, int lv) {
-        //synchronized(Logger.class) {
-            // 获取完整类名
-            String fullClassName = Thread.currentThread().getStackTrace()[3].getClassName();
-            // 获取最后一个 '.' 位置
-            int lastDotIndex = fullClassName.lastIndexOf('.');
-            // 仅获取类名
-            String cN = fullClassName.substring(lastDotIndex + 1);
-            // 获取方法名
-            String mN = Thread.currentThread().getStackTrace()[3].getMethodName();
-            // 打印信息
-            print(str,lv,cN,mN);
-            // 换行
-            System.out.println();
-        //}
+        // 获取完整类名
+        String fullClassName = Thread.currentThread().getStackTrace()[3].getClassName();
+        // 获取最后一个 '.' 位置
+        int lastDotIndex = fullClassName.lastIndexOf('.');
+        // 仅获取类名
+        String cN = fullClassName.substring(lastDotIndex + 1);
+        // 获取方法名
+        String mN = Thread.currentThread().getStackTrace()[3].getMethodName();
+        // 打印信息
+        print(str,lv,cN,mN);
+        // 换行
+        System.out.println();
     }
 
     public static void println(String str, long lv) {
