@@ -1,5 +1,6 @@
 package tk.xhuoffice.sessbilinfo;
 
+import java.io.File;
 import java.util.Scanner;
 import sun.misc.Signal;
 import tk.xhuoffice.sessbilinfo.util.CookieFile;
@@ -114,8 +115,13 @@ public class Main {
                         // 获取 JAR 包 文件名
                         String jarFileName;
                         try {
-                            jarFileName = new java.io.File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getName();
-                        } catch(java.net.URISyntaxException e) {
+                            File file = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+                            if(!file.isDirectory()) {
+                                jarFileName = file.getName();
+                            } else {
+                                throw new java.io.IOException(file.getCanonicalPath()+" is a directory");
+                            }
+                        } catch(java.net.URISyntaxException|java.io.IOException e) {
                             jarFileName = "SessBilinfo.jar";
                         }
                         // 帮助信息内容
@@ -133,13 +139,13 @@ public class Main {
                         String helpMsgZhCn = "用法:\n"+
                                 "	java -jar \""+jarFileName+"\"\n"+
                                 "命令参数:\n"+
-                                "	-d, --debug		启用 DEBUG 输出\n"+
-                                "	-n, --nocookie	删除 Cookie 文件后运行程序\n"+
+                                "	-d, --debug     启用 DEBUG 输出\n"+
+                                "	-n, --nocookie  删除 Cookie 文件后运行程序\n"+
                                 "环境变量:\n"+
-                                "	OPEN_BILI_DEBUG	当值为 \"true\" 时, 与 '-d' 或 '-debug' 相同\n"+
+                                "	OPEN_BILI_DEBUG 当值为 \"true\" 时, 与 '-d' 或 '-debug' 相同\n"+
                                 "帮助及信息:\n"+
-                                "	-h, --help		输出本帮助信息\n"+
-                                "	-v, --version	输出版本和其她信息";
+                                "	-h, --help      输出本帮助信息\n"+
+                                "	-v, --version   输出版本和其她信息";
                         // 根据语言输出帮助信息
                         if(OutFormat.getLang()[0].equals("zh")) {
                             helpMsg += helpMsgZhCn;
