@@ -59,15 +59,19 @@ public class CookieFile {
                     writeTimeAndLines(CookieFilePath,cookie);
                     // 离开循环
                     break;
+                } catch(java.io.FileNotFoundException e) {
+                    Logger.debugln("java.io.FileNotFoundException: "+e.getMessage());
                 } catch(Exception e) {
-                    if(i==0) {
-                        OutFormat.outThrowable(e,0);
-                        Logger.warnln("Cookie 文件写入失败, 将在当前目录下保存");
-                        CookieFilePath = getCookieFilePath("os");
-                    } else {
-                        OutFormat.outThrowable(e,0);
-                        Logger.errln("Cookie 文件写入失败");
-                    }
+                    OutFormat.outThrowable(e,0);
+                }
+                // 发生异常时的提示
+                if(i==0) {
+                    Logger.warnln("Cookie 文件写入失败, 将在当前目录下保存");
+                    CookieFilePath = getCookieFilePath("os");
+                } else {
+                    Logger.errln("Cookie 文件写入失败");
+                    // 恢复原路径
+                    CookieFilePath = getCookieFilePath();
                 }
             }
         }
@@ -118,6 +122,8 @@ public class CookieFile {
                 Logger.warnln("Cookie 文件加载失败");
             }
         }
+        // 恢复原路径
+        CookieFilePath = getCookieFilePath();
         // 返回空数据
         return new String[0];
     }
