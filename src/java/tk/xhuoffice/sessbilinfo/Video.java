@@ -151,27 +151,35 @@ public class Video {
         }
     }
     
-    private String bvid;
-    private long aid;
-    private String tname; // 子分区名
-    private String mtname; // 主分区名
-    private boolean original; // 视频类型
-    private String title;
-    private long pubdate; // 发布时间
-    private String desc; // 视频简介
-    private long duration; // 总时长
-    private long view;
-    private long danmaku;
-    private long reply; // 评论数
-    private long fav; // 收藏数
-    private long coin; // 投币数
-    private long share; // 分享数
-    private long like; // 点赞数
-    private String uploader; // UP主
-    private long mid; // UP主Mid
-    private String[] tag;
+    public String bvid;
+    public long aid;
+    public String tname; // 子分区名
+    public String mtname; // 主分区名
+    public boolean original; // 视频类型
+    public String title;
+    public long pubdate; // 发布时间
+    public String desc; // 视频简介
+    public long duration; // 总时长
+    public long view;
+    public long danmaku;
+    public long reply; // 评论数
+    public long fav; // 收藏数
+    public long coin; // 投币数
+    public long share; // 分享数
+    public long like; // 点赞数
+    public String uploader; // UP主
+    public long mid; // UP主Mid
+    public String[] tag;
+    
+    public Video(long aid) {
+        videoVars(Http.get(BiliAPIs.VIEW_DETAIL+"?aid="+aid));
+    }
     
     public Video(String json) {
+        videoVars(json);
+    }
+    
+    public void videoVars(String json) {
         // .data.View
         {
             // .
