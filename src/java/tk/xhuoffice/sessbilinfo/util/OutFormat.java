@@ -126,7 +126,9 @@ public class OutFormat {
         String stackTrace = sw.toString();
         Logger.throwabln(stackTrace,l);
     }
-
+    
+    public static boolean forceANSI;
+    
     private static boolean isSupportRichText() {
         // 获取系统类型
         String osName = System.getProperty("os.name").toLowerCase();
@@ -141,7 +143,7 @@ public class OutFormat {
     }
 
     public static String xmlToANSI(String text) {
-        if(isSupportRichText()) {
+        if(isSupportRichText()||forceANSI) {
             return xmlToRichText(text);
         } else {
             return xmlToPlainText(text,true);

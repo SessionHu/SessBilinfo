@@ -129,6 +129,7 @@ public class Main {
                         String helpMsgEnUs = "Usage:\n"+
                                 "    java -jar \""+jarFileName+"\"\n"+
                                 "Command arguments:\n"+
+                                "    -a, --force-ansi Force use of ANSI escape sequences\n"+
                                 "    -d, --debug      Enable DEBUG output\n"+
                                 "    -n, --nocookie   Run the program after deleting the Cookie file\n"+
                                 "Environment variables:\n"+
@@ -139,13 +140,14 @@ public class Main {
                         String helpMsgZhCn = "用法:\n"+
                                 "	java -jar \""+jarFileName+"\"\n"+
                                 "命令参数:\n"+
-                                "	-d, --debug     启用 DEBUG 输出\n"+
-                                "	-n, --nocookie  删除 Cookie 文件后运行程序\n"+
+                                "    -a, --force-ansi 强制使用ANSI转义序列\n"+
+                                "    -d, --debug      启用 DEBUG 输出\n"+
+                                "    -n, --nocookie   删除 Cookie 文件后运行程序\n"+
                                 "环境变量:\n"+
-                                "	OPEN_BILI_DEBUG 当值为 \"true\" 时, 与 '-d' 或 '-debug' 相同\n"+
+                                "    OPEN_BILI_DEBUG  当值为 \"true\" 时, 与 '-d' 或 '-debug' 相同\n"+
                                 "帮助及信息:\n"+
-                                "	-h, --help      输出本帮助信息\n"+
-                                "	-v, --version   输出版本和其她信息";
+                                "    -h, --help       输出本帮助信息\n"+
+                                "    -v, --version    输出版本和其她信息";
                         // 根据语言输出帮助信息
                         if(OutFormat.getLang()[0].equals("zh")) {
                             helpMsg += helpMsgZhCn;
@@ -184,6 +186,12 @@ public class Main {
                     } catch(Exception e) {
                         Logger.errln("文件删除异常: "+e.getMessage());
                     }
+                    break;
+                case "-a":
+                case "--force-ansi":
+                    // 强制使用ANSI转义序列
+                    OutFormat.forceANSI = true;
+                    Logger.warnln("\033[1;33m已强制启用ANSI转义序列, 若本段文字显示为非黄色, 说明您的终端不支持");
                     break;
                 default:
                     // nothing here...
