@@ -48,63 +48,66 @@ public class BiliAPIs {
         return summary;
     }
     
-    public static String codeErr(int code) {
-        Map<Integer,String> errMsg = new HashMap<>();
+    public static final Map<Integer,String> ERRMSG = new HashMap<>();
+    static {
         // -1 ~ -115 的 code 多半用不上
         // 权限类
-        errMsg.put(-1,  "应用程序不存在或已被封禁");
-        errMsg.put(-2,  "Access Key 错误");
-        errMsg.put(-3,  "API 校验密匙错误");
-        errMsg.put(-4,  "调用方对该 Method 没有权限");
-        errMsg.put(-101,"账号未登录");
-        errMsg.put(-102,"账号被封停");
-        errMsg.put(-103,"积分不足");
-        errMsg.put(-104,"硬币不足");
-        errMsg.put(-105,"验证码错误");
-        errMsg.put(-106,"账号非正式会员或在适应期");
-        errMsg.put(-107,"应用不存在或者被封禁");
-        errMsg.put(-108,"未绑定手机");
-        errMsg.put(-110,"未绑定手机");
-        errMsg.put(-111,"csrf 校验失败");
-        errMsg.put(-112,"系统升级中");
-        errMsg.put(-113,"账号尚未实名认证");
-        errMsg.put(-114,"请先绑定手机");
+        ERRMSG.put(-1,  "应用程序不存在或已被封禁");
+        ERRMSG.put(-2,  "Access Key 错误");
+        ERRMSG.put(-3,  "API 校验密匙错误");
+        ERRMSG.put(-4,  "调用方对该 Method 没有权限");
+        ERRMSG.put(-101,"账号未登录");
+        ERRMSG.put(-102,"账号被封停");
+        ERRMSG.put(-103,"积分不足");
+        ERRMSG.put(-104,"硬币不足");
+        ERRMSG.put(-105,"验证码错误");
+        ERRMSG.put(-106,"账号非正式会员或在适应期");
+        ERRMSG.put(-107,"应用不存在或者被封禁");
+        ERRMSG.put(-108,"未绑定手机");
+        ERRMSG.put(-110,"未绑定手机");
+        ERRMSG.put(-111,"csrf 校验失败");
+        ERRMSG.put(-112,"系统升级中");
+        ERRMSG.put(-113,"账号尚未实名认证");
+        ERRMSG.put(-114,"请先绑定手机");
                 // 好臭的 code, 这和 -108 与 -110 没区别吧
-        errMsg.put(-115,"请先完成实名认证");
+        ERRMSG.put(-115,"请先完成实名认证");
                 // 这和 -113 有区别吗
         // 请求类
-        errMsg.put(-304,"木有改动");
-        errMsg.put(-307,"撞车跳转");
-        errMsg.put(-400,"请求错误");
-        errMsg.put(-401,"未认证 (或非法请求)");
-        errMsg.put(-403,"访问权限不足");
-        errMsg.put(-404,"啥都木有");
-        errMsg.put(-405,"不支持该方法");
-        errMsg.put(-409,"冲突");
-        errMsg.put(-412,"请求被拦截 (客户端 IP 被服务端风控)");
-        errMsg.put(-500,"服务器错误");
-        errMsg.put(-503,"过载保护, 服务暂不可用");
-        errMsg.put(-504,"服务调用超时");
-        errMsg.put(-509,"超出限制");
-        errMsg.put(-616,"上传文件不存在");
-        errMsg.put(-617,"上传文件太大");
-        errMsg.put(-625,"登录失败次数太多");
-        errMsg.put(-626,"用户不存在");
-        errMsg.put(-628,"密码太弱");
-        errMsg.put(-629,"用户名或密码错误");
-        errMsg.put(-632,"操作对象数量限制");
-        errMsg.put(-643,"被锁定");
-        errMsg.put(-650,"用户等级太低");
-        errMsg.put(-652,"重复的用户");
-        errMsg.put(-658,"Token 过期");
-        errMsg.put(-662,"密码时间戳过期");
-        errMsg.put(-688,"地理区域限制 (请检查梯子)");
-        errMsg.put(-689,"版权限制");
-        errMsg.put(-701,"扣节操失败");
-        errMsg.put(-799,"请求过于频繁，请稍后再试");
-        errMsg.put(-8888,"对不起，服务器开小差了~ (ಥ﹏ಥ)");
+        ERRMSG.put(-304,"木有改动");
+        ERRMSG.put(-307,"撞车跳转");
+        ERRMSG.put(-400,"请求错误");
+        ERRMSG.put(-401,"未认证 (或非法请求)");
+        ERRMSG.put(-403,"访问权限不足");
+        ERRMSG.put(-404,"啥都木有");
+        ERRMSG.put(-405,"不支持该方法");
+        ERRMSG.put(-409,"冲突");
+        ERRMSG.put(-412,"请求被拦截 (客户端 IP 被服务端风控)");
+        ERRMSG.put(-500,"服务器错误");
+        ERRMSG.put(-503,"过载保护, 服务暂不可用");
+        ERRMSG.put(-504,"服务调用超时");
+        ERRMSG.put(-509,"超出限制");
+        ERRMSG.put(-616,"上传文件不存在");
+        ERRMSG.put(-617,"上传文件太大");
+        ERRMSG.put(-625,"登录失败次数太多");
+        ERRMSG.put(-626,"用户不存在");
+        ERRMSG.put(-628,"密码太弱");
+        ERRMSG.put(-629,"用户名或密码错误");
+        ERRMSG.put(-632,"操作对象数量限制");
+        ERRMSG.put(-643,"被锁定");
+        ERRMSG.put(-650,"用户等级太低");
+        ERRMSG.put(-652,"重复的用户");
+        ERRMSG.put(-658,"Token 过期");
+        ERRMSG.put(-662,"密码时间戳过期");
+        ERRMSG.put(-688,"地理区域限制 (请检查梯子)");
+        ERRMSG.put(-689,"版权限制");
+        ERRMSG.put(-701,"扣节操失败");
+        ERRMSG.put(-799,"请求过于频繁，请稍后再试");
+        ERRMSG.put(-8888,"对不起，服务器开小差了~ (ಥ﹏ಥ)");
+    }
+    
+    public static String codeErr(int code) {
         // 根据情况返回结果
-        return errMsg.getOrDefault(
+        return ERRMSG.getOrDefault(
                 // 输入值
                 code,
                 // 若输入值不符合前面的内容输出下面
