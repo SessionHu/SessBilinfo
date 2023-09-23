@@ -15,7 +15,7 @@ public class Http {
     public static final String WIN10_EDGE_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/115.0.1901.203";
     public static final String DEFAULT_COOKIE = "b_ut=7; i-wanna-go-back=-1; b_nut=1693285885; buvid3=88FDE25E-30BA-1D47-62B8-FAA9D96069D785506infoc; innersign=0";
     
-    public static String[] cookieCache = new String[]{};
+    public static String[] cookieCache = null;
     
     public static String encode(String str){
         try {
@@ -80,7 +80,7 @@ public class Http {
         // 加载缓存的Cookie
         String[] cookie = cookieCache;
         // 缓存不可用时加载本地 Cookie
-        if(cookie.length==0) {
+        if(cookie==null) {
             cookie = CookieFile.load();
             cookieCache = cookie;
         }
