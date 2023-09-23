@@ -10,9 +10,11 @@ import java.util.Map;
 
 public class AvBv {
     
+    // 这两个变量不能从外部修改
     public int aid;
     public String bvid;
     
+    // 构造函数
     public AvBv() {
         Logger.debugln("AvBv转换实用工具");
     }
@@ -27,6 +29,7 @@ public class AvBv {
         this.aid = bvidToAid(bvid);
     }
     
+    // 几个常量
     private final String TABLE = "fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF";
     private final int[] S = new int[]{11, 10, 3, 8, 4, 6};
     private final int XOR = 177451812;
@@ -39,6 +42,7 @@ public class AvBv {
         }
     }
     
+    // 转换方法
     public String aidToBvid(int aid) {
         long x = (aid ^ XOR) + ADD;
         char[] chars = new char[]{'B', 'V', '1', ' ', ' ', '4', ' ', '1', ' ', '7', ' ', ' '};
@@ -49,7 +53,10 @@ public class AvBv {
             chars[S[i]] = TABLE.charAt(index);
         }
         String result = String.valueOf(chars);
+        // 输出结果
         Logger.debugln("bvid "+result);
+        this.aid = aid;
+        this.bvid = result;
         return result;
     }
     
@@ -59,7 +66,10 @@ public class AvBv {
             r += MAP.get(bvid.charAt(S[i])) * Math.pow(58, i);
         }
         int result = (int)((r - ADD) ^ XOR);
+        // 输出结果
         Logger.debugln("aid "+result);
+        this.aid = result;
+        this.bvid = bvid;
         return result;
     }
     
