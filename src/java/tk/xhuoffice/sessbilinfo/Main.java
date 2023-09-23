@@ -25,6 +25,8 @@ public class Main {
     }
     
     public static void main(String... args) {
+        // 环境变量处理
+        env();
         // 命令行参数处理
         cmdArgs(args);
         // 显示菜单
@@ -46,7 +48,7 @@ public class Main {
     }
     
     public static int menu() {
-        int id = 0;
+        int id = -1;
         // 提示输入信息
         Logger.println(
                 "请输入操作编号\n"+
@@ -64,7 +66,6 @@ public class Main {
         } catch(Exception e) {
             // 送给不按套路出牌的用户
             Logger.ln();
-            return -1;
         }
         return id;
     }
@@ -93,15 +94,12 @@ public class Main {
         }
     }
 
+    public static void env() {
+        // 是否应该启用 DEBUG 输出
+        Logger.debug = System.getenv("OPEN_BILI_DEBUG").equals("true");
+    }
+
     public static void cmdArgs(String... args) {
-        // 检测环境变量中是否应该启用 DEBUG 输出
-        try {
-            if(System.getenv("OPEN_BILI_DEBUG").trim().equals("true")) {
-                Logger.debug = true;
-            }
-        } catch(NullPointerException e) {
-            // nothing here...
-        }
         // 判断命令行参数
         if(args.length==0) {
             return;
