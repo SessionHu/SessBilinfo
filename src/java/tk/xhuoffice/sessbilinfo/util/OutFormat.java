@@ -129,7 +129,7 @@ public class OutFormat {
     
     public static boolean forceANSI;
     
-    private static boolean isSupportRichText() {
+    private static boolean isSupportANSI() {
         // 获取系统类型
         String osName = System.getProperty("os.name").toLowerCase();
         // Windows 环境
@@ -146,7 +146,7 @@ public class OutFormat {
     }
 
     public static String xmlToANSI(String text) {
-        if(isSupportRichText()||forceANSI) {
+        if(isSupportANSI()||forceANSI) {
             return xmlToRichText(text);
         } else {
             return xmlToPlainText(text,true);
