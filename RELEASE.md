@@ -2,6 +2,10 @@
 
 ## 2023
 
+### September
+
+- Sep 16 发布第一个正式版本 [`1.0.0`](https://github.com/SessionHu/SessBilinfo/releases/v1.0.0)
+
 ### August
 
 - Aug 17 发布版本 [`0.2.0`](https://github.com/SessionHu/SessBilinfo/releases/v0.2.0)
