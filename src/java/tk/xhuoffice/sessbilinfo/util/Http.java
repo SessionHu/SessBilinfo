@@ -179,7 +179,7 @@ public class Http {
             return cookie;
         } catch(IOException|NullPointerException e) {
             Logger.warnln("联机获取 Cookie 发生异常, 使用内置 Cookie");
-            return DEFAULT_COOKIE.split(";") ;
+            return DEFAULT_COOKIE.split(";");
         }
     }
     
