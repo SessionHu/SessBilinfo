@@ -135,8 +135,11 @@ public class OutFormat {
         // Windows 环境
         if(osName.contains("windows")) {
             // 是否使用 Windows Terminal
-            String wts = System.getenv("WT_SESSION");
-            return wts != null && !wts.trim().isEmpty();
+            boolean wt = System.getenv("WT_SESSION") != null;
+            // 是否使用 xterm
+            boolean xterm = System.getenv("TERM").equals("xterm");
+            // 返回
+            return wt||xterm;
         } else {
             return true;
         }
