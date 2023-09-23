@@ -6,7 +6,7 @@ echo -e "Building..."
 javac -encoding utf-8 \
       -Xlint:deprecation -XDignore.symbol.file \
       -d build/ \
-      -cp lib/gson-3.10.1.jar \
+      -cp lib/gson-2.10.1.jar \
       -sourcepath src/java/tk/xhuoffice/sessbilinfo/ \
       src/java/tk/xhuoffice/sessbilinfo/util/*.java \
       src/java/tk/xhuoffice/sessbilinfo/*.java
@@ -14,7 +14,7 @@ javac -encoding utf-8 \
 if [ $? -eq 0 ]; then
     echo -e "Packing..."
     cp ./NOTES.md ./README.md ./LICENSE ./RELEASE.md build/
-    unzip lib/gson-3.10.1.jar -d build/
+    unzip lib/gson-2.10.1.jar -d build/
     cd build/
     rm -r META-INF
     jar -cvfm 'SessBilinfo.jar' ../manifest -C ./ .
