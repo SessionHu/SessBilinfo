@@ -222,8 +222,8 @@ public class Video {
         }
     }
     
-    public static String tidSubToMain(int tid) {
-        Map<Integer,String> zone = new HashMap<>();
+    public static final Map<Integer,String> ZONE = new HashMap<>();
+    static {
         int[][] data = {
             {1,24,25,47,210,86,253,27}, // 动画
             {13,51,152,32,33}, // 番剧
@@ -255,11 +255,14 @@ public class Video {
         };
         for(int i = 0; i < data.length; i++) {
             for(int j = 0; j < data[i].length; j++) {
-                zone.put(data[i][j], labels[i]);
+                ZONE.put(data[i][j], labels[i]);
             }
         }
+    }
+    
+    public static String tidSubToMain(int tid) {
         // 根据情况返回结果
-        return zone.getOrDefault(
+        return ZONE.getOrDefault(
                 // 输入值
                 tid,
                 // 若输入值不符合前面的内容输出下面
