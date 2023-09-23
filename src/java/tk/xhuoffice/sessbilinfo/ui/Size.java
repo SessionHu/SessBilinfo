@@ -18,10 +18,18 @@ public class Size {
             OutFormat.outThrowable(e,2);
         }
     }
+    
+    public static int[] get(){
+        return getSize();
+    }
 
-    public static int[] getSize() throws IOException {
-        // stty size
-        return sttySize();
+    public static int[] getSize(){
+        try {
+            // stty size
+            return sttySize();
+        } catch(Exception e) {
+            return new int[]{0,0};
+        }
     }
 
     public static int[] sttySize() throws IOException {
