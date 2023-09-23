@@ -21,9 +21,7 @@ public class Size {
 
     public static int[] getSize() throws IOException {
         // stty size
-        int[] stty = sttySize();
-        // return
-        return stty;
+        return sttySize();
     }
 
     public static int[] sttySize() throws IOException {
