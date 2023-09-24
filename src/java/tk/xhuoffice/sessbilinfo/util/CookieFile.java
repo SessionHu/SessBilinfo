@@ -202,6 +202,7 @@ public class CookieFile {
                     Logger.warnln("无效的 Cookie "+current);
                 } else {
                     // 有效输入
+                    Logger.println((lines.size()+1)+": "+current);
                     lines.add(current);
                 }
             } else {
@@ -214,8 +215,7 @@ public class CookieFile {
     }
 
     public static void rm() {
-        File file = new File(CookieFilePath);
-        if(file.delete()) {
+        if(new File(CookieFilePath).delete()) {
             Logger.println("Cookie 文件已删除");
         } else {
             Logger.warnln("Cookie 文件删除失败");
