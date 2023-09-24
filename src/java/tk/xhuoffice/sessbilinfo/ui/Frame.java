@@ -21,11 +21,12 @@ public class Frame {
     }
     
     public static void clear() {
+        System.out.print("\033[0;0f");
         for(int l = 0; l < size[1]; l++) {
-            System.out.printf("\033[%d;0f",l);
             for(int c = 0; c < size[0]; c++) {
                 System.out.print(" ");
             }
+            System.out.println();
         }
     }
     
@@ -44,7 +45,7 @@ public class Frame {
     }
     
     public static void reset() {
-        Pointer.ln = 1;
+        Pointer.ln = 2;
         Pointer.col = 0;
         redraw();
     }

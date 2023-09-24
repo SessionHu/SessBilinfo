@@ -6,7 +6,7 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 public class Pointer {
     
-    public static int ln = 1;
+    public static int ln = 2;
     public static int col = 0;
     
     public static boolean prompt;
