@@ -13,6 +13,11 @@ public class Frame {
     public static int[] size = Size.get();
     
     public static void main(String[] args) {
+        // 环境变量处理
+        Main.env();
+        // 命令行参数处理
+        Main.cmdArgs(args);
+        // 启动!
         clear();
         printFullTitle();
         ExecutorService executor = Executors.newFixedThreadPool(2);
