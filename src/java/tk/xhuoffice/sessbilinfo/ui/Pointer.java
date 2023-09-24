@@ -1,5 +1,6 @@
 package tk.xhuoffice.sessbilinfo.ui;
 
+import java.util.Arrays;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
@@ -11,9 +12,11 @@ public class Pointer {
     
     public static boolean prompt;
     
+    public static int[] size = Size.get();
+    
     public static void set() {
         if(prompt) {
-            System.out.printf("\033[%d;%df",Size.get()[1]-1,col+1);
+            System.out.printf("\033[%d;%df",size[1]-1,col+1);
         } else {
             System.out.printf("\033[%d;0f",ln);
         }
@@ -43,15 +46,14 @@ public class Pointer {
         // 清空提示符所在行
         clearPromptLine();
         // 将光标临时移动至提示符行
-        System.out.printf("\033[%d;0f",Size.get()[1]-1);
+        System.out.printf("\033[%d;0f",size[1]-1);
     }
     
     public static void clearPromptLine() {
-        int cols = Size.get()[0];
-        System.out.printf("\033[%d;0f",Size.get()[1]-1);
-        for(int i = 0; i < cols; i++) {
-            System.out.print(" ");
-        }
+        System.out.printf("\033[%d;0f",size[1]-1);
+        char[] spaces = new char[size[0]-1];
+        Arrays.fill(spaces,' ');
+        System.out.println(new String(spaces));
     }
     
 }
