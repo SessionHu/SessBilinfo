@@ -9,6 +9,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Scanner;
+import tk.xhuoffice.sessbilinfo.ui.Pointer;
 
 
 public class OutFormat {
@@ -61,6 +62,7 @@ public class OutFormat {
             // 定义变量
             String str = null;
             // 输出提示
+            Pointer.prompt();
             if(tip.length!=0) {
                 Logger.prompt(tip[0]);
             } else {
@@ -69,6 +71,7 @@ public class OutFormat {
             // 读取控制台输入
             try {
                 str = scan.nextLine();
+                Pointer.unset();
             } catch(java.util.NoSuchElementException e) {
                 // 异常处理(退出)
                 Logger.ln();

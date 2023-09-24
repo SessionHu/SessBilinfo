@@ -19,34 +19,33 @@ public class Size {
         }
     }
     
-    public static int[] get(){
-        return getSize();
+    public static int[] get() {
+        try {
+            return getSize();
+        } catch(Exception e) {
+            return new int[]{80,24};
+        }
     }
 
-    public static int[] getSize(){
-        try {
-            // stty size
-            return sttySize();
-        } catch(Exception e) {
-            return new int[]{0,0};
-        }
+    public static int[] getSize() throws IOException {
+        // stty size
+        return sttySize();
     }
 
     public static int[] sttySize() throws IOException {
         // run process
         String line = null;
         String ty = "/dev/tty";
-        for(int i = 0; i < 20; i++) {
+        for(int i = 0; i <= 11; i++) {
             if(i>0&&i<11) {
                 ty = "/dev/pty"+(i-1);
-            } else if(i>10) {
-                ty = "/dev/cons"+(i-10);
+            } else {
+                ty = System.getenv("tty");
             }
             Process process = Runtime.getRuntime().exec(new String[]{"sh","-c","stty size <"+ty});
             try(BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 line = reader.readLine();
                 if(line!=null) {
-                    Logger.debugln("stty size: "+line);
                     break;
                 }
             }

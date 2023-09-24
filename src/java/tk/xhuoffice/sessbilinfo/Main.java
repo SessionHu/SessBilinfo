@@ -3,6 +3,7 @@ package tk.xhuoffice.sessbilinfo;
 import java.io.File;
 import java.util.Scanner;
 import sun.misc.Signal;
+import tk.xhuoffice.sessbilinfo.ui.Pointer;
 import tk.xhuoffice.sessbilinfo.util.CookieFile;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
@@ -58,11 +59,13 @@ public class Main {
                 "4. 检查昵称状态\n"+
                 "5. 修改 Cookie\n"+
                 "0. 退出");
+        Pointer.prompt();
         Logger.prompt();
         // 获取输入信息
         try {
             id = scan.nextInt();
             scan.nextLine(); // 消耗掉换行符
+            Pointer.unset();
         } catch(Exception e) {
             // 送给不按套路出牌的用户
             Logger.ln();
@@ -96,7 +99,8 @@ public class Main {
 
     public static void env() {
         // 是否应该启用 DEBUG 输出
-        Logger.debug = System.getenv("OPEN_BILI_DEBUG").equals("true");
+        String d = System.getenv("OPEN_BILI_DEBUG");
+        Logger.debug = (d!=null) && (d.equals("true"));
     }
 
     public static void cmdArgs(String... args) {

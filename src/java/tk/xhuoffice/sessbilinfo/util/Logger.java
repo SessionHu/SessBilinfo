@@ -1,5 +1,7 @@
 package tk.xhuoffice.sessbilinfo.util;
 
+import tk.xhuoffice.sessbilinfo.ui.Pointer;
+
 public class Logger {
 
     public static boolean debug;
@@ -14,9 +16,11 @@ public class Logger {
             } else {
                 System.out.print(formatted+str);
             }
+            Pointer.update(str);
         } else if(debug) {
             str = str.replaceAll("\\n", "\n[DEBUG]["+cN+"] ["+mN+"] ");
             System.out.format("[DEBUG][%s.%s] %s", cN, mN, str);
+            Pointer.update(str);
         }
     }
     
@@ -33,6 +37,7 @@ public class Logger {
         print(str,lv,cN,mN);
         // 换行
         System.out.println();
+        Pointer.ln++;
     }
 
     public static void println(String str, long lv) {
@@ -63,14 +68,17 @@ public class Logger {
     
     public static void prompt() {
         System.out.print("> ");
+        Pointer.col = 2;
     }
     
     public static void prompt(String str) {
         System.out.print(str+" > ");
+        Pointer.col = str.length()+2;
     }
     
     public static void ln() {
         System.out.println();
+        Pointer.ln++;
     }
     
     public static void throwabln(String str, int l) {
@@ -83,9 +91,11 @@ public class Logger {
             } else {
                 System.out.println(formatted+str);
             }
+            Pointer.update(str);
         } else if(debug) {
             str = str.replaceAll("\\n", "\n[DEBUG] ");
             System.out.println("[DEBUG] "+str);
+            Pointer.update(str);
         }
     }
     
