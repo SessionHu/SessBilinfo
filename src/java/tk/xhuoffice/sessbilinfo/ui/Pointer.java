@@ -32,7 +32,7 @@ public class Pointer {
     public static void update(String str) {
         // 更新指针位置
         int lns = str.length() - str.replace("\n", "").length();
-        Pointer.ln = Pointer.ln + lns;
+        ln = ln + lns;
     }
     
     public static void prompt() {

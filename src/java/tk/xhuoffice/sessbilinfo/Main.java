@@ -59,6 +59,7 @@ public class Main {
                 "4. 检查昵称状态\n"+
                 "5. 修改 Cookie\n"+
                 "0. 退出");
+        Logger.ln();
         Pointer.prompt();
         Logger.prompt();
         // 获取输入信息
