@@ -21,6 +21,9 @@ public class Pointer {
     
     public static void unset() {
         prompt = false;
+        // 清空提示符所在行
+        clearPromptLine();
+        // 光标恢复原行
         System.out.printf("\033[%d;0f",ln);
     }
     
@@ -37,12 +40,18 @@ public class Pointer {
     
     public static void prompt() {
         prompt = true;
+        // 清空提示符所在行
+        clearPromptLine();
+        // 将光标临时移动至提示符行
+        System.out.printf("\033[%d;0f",Size.get()[1]-1);
+    }
+    
+    public static void clearPromptLine() {
         int cols = Size.get()[0];
         System.out.printf("\033[%d;0f",Size.get()[1]-1);
         for(int i = 0; i < cols; i++) {
             System.out.print(" ");
         }
-        System.out.printf("\033[%d;0f",Size.get()[1]-1);
     }
     
 }
