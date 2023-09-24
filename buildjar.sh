@@ -8,6 +8,7 @@ javac -encoding utf-8 \
       -d build/ \
       -cp lib/gson-2.10.1.jar \
       -sourcepath src/java/tk/xhuoffice/sessbilinfo/ \
+      src/java/tk/xhuoffice/sessbilinfo/ui/*.java \
       src/java/tk/xhuoffice/sessbilinfo/util/*.java \
       src/java/tk/xhuoffice/sessbilinfo/*.java
 
