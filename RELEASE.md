@@ -4,6 +4,8 @@
 
 ### September
 
+- Sep 24 加入 Terminal UI
+
 - Sep 16 发布第一个正式版本 [`1.0.0`](https://github.com/SessionHu/SessBilinfo/releases/v1.0.0)
 
 ### August
