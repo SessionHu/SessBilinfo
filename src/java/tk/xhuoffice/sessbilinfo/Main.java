@@ -111,56 +111,11 @@ public class Main {
         }
         for(int i = 0; i < args.length; i++) {
             switch(args[i]) {
+                case "-?":
                 case "-h":
                 case "--help":
-                    // 帮助信息
-                    {
-                        // 获取 JAR 包 文件名
-                        String jarFileName;
-                        try {
-                            File file = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-                            if(!file.isDirectory()) {
-                                jarFileName = file.getName();
-                            } else {
-                                throw new java.io.IOException(file.getCanonicalPath()+" is a directory");
-                            }
-                        } catch(java.net.URISyntaxException|java.io.IOException e) {
-                            jarFileName = "SessBilinfo.jar";
-                        }
-                        // 帮助信息内容
-                        String helpMsg = SOFT_TITLE+"\n";
-                        String helpMsgEnUs = "Usage:\n"+
-                                "    java -jar \""+jarFileName+"\"\n"+
-                                "Command arguments:\n"+
-                                "    -a, --force-ansi Force use of ANSI escape sequences\n"+
-                                "    -d, --debug      Enable DEBUG output\n"+
-                                "    -n, --nocookie   Run the program after deleting the Cookie file\n"+
-                                "Environment variables:\n"+
-                                "    OPEN_BILI_DEBUG  The same as '-d' or '--debug' when the value is \"true\"\n"+
-                                "Help information:\n"+
-                                "    -h, --help       Output this help information\n"+
-                                "    -v, --version    Output version and other information";
-                        String helpMsgZhCn = "用法:\n"+
-                                "	java -jar \""+jarFileName+"\"\n"+
-                                "命令参数:\n"+
-                                "    -a, --force-ansi 强制使用ANSI转义序列\n"+
-                                "    -d, --debug      启用 DEBUG 输出\n"+
-                                "    -n, --nocookie   删除 Cookie 文件后运行程序\n"+
-                                "环境变量:\n"+
-                                "    OPEN_BILI_DEBUG  当值为 \"true\" 时, 与 '-d' 或 '-debug' 相同\n"+
-                                "帮助及信息:\n"+
-                                "    -h, --help       输出本帮助信息\n"+
-                                "    -v, --version    输出版本和其她信息";
-                        // 根据语言输出帮助信息
-                        if(OutFormat.getLang()[0].equals("zh")) {
-                            helpMsg += helpMsgZhCn;
-                        } else {
-                            helpMsg += helpMsgEnUs;
-                        }
-                        Logger.println(helpMsg);
-                        // 退出
-                        System.exit(0);
-                    }
+                    printHelpInfo();
+                    System.exit(0);
                     break;
                 case "-v":
                 case "--version":
@@ -170,7 +125,7 @@ public class Main {
                             SOFT_TITLE+"\n"+
                             "Copyright (C) 2023 SessionHu\n"+
                             "Cookie Path:  "+CookieFile.getCookieFilePath()+"\n"+
-                            "Current Time: "+System.currentTimeMillis());
+                            "Current Time: "+System.currentTimeMillis()/1000);
                     System.exit(0);
                     break;
                 case "-d":
@@ -184,11 +139,7 @@ public class Main {
                 case "-n":
                 case "--nocookie":
                     // Cookie 处理
-                    try {
-                        CookieFile.rm();
-                    } catch(Exception e) {
-                        Logger.errln("文件删除异常: "+e.getMessage());
-                    }
+                    CookieFile.rm();
                     break;
                 case "-a":
                 case "--force-ansi":
@@ -200,6 +151,52 @@ public class Main {
                     // nothing here...
             }
         }
+    }
+    
+    public static void printHelpInfo() {
+        // 获取 JAR 包 文件名
+        String jarFileName;
+        try {
+            File file = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
+            if(!file.isDirectory()) {
+                jarFileName = file.getName();
+            } else {
+                throw new java.io.IOException(file.getCanonicalPath()+" is a directory");
+            }
+        } catch(java.net.URISyntaxException|java.io.IOException e) {
+            jarFileName = "SessBilinfo.jar";
+        }
+        // 帮助信息内容
+        String helpMsg = SOFT_TITLE+"\n";
+        String helpMsgEnUs = "Usage:\n"+
+                "    java -jar \""+jarFileName+"\"\n"+
+                "Command arguments:\n"+
+                "    -a, --force-ansi Force use of ANSI escape sequences\n"+
+                "    -d, --debug      Enable DEBUG output\n"+
+                "    -n, --nocookie   Run the program after deleting the Cookie file\n"+
+                "Environment variables:\n"+
+                "    OPEN_BILI_DEBUG  The same as '-d' or '--debug' when the value is \"true\"\n"+
+                "Help information:\n"+
+                "    -h, --help       Output this help information\n"+
+                "    -v, --version    Output version and other information";
+        String helpMsgZhCn = "用法:\n"+
+                "	java -jar \""+jarFileName+"\"\n"+
+                "命令参数:\n"+
+                "    -a, --force-ansi 强制使用ANSI转义序列\n"+
+                "    -d, --debug      启用 DEBUG 输出\n"+
+                "    -n, --nocookie   删除 Cookie 文件后运行程序\n"+
+                "环境变量:\n"+
+                "    OPEN_BILI_DEBUG  当值为 \"true\" 时, 与 '-d' 或 '-debug' 相同\n"+
+                "帮助及信息:\n"+
+                "    -h, --help       输出本帮助信息\n"+
+                "    -v, --version    输出版本和其她信息";
+        // 根据语言输出帮助信息
+        if(OutFormat.getLang()[0].equals("zh")) {
+            helpMsg += helpMsgZhCn;
+        } else {
+            helpMsg += helpMsgEnUs;
+        }
+        Logger.println(helpMsg);
     }
     
 }
