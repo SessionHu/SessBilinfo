@@ -1,6 +1,7 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.util.regex.Pattern;
+import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
 import tk.xhuoffice.sessbilinfo.util.Http;
 import tk.xhuoffice.sessbilinfo.util.JsonLib;
@@ -11,9 +12,11 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 public class Account {
     
     public static void checkNickname() {
+        Frame.reset();
         // 定义变量
         String name = "";
         // 提示输入
+        Frame.reset();
         Logger.println("请输入要检查的昵称");
         while(true) {
             // 获取输入
@@ -56,6 +59,7 @@ public class Account {
         // 获取返回值
         int code = JsonLib.getInt(json,"code");
         // 输出信息
+        Frame.reset();
         if(code==0) {
             Logger.println("昵称未被注册");
         } else if(code==2001||code==40014) {

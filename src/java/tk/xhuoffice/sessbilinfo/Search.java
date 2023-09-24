@@ -2,6 +2,7 @@ package tk.xhuoffice.sessbilinfo;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
 import tk.xhuoffice.sessbilinfo.util.Http;
 import tk.xhuoffice.sessbilinfo.util.JsonLib;
@@ -14,6 +15,7 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 public class Search {
     
     public static void search() {
+        Frame.reset();
         // 获取搜索内容
         Logger.println("请输入关键词 (不区分大小写)");
         String keyword = OutFormat.getString("关键词").trim();
@@ -23,12 +25,12 @@ public class Search {
             Logger.println("正在请求数据...");
             // 获取数据
             String result = "";
-            result += "\n";
             result += "------------------------\n\n";
             result += all(keyword);
             result += "------------------------";
             Logger.println("请求完毕");
             // 输出结果
+            Frame.reset();
             Logger.println(result);
             // 返回
             return;

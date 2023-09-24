@@ -4,6 +4,7 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
 import tk.xhuoffice.sessbilinfo.util.Http;
 import tk.xhuoffice.sessbilinfo.util.JsonLib;
@@ -18,6 +19,7 @@ public class UserInfo {
     public static Scanner scan = new Scanner(System.in);
     
     public static void getUserInfo() {
+        Frame.reset();
         // 提示输入信息
         Logger.println(
                 "请输入被查询用户的 Mid 信息\n"+
@@ -27,13 +29,13 @@ public class UserInfo {
         // 获取数据
         Logger.println("正在请求数据...");
         String usrinfo = "";
-        usrinfo += "\n";
         usrinfo += "------------------------\n\n";
         usrinfo += card(mid);
         usrinfo += space(mid);
         usrinfo += "------------------------";
         Logger.println("请求完毕");
         // 输出数据
+        Frame.reset();
         Logger.println(usrinfo);
     }
     

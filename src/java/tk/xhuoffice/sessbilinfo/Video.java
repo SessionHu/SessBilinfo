@@ -2,6 +2,7 @@ package tk.xhuoffice.sessbilinfo;
 
 import java.util.HashMap;
 import java.util.Map;
+import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.util.AvBv;
 import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
 import tk.xhuoffice.sessbilinfo.util.BiliException;
@@ -16,6 +17,7 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 public class Video {
     
     public static void getVideoInfo() {
+        Frame.reset();
         // 提示信息
         Logger.println("请输入视频AV或BV号");
         // 获取AV号
@@ -24,7 +26,6 @@ public class Video {
         Logger.println("正在请求数据...");
         String videoInfo = "";
         try {
-            videoInfo += "\n";
             videoInfo += "------------------------\n\n";
             videoInfo += getDetail(aid);
             videoInfo += "------------------------";
@@ -33,6 +34,7 @@ public class Video {
         }
         Logger.println("请求完毕");
         // 输出信息
+        Frame.reset();
         Logger.println(videoInfo);
     }
 
