@@ -10,13 +10,13 @@ public class Frame {
     public static int[] size = Size.get();
     
     public static void main(String[] args) {
+        // 重绘屏幕
+        redraw();
         // 环境变量处理
         Main.env();
         // 命令行参数处理
         Main.cmdArgs(args);
         // 启动!
-        clear();
-        printTitle();
         Main.main();
     }
     
@@ -36,6 +36,17 @@ public class Frame {
         }
         System.out.print("\033[0;0f"+Main.SOFT_TITLE);
         System.out.println("\033[0m");
+    }
+    
+    public static void redraw() {
+        clear();
+        printTitle();
+    }
+    
+    public static void reset() {
+        Pointer.ln = 1;
+        Pointer.col = 0;
+        redraw();
     }
     
 }
