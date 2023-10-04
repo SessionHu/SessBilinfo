@@ -82,17 +82,7 @@ public class CookieFile {
     
     public static void writeTimeAndLines(String path, String[] line) throws IOException {
         // 检查父目录
-        if(path.contains(".openbili")) {
-            File parentDir = new File(path).getParentFile();
-            if(!parentDir.exists()) { // 当父目录不存在时
-                Logger.debugln("正在创建 Cookie 父目录");
-                parentDir.mkdirs();
-                if(System.getProperty("os.name").toLowerCase().contains("windows")) {
-                    // 仅在 Windows 下隐藏目录  (类Unix无隐藏属性)
-                    hideWinDir(parentDir.getCanonicalPath());
-                }
-            }
-        }
+        checkParentDir(path);
         // 写入文件
         try(FileWriter writer = new FileWriter(path)) {
             Logger.debugln("正在写入 Cookie");
@@ -101,6 +91,20 @@ public class CookieFile {
                 lines += line[l]+"\n";
             }
             writer.write(System.currentTimeMillis() + "\n" + lines);
+        }
+    }
+    
+    public static void checkParentDir(String path) throws IOException {
+        if(path.contains(".openbili")) {
+            File parentDir = new File(path).getParentFile();
+            if(!parentDir.exists()) { // 当父目录不存在时
+                Logger.debugln("正在创建 .openbili 目录");
+                parentDir.mkdirs();
+                if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+                    // 仅在 Windows 下隐藏目录  (类Unix无隐藏属性)
+                    hideWinDir(parentDir.getCanonicalPath());
+                }
+            }
         }
     }
     
