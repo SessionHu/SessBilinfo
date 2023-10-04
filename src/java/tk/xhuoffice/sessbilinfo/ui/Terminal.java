@@ -76,10 +76,8 @@ public class Terminal {
         Arrays.fill(this.screen,null);
         // clear Terminal
         String emptyLine = emptyLine(); // get empty line
-        System.out.print("\033[1;0f"); // 移动光标至第1行第0列
-        for(int i = 0;  i < this.lns; i++) { // clear lines
-            System.out.println(emptyLine);
-        }
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
     
     // update virtual Terminal size
