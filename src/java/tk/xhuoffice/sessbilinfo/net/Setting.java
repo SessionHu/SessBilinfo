@@ -26,8 +26,8 @@ public class Setting {
         ProxySetting.useProxy = props.getProperty("proxy.use","false").equals("true"); // default: false
     }
     
-    public static String read(String key, String default) {
-        return props.getProperty(key, default);
+    public static String read(String key, String dft) {
+        return props.getProperty(key, dft);
     }
     
     public static void set(String key, String val) {
