@@ -90,7 +90,7 @@ public class Logger {
             }
         }
         // get lines
-        String[] lines = lineSplitDesc(str,levels[lv]+" ");
+        String[] lines = lineSplitDesc(str,"["+levels[lv]+"] ");
         // print
         for(String text : lines) {
             Frame.terminal.addLine(text);
