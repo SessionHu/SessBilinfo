@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Scanner;
 import sun.misc.Signal;
 import tk.xhuoffice.sessbilinfo.net.CookieFile;
+import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.ui.Prompt;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
@@ -30,11 +31,18 @@ public class Main {
         env();
         // 命令行参数处理
         cmdArgs(args);
-        // 显示菜单
-        int id = menu();
-        // 执行操作
         try {
-            task(id);
+            while(true) {
+                // 显示菜单
+                int id = menu();
+                // 执行操作
+                task(id);
+                // Press any key to continue ...
+                Logger.println("Press Enter key to continue ...");
+                scan.nextLine();
+                // reset screen
+                Frame.reset();
+            }
         } catch(Exception e) {
             Logger.fataln("发生未知异常");
             OutFormat.outThrowable(e,4);
@@ -44,8 +52,6 @@ public class Main {
             OutFormat.outThrowable(e,4);
             System.exit(127);
         }
-        // 退出
-        System.exit(0);
     }
     
     public static int menu() {
@@ -89,10 +95,13 @@ public class Main {
             // 修改 Cookie
             CookieFile.edit();
         } else if(id==0) {
-            // noting here...
+            // 退出
+            System.exit(0);
         } else {
             // print warning
             Logger.warnln("无效的操作编号");
+            // 退出
+            System.exit(0);
         }
     }
 
