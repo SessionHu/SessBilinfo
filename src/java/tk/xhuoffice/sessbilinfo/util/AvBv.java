@@ -73,4 +73,9 @@ public class AvBv {
         return result;
     }
     
+    @Override
+    public String toString() {
+        return "av"+this.aid;
+    }
+    
 }

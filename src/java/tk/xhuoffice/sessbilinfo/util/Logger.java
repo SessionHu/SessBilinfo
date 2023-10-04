@@ -1,30 +1,39 @@
 package tk.xhuoffice.sessbilinfo.util;
 
-import tk.xhuoffice.sessbilinfo.ui.Pointer;
+import tk.xhuoffice.sessbilinfo.ui.Frame;
+import tk.xhuoffice.sessbilinfo.ui.Prompt;
+
 
 public class Logger {
 
     public static boolean debug;
     
-    private static void print(String str, int lv, String cN, String mN) {
-        String[] levels = {"DEBUG","INFO","WARN","ERROR","FATAL"};
-        if(lv>=1&&lv<=4) {
-            String formatted = String.format("[%s][%s.%s] ", levels[lv], cN, mN);
-            str = str.replaceAll("\\n", "\n"+formatted);
-            if(lv>=3) {
-                System.err.print(formatted+str);
+    public static String[] levels = {"DEBUG","INFO","WARN","ERROR","FATAL"};
+    
+    public static synchronized void addLines(String str, int lv, String desc) {
+        // log level
+        if(lv<1||lv>4) {
+            if(debug) {
+                lv = 0;
             } else {
-                System.out.print(formatted+str);
+                return;
             }
-            Pointer.update(str);
-        } else if(debug) {
-            str = str.replaceAll("\\n", "\n[DEBUG]["+cN+"] ["+mN+"] ");
-            System.out.format("[DEBUG][%s.%s] %s", cN, mN, str);
-            Pointer.update(str);
+        }
+        // generate fullDesc
+        String fullDesc = String.format("[%s][%s] ", levels[lv], desc);
+        // get lines
+        String[] lines = lineSplitDesc(str,fullDesc);
+        // print
+        for(String text : lines) {
+            Frame.terminal.addLine(text);
+        }
+        // title
+        if(Frame.terminal.screen[Frame.terminal.screen.length-1]!=null) {
+            Frame.printTitle();
         }
     }
     
-    private static synchronized void println(String str, int lv) {
+    private static synchronized void printLines(String str, int lv) {
         // 获取完整类名
         String fullClassName = Thread.currentThread().getStackTrace()[3].getClassName();
         // 获取最后一个 '.' 位置
@@ -33,70 +42,71 @@ public class Logger {
         String cN = fullClassName.substring(lastDotIndex + 1);
         // 获取方法名
         String mN = Thread.currentThread().getStackTrace()[3].getMethodName();
+        // generate description
+        String desc = cN + "." + mN;
         // 打印信息
-        print(str,lv,cN,mN);
-        // 换行
-        System.out.println();
-        Pointer.ln++;
+        addLines(str,lv,desc);
     }
 
-    public static void println(String str, long lv) {
-        println(str,(int)lv);
+    public static void println(String str, int lv) {
+        if((lv>=1&&lv<=4)||debug) {
+            printLines(str,lv);
+        }
     }
 
     public static void println(String str) {
-        println(str,1); // 信息
+        printLines(str,1); // 信息
     }
 
     public static void warnln(String str) {
-        println(str,2); // 警告
+        printLines(str,2); // 警告
     }
     
     public static void errln(String str) {
-        println(str,3); // 错误
+        printLines(str,3); // 错误
     }
     
     public static void fataln(String str) {
-        println(str,4); // 致命
+        printLines(str,4); // 致命
     }
 
     public static void debugln(String str) {
         if(debug) {
-            println(str,0); // 调试
+            printLines(str,0); // 调试
         }
-    }
-    
-    public static void prompt() {
-        System.out.print("> ");
-        Pointer.col = 2;
-    }
-    
-    public static void prompt(String str) {
-        System.out.print(str+" > ");
-        Pointer.col = str.length()+2;
     }
     
     public static void ln() {
         System.out.println();
-        Pointer.ln++;
     }
     
-    public static void throwabln(String str, int l) {
-        String[] levels = {"DEBUG","INFO","WARN","ERROR","FATAL"};
-        if(l>=1&&l<=4) {
-            String formatted = String.format("[%s] ",levels[l]);
-            str = str.replaceAll("\\n", "\n"+formatted);
-            if(l>=3) {
-                System.err.println(formatted+str);
+    public static void throwabln(String str, int lv) {
+        // log level
+        if(lv<1||lv>4) {
+            if(debug) {
+                lv = 0;
             } else {
-                System.out.println(formatted+str);
+                return;
             }
-            Pointer.update(str);
-        } else if(debug) {
-            str = str.replaceAll("\\n", "\n[DEBUG] ");
-            System.out.println("[DEBUG] "+str);
-            Pointer.update(str);
+        }
+        // get lines
+        String[] lines = lineSplitDesc(str,levels[lv]+" ");
+        // print
+        for(String text : lines) {
+            Frame.terminal.addLine(text);
+        }
+        // title
+        if(Frame.terminal.screen[Frame.terminal.screen.length-1]!=null) {
+            Frame.printTitle();
         }
     }
+    
+    public static String[] lineSplitDesc(String str, String fullDesc) {
+        String[] lines = str.split("\\n");
+        for(int i = 0; i < lines.length; i++) {
+            lines[i] = fullDesc + lines[i];
+        }
+        return lines;
+    } 
     
 }

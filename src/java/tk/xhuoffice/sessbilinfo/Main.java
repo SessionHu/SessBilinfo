@@ -3,8 +3,8 @@ package tk.xhuoffice.sessbilinfo;
 import java.io.File;
 import java.util.Scanner;
 import sun.misc.Signal;
-import tk.xhuoffice.sessbilinfo.ui.Pointer;
-import tk.xhuoffice.sessbilinfo.util.CookieFile;
+import tk.xhuoffice.sessbilinfo.net.CookieFile;
+import tk.xhuoffice.sessbilinfo.ui.Prompt;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
@@ -12,7 +12,7 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 public class Main {
     
     public static final String SOFT_NAME = "SessBilinfo";
-    public static final String SOFT_VERSION = "1.1.0-alpha";
+    public static final String SOFT_VERSION = "1.1.0-alpha.1";
     public static final String SOFT_TITLE  = SOFT_NAME+" "+SOFT_VERSION;
     
     public static Scanner scan = new Scanner(System.in);
@@ -25,7 +25,7 @@ public class Main {
         });
     }
     
-    public static void main(String... args) {
+    public static void main(String[] args) {
         // 环境变量处理
         env();
         // 命令行参数处理
@@ -59,13 +59,12 @@ public class Main {
                 "4. 检查昵称状态\n"+
                 "5. 修改 Cookie\n"+
                 "0. 退出");
-        Pointer.prompt();
-        Logger.prompt();
+        Prompt.set();
         // 获取输入信息
         try {
             id = scan.nextInt();
             scan.nextLine(); // 消耗掉换行符
-            Pointer.unset();
+            Prompt.unset();
         } catch(Exception e) {
             // 送给不按套路出牌的用户
             Logger.ln();
@@ -92,24 +91,26 @@ public class Main {
         } else if(id==0) {
             // noting here...
         } else {
-            // 输出错误
+            // print warning
             Logger.warnln("无效的操作编号");
         }
     }
 
     public static void env() {
-        // 是否应该启用 DEBUG 输出
-        String d = System.getenv("OPEN_BILI_DEBUG");
-        Logger.debug = (d!=null) && (d.equals("true"));
+        // 是否启用 DEBUG 输出
+        {
+            String d = System.getenv("OPEN_BILI_DEBUG");
+            Logger.debug = (d!=null) && (d.equals("true"));
+        }
     }
 
-    public static void cmdArgs(String... args) {
+    public static void cmdArgs(String[] args) {
         // 判断命令行参数
         if(args.length==0) {
             return;
         }
-        for(int i = 0; i < args.length; i++) {
-            switch(args[i]) {
+        for(String arg : args) {
+            switch(arg) {
                 case "-?":
                 case "-h":
                 case "--help":

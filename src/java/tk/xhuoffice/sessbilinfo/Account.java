@@ -1,9 +1,9 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.util.regex.Pattern;
+import tk.xhuoffice.sessbilinfo.net.Http;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
-import tk.xhuoffice.sessbilinfo.util.Http;
 import tk.xhuoffice.sessbilinfo.util.JsonLib;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
@@ -43,8 +43,7 @@ public class Account {
         }
         // 检查是否包含特殊字符
         Pattern pattern = Pattern.compile("[^\\p{L}\\p{N}_\\-\\p{IsHan}\\p{IsHangul}\\p{IsKatakana}\\p{IsHiragana}]");
-        boolean containsOtherChars = pattern.matcher(name).find();
-        if(containsOtherChars) {
+        if(pattern.matcher(name).find()) {
             Logger.warnln("昵称包含除字母、数字、下划线(_)、连字符(-)、中日韩统一表意文字以外的字符");
             return false;
         }

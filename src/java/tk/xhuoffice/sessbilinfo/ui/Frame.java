@@ -8,51 +8,47 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 public class Frame {
 
-    public static int[] size = Size.get();
+    public static Terminal terminal = null;
     
     public static void main(String[] args) {
+        // create a new Terminal
+        terminal = new Terminal();
         // 重绘屏幕
         redraw();
-        // 环境变量处理
-        Main.env();
-        // 命令行参数处理
-        Main.cmdArgs(args);
         // 启动!
-        Main.main();
+        Main.main(args);
     }
     
-    public static void clear() {
-        System.out.print("\033[0;0f");
-        char[] spaces = new char[size[0]];
-        Arrays.fill(spaces,' ');
-        String line = new String(spaces);
-        for(int l = 0; l < size[1]; l++) {
-            System.out.println(line);
-        }
-    }       
-
-    
     public static void printTitle() {
-        // 在第0行打印白色背景
-        System.out.print("\033[0;0f\033[47;30m");
-        char[] spaces = new char[size[0]];
-        Arrays.fill(spaces,' ');
-        System.out.println(new String(spaces));
-        // 在第0行白色背景黑色前景的标题
-        System.out.print("\033[0;0f"+Main.SOFT_TITLE);
-        // 恢复正常颜色
-        System.out.println("\033[0m");
+        // some colors
+        String whiteBgWithBlackText = "\033[47;30m";
+        String resetColor = "\033[0m";
+        // title
+        String titleText = Main.SOFT_TITLE;
+        String titleSpace = null; {
+            char[] spaces = new char[terminal.cols-titleText.length()];
+            Arrays.fill(spaces,' ');
+            titleSpace = new String(spaces);
+        }
+        // text for print
+        String text = whiteBgWithBlackText + titleText + titleSpace + resetColor;
+        // set line
+        terminal.setLine(1,text);
     }
     
     public static void redraw() {
-        clear();
+        terminal.redraw();
+        printTitle();
+    }
+    
+    public static void clear() {
+        terminal.clear();
         printTitle();
     }
     
     public static void reset() {
-        Pointer.ln = 2;
-        Pointer.col = 0;
-        redraw();
+        terminal.clear();
+        printTitle();
     }
     
 }

@@ -2,9 +2,9 @@ package tk.xhuoffice.sessbilinfo;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import tk.xhuoffice.sessbilinfo.net.Http;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
-import tk.xhuoffice.sessbilinfo.util.Http;
 import tk.xhuoffice.sessbilinfo.util.JsonLib;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;

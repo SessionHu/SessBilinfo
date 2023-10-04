@@ -9,16 +9,6 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 public class Size {
     
-    public static void main(String[] args) {
-        Logger.debug = true;
-        try {
-            int[] size = getSize();
-            Logger.println(size[0]+"x"+size[1]);
-        } catch(Exception e) {
-            OutFormat.outThrowable(e,2);
-        }
-    }
-    
     public static int[] get() {
         try {
             return getSize();
@@ -26,26 +16,20 @@ public class Size {
             return new int[]{80,24};
         }
     }
-
+    
     public static int[] getSize() throws IOException {
         // stty size
         return sttySize();
     }
-
+    
     public static int[] sttySize() throws IOException {
         // run process
         String line = null;
-        String ty = "/dev/tty";
-        for(int i = 0; i <= 11; i++) {
-            if(i>0&&i<11) {
-                ty = "/dev/pty"+(i-1);
-            } else {
-                ty = System.getenv("tty");
-            }
-            Process process = Runtime.getRuntime().exec(new String[]{"sh","-c","stty size <"+ty});
+        String[] ttys = {System.getenv("tty"),"/dev/tty","/dev/pty0"};
+        for(String tty : ttys) {
+            Process process = Runtime.getRuntime().exec(new String[]{"sh","-c","stty size <"+tty});
             try(BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                line = reader.readLine();
-                if(line!=null) {
+                if((line=reader.readLine())!=null) {
                     break;
                 }
             }

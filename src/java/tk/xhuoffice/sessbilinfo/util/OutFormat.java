@@ -9,8 +9,11 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Scanner;
-import tk.xhuoffice.sessbilinfo.ui.Pointer;
+import tk.xhuoffice.sessbilinfo.ui.Prompt;
 
+/**
+ * format message for output
+ */
 
 public class OutFormat {
     
@@ -62,16 +65,15 @@ public class OutFormat {
             // 定义变量
             String str = null;
             // 输出提示
-            Pointer.prompt();
             if(tip.length!=0) {
-                Logger.prompt(tip[0]);
+                Prompt.set(tip[0]);
             } else {
-                Logger.prompt();
+                Prompt.set();
             }
             // 读取控制台输入
             try {
                 str = scan.nextLine();
-                Pointer.unset();
+                Prompt.unset();
             } catch(java.util.NoSuchElementException e) {
                 // 异常处理(退出)
                 Logger.ln();
@@ -83,7 +85,7 @@ public class OutFormat {
             if(str==null||str.trim().isEmpty()) {
                 Logger.warnln(typ+" 不能为空");
             } else {
-                return str;
+                return str.trim();
             }
         }
     }
@@ -97,7 +99,7 @@ public class OutFormat {
                 input = strNum[0];
             } else {
                 // 获取输入
-                input = getString(typ).trim();
+                input = getString(typ);
             }
             try {
                 // 将输入转换为 long
@@ -171,14 +173,14 @@ public class OutFormat {
         if(tipSwitch) {
             // 打印文字提示
             Logger.warnln("当前终端似乎不支持 ANSI 转义序列");
-            Logger.warnln("当前系统环境仅支持 Windows Terminal");
+            Logger.warnln("推荐使用 Git Bash (MinTTY), Windows Terminal");
             // 等待以让用户注意到提示
             try {
-                // 等待 1.111 秒
-                Thread.sleep(1111);
-            } catch (InterruptedException e) {
+                // sleep 1333 ms
+                Thread.sleep(1333);
+            } catch(InterruptedException e) {
                 // 处理中断异常
-                // nothing here...
+                // 你好,中国. 国庆快乐. -2023.10.1
             }
         }
         // <em>CONTENT</em> -> \033[0;1mCONTENT\033[0m
@@ -214,16 +216,11 @@ public class OutFormat {
 
     public static String shorterString(String str) {
         int length = str.length();
-        if(length>55) {
-            return str.substring(0,24)+"......"+str.substring(length-24);
-        } else if(length>39) {
-            return str.substring(0,16)+"......"+str.substring(length-16);
-        } else if(length>28) {
-            return str.substring(0,12)+"..."+str.substring(length-12);
-        } else if(length>20) {
-            return str.substring(0,8)+"..."+str.substring(length-8);
+        if(length>32) {
+            return str.substring(0,12)+"......"+str.substring(length-12);
+        } else if(length>16) {
+            return str.substring(0,6)+"..."+str.substring(length-6);
         } else {
-            Logger.debugln("无法缩短字符串 "+str);
             return str;
         }
     }

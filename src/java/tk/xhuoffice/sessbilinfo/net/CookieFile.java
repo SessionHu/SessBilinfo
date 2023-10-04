@@ -1,40 +1,42 @@
-package tk.xhuoffice.sessbilinfo.util;
+package tk.xhuoffice.sessbilinfo.net;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import tk.xhuoffice.sessbilinfo.util.Logger;
+import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 
 public class CookieFile {
 
-    public static final long COOKIE_EXPIRE_TIME = 2 * 30 * 24 * 60 * 60 * 1000; // 2 months
+    public static final long COOKIE_EXPIRE_TIME = 6 * 30 * 24 * 60 * 60 * 1000; // 6 months
 
     public static String CookieFilePath = getCookieFilePath();
     
-    public static String getCookieFilePath(String... os) {
+    public static String getCookieFilePath() {
         // 获取系统类型
-        String osName = null;
-        if(os.length==0) {
-            osName = System.getProperty("os.name").toLowerCase();
-            Logger.debugln("系统 "+osName);
-        } else {
-            osName = os[0].toLowerCase();
-        }
+        String osName = System.getProperty("os.name").toLowerCase();
+        Logger.debugln("系统 "+osName);
+        // get & return
+        return getCookieFilePath(osName);
+    }
+    
+    public static String getCookieFilePath(String os) {
         // 根据系统选择路径
-        if(osName.contains("windows")) {
+        if(os.contains("windows")) {
             // Windows
             String usrdir = System.getenv("USERPROFILE");
             return usrdir + "\\.openbili\\cookie.txt";
-        } else if(osName.contains("mac") || osName.contains("linux")) {
+        } else if(os.contains("mac") || os.contains("linux")) {
             // 类 Unix
             String usrHome = System.getProperty("user.home");
             return usrHome + "/.openbili/cookie.txt";
         } else {
             // 其她
-            if(os.length==0) {
-                Logger.warnln("未知的操作系统 "+osName+", Cookie 将保存在当前工作目录下");
+            if(os.length()!=0) {
+                Logger.warnln("未知的操作系统 "+os+", Cookie 将保存在当前工作目录下");
             }
             return "cookie.txt";
         }
@@ -51,7 +53,7 @@ public class CookieFile {
                     // 修改 Cookie
                     for(int l = 0; l < cookie.length; l++) {
                         // 避免 null
-                        if(cookie[l]==null||cookie[l].trim().isEmpty()) {
+                        if(cookie[l]==null) {
                             cookie[l] = "";
                         }
                     }
@@ -60,14 +62,14 @@ public class CookieFile {
                     // 离开循环
                     break;
                 } catch(java.io.FileNotFoundException e) {
-                    Logger.debugln("java.io.FileNotFoundException: "+e.getMessage());
+                    Logger.debugln(e.toString());
                 } catch(Exception e) {
                     OutFormat.outThrowable(e,0);
                 }
                 // 发生异常时的提示
                 if(i==0) {
                     Logger.warnln("Cookie 文件写入失败, 将在当前目录下保存");
-                    CookieFilePath = getCookieFilePath("os");
+                    CookieFilePath = getCookieFilePath("");
                 } else {
                     Logger.errln("Cookie 文件写入失败");
                     // 恢复原路径
@@ -115,8 +117,8 @@ public class CookieFile {
                 return readCookie();
             } catch(java.io.FileNotFoundException e) {
                 // 重新更换路径加载
-                Logger.debugln("java.io.FileNotFoundException: "+e.getMessage());
-                CookieFilePath = getCookieFilePath("os");
+                Logger.debugln(e.toString());
+                CookieFilePath = getCookieFilePath("");
             } catch(Exception e) {
                 OutFormat.outThrowable(e,0);
                 Logger.warnln("Cookie 文件加载失败");
@@ -140,9 +142,8 @@ public class CookieFile {
         }
         // 处理数据
         try {
-            long timestamp = Long.parseLong(line[0]);
             // 验证文件
-            if(System.currentTimeMillis() - timestamp > COOKIE_EXPIRE_TIME) {
+            if(System.currentTimeMillis() - Long.parseLong(line[0]) > COOKIE_EXPIRE_TIME) {
                 // 文件过期
                 Logger.debugln("文件过期");
             } else if(line[1]==null||line[1].trim().isEmpty()) {
@@ -150,29 +151,27 @@ public class CookieFile {
                 Logger.debugln("文件首行为空");
             } else {
                 // 读取数据
-                String[] cookie = new String[line.length-1];
-                int cookieIndex = 0;
+                ArrayList<String> cookie = new ArrayList<>();
                 for(int i = 1; i < line.length; i++) {
                     // 读取行
-                    String current = line[i];
+                    String current = line[i]; // 你好,中国.国庆快乐.-2023.10.1.
                     // 判断行是否有效
-                    if(current.contains("=")) {
+                    if(current.matches("^[^=]+=[^=]+$")) {
                         // 有效载入
-                        cookie[cookieIndex] = current;
-                        cookieIndex++;
+                        cookie.add(current);
                     } else {
-                        // 无效留空
+                        // 无效
                         Logger.debugln("文件行 "+i+" 无效");
                     }
                 }
                 // 返回数据
-                return cookie;
+                return cookie.toArray(new String[0]);
             }
         } catch(NumberFormatException e) {
-            Logger.debugln("NumberFormatException: "+e.getMessage());
+            Logger.debugln(e.toString());
             Logger.errln("Cookie 文件时间戳错误");
         } catch(ArrayIndexOutOfBoundsException e) {
-            Logger.debugln("ArrayIndexOutOfBoundsException: "+e.getMessage());
+            Logger.debugln(e.toString());
             Logger.warnln("Cookie 文件为空");
         }
         // 返回空数据
@@ -195,9 +194,9 @@ public class CookieFile {
             // 获取输入
             current = OutFormat.getString("行",String.valueOf(lines.size()+1));
             // 验证行
-            if(!current.trim().equals(":wq")) {
+            if(!current.equals(":wq")) {
                 // 输入有效性检测
-                if(!current.trim().matches("^[^=]+=[^=]+$")) {
+                if(!current.matches("^[^=]+=[^=]+$")) {
                     // 无效输入
                     Logger.warnln("无效的 Cookie "+current);
                 } else {

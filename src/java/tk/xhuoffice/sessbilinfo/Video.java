@@ -2,11 +2,11 @@ package tk.xhuoffice.sessbilinfo;
 
 import java.util.HashMap;
 import java.util.Map;
+import tk.xhuoffice.sessbilinfo.net.Http;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.util.AvBv;
 import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
 import tk.xhuoffice.sessbilinfo.util.BiliException;
-import tk.xhuoffice.sessbilinfo.util.Http;
 import tk.xhuoffice.sessbilinfo.util.JsonLib;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
@@ -174,54 +174,68 @@ public class Video {
     public String[] tag;
     
     public Video(long aid) {
-        videoVars(Http.get(BiliAPIs.VIEW_DETAIL+"?aid="+aid));
+        String detailJson = Http.get(BiliAPIs.VIEW_DETAIL+"?aid="+aid);
+        try {
+            videoVars(detailJson);
+        } catch(Exception e) {
+            throw new BiliException(BiliAPIs.outCodeErr(detailJson));
+        }
     }
     
-    public Video(String json) {
-        videoVars(json);
+    public Video(String detailJson) {
+        try {
+            videoVars(detailJson);
+        } catch(Exception e) {
+            throw new BiliException(BiliAPIs.outCodeErr(detailJson));
+        }
     }
     
-    public void videoVars(String json) {
+    public void videoVars(String detailJson) {
         // .data.View
         {
             // .
-            bvid = JsonLib.getString(json,"data","View","bvid");
-            aid = JsonLib.getLong(json,"data","View","aid");
-            tname = JsonLib.getString(json,"data","View","tname");
-            mtname = tidSubToMain(JsonLib.getInt(json,"data","View","tid"));
-            original = JsonLib.getInt(json,"data","View","copyright") == 1;
-            title = JsonLib.getString(json,"data","View","title");
-            pubdate = JsonLib.getLong(json,"data","View","pubdate");
-            desc = JsonLib.getString(json,"data","View","desc");
-            duration = JsonLib.getLong(json,"data","View","duration");
+            bvid = JsonLib.getString(detailJson,"data","View","bvid");
+            aid = JsonLib.getLong(detailJson,"data","View","aid");
+            tname = JsonLib.getString(detailJson,"data","View","tname");
+            mtname = tidSubToMain(JsonLib.getInt(detailJson,"data","View","tid"));
+            original = JsonLib.getInt(detailJson,"data","View","copyright") == 1;
+            title = JsonLib.getString(detailJson,"data","View","title");
+            pubdate = JsonLib.getLong(detailJson,"data","View","pubdate");
+            desc = JsonLib.getString(detailJson,"data","View","desc");
+            duration = JsonLib.getLong(detailJson,"data","View","duration");
             // ..stat
             {
-                view = JsonLib.getLong(json,"data","View","stat","view");
-                danmaku = JsonLib.getLong(json,"data","View","stat","danmaku");
-                reply = JsonLib.getLong(json,"data","View","stat","reply");
-                fav = JsonLib.getLong(json,"data","View","stat","favorite");
-                coin = JsonLib.getLong(json,"data","View","stat","coin");
-                share = JsonLib.getLong(json,"data","View","stat","share");
-                like = JsonLib.getLong(json,"data","View","stat","like");
+                view = JsonLib.getLong(detailJson,"data","View","stat","view");
+                danmaku = JsonLib.getLong(detailJson,"data","View","stat","danmaku");
+                reply = JsonLib.getLong(detailJson,"data","View","stat","reply");
+                fav = JsonLib.getLong(detailJson,"data","View","stat","favorite");
+                coin = JsonLib.getLong(detailJson,"data","View","stat","coin");
+                share = JsonLib.getLong(detailJson,"data","View","stat","share");
+                like = JsonLib.getLong(detailJson,"data","View","stat","like");
             }
         }
         // .data.Card
         {
             // ..card
             {
-                mid = JsonLib.getLong(json,"data","Card","card","mid");
-                uploader = JsonLib.getString(json,"data","Card","card","name");
+                mid = JsonLib.getLong(detailJson,"data","Card","card","mid");
+                uploader = JsonLib.getString(detailJson,"data","Card","card","name");
             }
         }
         // .data.Tags
         {
-            String[] tagJson = JsonLib.getArray(json,"data","Tags");
+            String[] tagJson = JsonLib.getArray(detailJson,"data","Tags");
             String[] tagName = new String[tagJson.length];
             for(int i = 0; i < tagJson.length; i++) {
                 tagName[i] = JsonLib.getString(tagJson[i],"tag_name");
             }
             tag = tagName;
         }
+    }
+    
+    @Override
+    public String toString() {
+        return this.title+"@av"+this.aid;
     }
     
     public static final Map<Integer,String> ZONE = new HashMap<>();

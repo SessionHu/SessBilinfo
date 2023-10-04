@@ -1,13 +1,15 @@
-package tk.xhuoffice.sessbilinfo.util;
+package tk.xhuoffice.sessbilinfo.net;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
+import tk.xhuoffice.sessbilinfo.util.Logger;
+import tk.xhuoffice.sessbilinfo.util.OutFormat;
+
 
 public class Http {
 
@@ -17,13 +19,11 @@ public class Http {
     
     public static String[] cookieCache = null;
     
-    public static String encode(String str){
-        try {
-            return URLEncoder.encode(str,"utf-8");
-        } catch(java.io.UnsupportedEncodingException e) {
-            Logger.warnln("URL 编码失败: "+e.getMessage());
-            return str;
-        }
+    public static boolean useCookie = true;
+    public static int timeout = 5000;
+
+    public static String encode(String str) {
+        return StringCoder.urlEncode(str);
     }
     
     public static String get(String url) {
@@ -77,27 +77,28 @@ public class Http {
     }
     
     public static String getDataFromURL(String inurl) throws IOException {
-        // 加载缓存的Cookie
-        String[] cookie = cookieCache;
         // 缓存不可用时加载本地 Cookie
-        if(cookie==null) {
-            cookie = CookieFile.load();
-            cookieCache = cookie;
+        if(cookieCache==null) {
+            cookieCache = CookieFile.load();
         }
         // 本地不可用时重新获取
-        if(cookie.length==0) {
-            cookie = getDefaultCookie();
-            cookieCache = cookie;
+        if(cookieCache.length==0) {
+            cookieCache = getDefaultCookie();
+        }
+        // 处理 Cookie 缓存
+        for(int i = 0; i < cookieCache.length; i++) {
+            cookieCache[i] = cookieCache[i].split(";")[0];
         }
         // 创建请求
-        HttpURLConnection conn = setGetConnURL(inurl,ANDROID_APP_UA,cookie);
+        HttpURLConnection conn = setGetConnURL(inurl);
         // 读取数据
         String data = readResponseData(conn);
         // 返回结果
         return data;
     }
     
-    public static HttpURLConnection setGetConnURL(String inurl, String ua, String... cookie) throws IOException {
+    public static HttpURLConnection setGetConnURL(String inurl) throws IOException {
+        // print debug log
         Logger.debugln("设置请求到 "+OutFormat.shorterString(inurl));
         // 创建 URL 对象
         URL url = new URL(inurl);
@@ -105,18 +106,30 @@ public class Http {
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         // 设置请求方法为 GET
         conn.setRequestMethod("GET");
+        // 设置是否使用缓存
+        conn.setUseCaches(true);
+        // 设置超时时间
+        conn.setConnectTimeout(timeout);
         // 设置 User-Agent 请求头
-        conn.setRequestProperty("User-Agent",ua);
+        {
+            // choose userAgent
+            String userAgent = null;
+            if(inurl.startsWith("https://api")) {
+                userAgent = ANDROID_APP_UA;
+            } else {
+                userAgent = WIN10_EDGE_UA;
+            }
+            // set User-Agent
+            conn.setRequestProperty("User-Agent",userAgent);
+            // print User-Agent
+            Logger.debugln("User-Agent: "+userAgent);
+        }
         // 设置 Cookie
-        if(cookie.length==0) {
-            // do nothing...
-        } else {
+        if(useCookie) {
             String cookies = "";
             // 提取 Cookie
             try {
-                for(int i = 0; i < cookie.length; i++) {
-                    String[] parts = cookie[i].split(";");
-                    String cookieVal = parts[0];
+                for(String cookieVal : cookieCache) {
                     cookies += cookieVal + "; ";
                 }
                 cookies = cookies.substring(0, cookies.length() - 2);
@@ -128,19 +141,20 @@ public class Http {
             conn.setRequestProperty("Cookie", cookies);
             // 打印 Cookie (加密)
             cookies = cookies.replaceAll("(?<=\\=)[^;]+", "xxx");
-            Logger.debugln("Cookies: "+cookies);
+            Logger.debugln("Cookie: "+cookies);
         }
+        // connect & return
+        conn.connect();
         return conn;
     }
     
     public static String readResponseData(HttpURLConnection conn) throws IOException {
         // 打印调试日志
-        String connStr = conn.toString();
-        String url = connStr.substring(connStr.indexOf(":")+1);
+        String url = conn.getURL().toString();
         Logger.debugln("读取返回数据从 "+OutFormat.shorterString(url));
         // 读取 HTTP 状态码
         int responseCode = conn.getResponseCode();
-        Logger.debugln("HTTP 状态码: "+responseCode);
+        Logger.debugln("HTTP "+responseCode+" "+conn.getResponseMessage());
         // 读取返回数据
         BufferedReader in;
         if(responseCode==200) {
@@ -164,20 +178,18 @@ public class Http {
         try {
             Logger.debugln("联机获取默认 Cookie");
             // 设置请求到 https://www.bilibili.com/
-            String url = "https://www.bilibili.com/";
-            HttpURLConnection conn = setGetConnURL(url, WIN10_EDGE_UA);
+            useCookie = false;
+            HttpURLConnection conn = setGetConnURL("https://www.bilibili.com/");
             // 从响应头中获取 Cookie
             Map<String, List<String>> headers = conn.getHeaderFields();
             List<String> cookies = headers.get("Set-Cookie");
-            String[] cookie = new String[cookies.size()];
-            for(int i = 0; i < cookies.size(); i++) {
-                cookie[i] = cookies.get(i);
-            }
+            String[] cookie = cookies.toArray(new String[0]);
             // 保存 Cookie
             CookieFile.save(cookie);
             // 返回 Cookie
+            useCookie = true;
             return cookie;
-        } catch(IOException|NullPointerException e) {
+        } catch(IOException e) {
             Logger.warnln("联机获取 Cookie 发生异常, 使用内置 Cookie");
             return DEFAULT_COOKIE.split(";");
         }
