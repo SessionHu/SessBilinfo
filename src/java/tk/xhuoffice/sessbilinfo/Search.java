@@ -132,7 +132,7 @@ public class Search {
                         usrOfficalMsg += JsonLib.getString(usrJson,"official_verify","desc");
                     } else if(usrOfficalType==1) {
                         // 组织认证
-                        usrOfficalMsg += "组织认证";
+                        usrOfficalMsg += "组织认证: ";
                         usrOfficalMsg += JsonLib.getString(usrJson,"official_verify","desc");
                     }
                 }
