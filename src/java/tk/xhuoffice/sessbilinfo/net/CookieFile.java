@@ -5,13 +5,14 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 
 public class CookieFile {
 
-    public static final long COOKIE_EXPIRE_TIME = 6 * 30 * 24 * 60 * 60 * 1000; // 6 months
+    public static final long COOKIE_EXPIRE_TIME = 15552000000L; // 6 months
 
     public static String CookieFilePath = getCookieFilePath();
     
@@ -143,7 +144,7 @@ public class CookieFile {
         // 处理数据
         try {
             // 验证文件
-            if(System.currentTimeMillis() - Long.parseLong(line[0]) > COOKIE_EXPIRE_TIME) {
+            if(System.currentTimeMillis()-Long.parseLong(line[0]) > COOKIE_EXPIRE_TIME) {
                 // 文件过期
                 Logger.debugln("文件过期");
             } else if(line[1]==null||line[1].trim().isEmpty()) {
@@ -156,7 +157,7 @@ public class CookieFile {
                     // 读取行
                     String current = line[i]; // 你好,中国.国庆快乐.-2023.10.1.
                     // 判断行是否有效
-                    if(current.matches("^[^=]+=[^=]+$")) {
+                    if(current.contains("=")) {
                         // 有效载入
                         cookie.add(current);
                     } else {
@@ -179,6 +180,7 @@ public class CookieFile {
     }
     
     public static void edit() {
+        Frame.reset();
         // 初始化变量
         ArrayList<String> lines = new ArrayList<>();
         String current = "";
