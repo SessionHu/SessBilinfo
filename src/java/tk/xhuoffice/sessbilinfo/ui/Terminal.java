@@ -170,10 +170,8 @@ public class Terminal {
         int index = getEmptyLineIndex();
         // verify index
         if(index>-1) { // normal add
-            // set empty(null) line to text
+            // set & print empty(null) line to text
             setLine(index+1,text);
-            // print text
-            System.out.printf("\033[%d;0f%s%n",index+1,text);
         } else { // no empty(null) line
             // create new virtual screen
             String[] screen = new String[this.lns];
