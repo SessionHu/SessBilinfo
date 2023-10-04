@@ -20,7 +20,8 @@ public class Http {
     public static String[] cookieCache = null;
     
     public static boolean useCookie = true;
-    public static int timeout = 5000;
+    public static int timeoutc = 5000;
+    public static int timeoutr = 12000;
 
     public static String encode(String str) {
         return StringCoder.urlEncode(str);
@@ -56,6 +57,15 @@ public class Http {
                 if(msg.contains("timed out")) {
                     // 连接超时
                     Logger.println("连接超时, 请检查网络连接是否稳定",l);
+                } else {
+                    handleUnknownException(e);
+                    break;
+                }
+            } catch(java.net.SocketTimeoutException|javax.net.ssl.SSLException e) {
+                String msg = e.getMessage();
+                if(msg.equals("Read timed out")) {
+                    // 读取超时
+                    Logger.println("读取超时, 请检查网络连接是否稳定",l);
                 } else {
                     handleUnknownException(e);
                     break;
@@ -106,10 +116,10 @@ public class Http {
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         // 设置请求方法为 GET
         conn.setRequestMethod("GET");
-        // 设置是否使用缓存
-        conn.setUseCaches(true);
-        // 设置超时时间
-        conn.setConnectTimeout(timeout);
+        // 设置连接超时时间
+        conn.setConnectTimeout(timeoutc);
+        // 设置读取超时时间
+        conn.setReadTimeout(timeoutr);
         // 设置 User-Agent 请求头
         {
             // choose userAgent
