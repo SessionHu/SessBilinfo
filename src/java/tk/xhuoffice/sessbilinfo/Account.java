@@ -33,7 +33,7 @@ public class Account {
         }
     }
     
-    public static boolean iStandardNickname(String name) {
+    private static boolean iStandardNickname(String name) {
         Logger.debugln("本地处理昵称");
         // 检查字符串长度
         int length = name.length();
@@ -71,6 +71,57 @@ public class Account {
             Logger.println("昵称过长");
         } else if(code==40006) {
             Logger.println("昵称过短");
+        } else {
+            BiliAPIs.outCodeErr(json);
+        }
+    }
+    
+    public static void ipLocation() {
+        Frame.reset();
+        // 发送请求
+        Logger.println("正在请求数据...");
+        String json = Http.get(BiliAPIs.IP_LOCATION);
+        // 解析返回数据
+        int code = JsonLib.getInt(json,"code");
+        if(code==0) {
+            // 提取信息
+            String ip = JsonLib.getString(json,"data","addr"); // 公网IP地址
+            String country = JsonLib.getString(json,"data","county"); // 国家/地区
+            String province = JsonLib.getString(json,"data","province"); // 省/州
+            String city = JsonLib.getString(json,"data","city"); // 城市
+            String isp = JsonLib.getString(json,"data","isp"); // 运营商
+            int latitude = JsonLib.getInt(json,"data","latitude"); // 纬度
+            int longitude = JsonLib.getInt(json,"data","longitude"); // 经度
+            int countryCode = JsonLib.getInt(json,"data","country_code"); // 国家/地区代码
+            // 处理信息
+            String ns = ""; // 纬度
+            if(latitude>=0) {
+                ns = latitude+"°N";
+            } else {
+                ns = latitude+"°S";
+            }
+            String ew = ""; // 经度
+            if(longitude>=0) {
+                ew = longitude+"°E";
+            } else {
+                ew = longitude+"°W";
+            }
+            // 准备信息
+            String info = "--------------------------------"+"\n";
+            info += "公网 IP:       "+ip+"\n";
+            info += "国家/地区:     "+country+"\n";
+            if(province!=null) {
+                info += "省/州:         "+province+"\n";
+                if(city!=null) {
+                    info += "城市:          "+city+"\n";
+                }
+            }
+            info += "经纬度:        "+ew+" "+ns+"\n";
+            info += "运营商:        "+isp+"\n";
+            info += "国家/地区代码: "+countryCode+"\n";
+            info += "--------------------------------"+"\n";
+            // 打印信息
+            Logger.println(info);
         } else {
             BiliAPIs.outCodeErr(json);
         }

@@ -10,6 +10,7 @@ import java.util.HashMap;
  *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_request.md
  *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/check_nickname.md
  *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/info.md
+ *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/clientinfo/ip.md
  * 信息来源:
  *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/errcode.md
  */
@@ -35,6 +36,8 @@ public class BiliAPIs {
     public static final String ACCOUNT_CHECK_NICKNAME = "https://passport.bilibili.com/web/generic/check/nickname";
     // 视频超详细信息
     public static final String VIEW_DETAIL = BASE_URL+"/web-interface/view/detail";
+    // 通过ip确定地理位置
+    public static final String IP_LOCATION = BASE_URL+"/web-interface/zone";
     
     public static String outCodeErr(String rawJson) {
         // 获取错误

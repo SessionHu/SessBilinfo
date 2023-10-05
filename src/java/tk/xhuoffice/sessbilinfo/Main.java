@@ -60,7 +60,8 @@ public class Main {
                 "2. 获取视频信息\n"+
                 "3. 进行综合搜索\n"+
                 "4. 检查昵称状态\n"+
-                "5. 修改 Cookie\n"+
+                "5. 获取IP地理位置\n"+
+                "6. 修改 Cookie\n"+
                 "0. 退出");
         Prompt.set();
         // 获取输入信息
@@ -89,6 +90,9 @@ public class Main {
             // 检查昵称状态
             Account.checkNickname();
         } else if(id==5) {
+            //  获取IP地理位置
+            Account.ipLocation();
+        } else if(id==6) {
             // 修改 Cookie
             CookieFile.edit();
         } else if(id==0) {
