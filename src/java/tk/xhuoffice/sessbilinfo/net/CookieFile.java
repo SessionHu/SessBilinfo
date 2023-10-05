@@ -216,6 +216,8 @@ public class CookieFile {
         }
         // 写入文件
         save(lines.toArray(new String[0]));
+        // clear cache
+        Http.cookieCache = null;
     }
 
     public static void rm() {
