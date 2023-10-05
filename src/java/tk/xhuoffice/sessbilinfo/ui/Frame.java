@@ -10,13 +10,11 @@ public class Frame {
 
     public static Terminal terminal = null;
     
-    public static void main(String[] args) {
+    public static void main(String... args) {
         // create a new Terminal
         terminal = new Terminal();
         // 重绘屏幕
         redraw();
-        // 启动!
-        Main.main(args);
     }
     
     public static void printTitle() {

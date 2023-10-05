@@ -2,7 +2,6 @@ package tk.xhuoffice.sessbilinfo;
 
 import java.io.File;
 import java.util.Scanner;
-import sun.misc.Signal;
 import tk.xhuoffice.sessbilinfo.net.CookieFile;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.ui.Prompt;
@@ -19,19 +18,7 @@ public class Main {
     
     public static Scanner scan = new Scanner(System.in);
     
-    static {
-        Signal.handle(new Signal("INT"), signal -> {
-            Logger.ln();
-            Logger.debugln("SIGINT signal received, exit!");
-            System.exit(0);
-        });
-    }
-    
-    public static void main(String[] args) {
-        // 环境变量处理
-        env();
-        // 命令行参数处理
-        cmdArgs(args);
+    public static void main(String... args) {
         // 直接启动本类的处理
         if(Frame.terminal==null) {
             Frame.terminal = new Terminal();
