@@ -4,21 +4,27 @@ import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.ProxySelector;
+import java.net.URI;
 import java.util.List;
+import tk.xhuoffice.sessbilinfo.util.Logger;
 
 
 public class ProxySetting {
     
-    public static boolean useSys;
-    public static boolean useProxy;
+    public static boolean useSys = true;
+    public static boolean useProxy = false;
     
     public static Proxy getSystemProxy() {
-        ProxySelector proxySelector = ProxySelector.getDefault();
-        List<Proxy> selectedProxies = proxySelector.select(new URI("http://www.example.com"));
-        if(selectedProxies.isEmpty()) {
+        try {
+            ProxySelector proxySelector = ProxySelector.getDefault();
+            List<Proxy> selectedProxies = proxySelector.select(new URI("http://www.example.com"));
+            if(selectedProxies.isEmpty()) {
+                return Proxy.NO_PROXY;
+            } else {
+                return selectedProxies.get(0);
+            }
+        } catch(java.net.URISyntaxException e) {
             return Proxy.NO_PROXY;
-        } else {
-            return selectedProxies.get(0);
         }
     }
     
@@ -36,9 +42,9 @@ public class ProxySetting {
         // proxy type
         Proxy.Type ptyp = null; {
             if(styp.equals("http")) {
-                ptype = Proxy.Type.HTTP;
+                ptyp = Proxy.Type.HTTP;
             } else if(styp.equals("socks")||styp.equals("socks4")||styp.equals("socks5")) {
-                ptype = Proxy.Type.SOCKS;
+                ptyp = Proxy.Type.SOCKS;
             } else {
                 Logger.warnln("不支持的代理类型 "+styp+", 使用系统代理");
                 return Proxy.NO_PROXY;
@@ -79,7 +85,7 @@ public class ProxySetting {
         if(username.isEmpty()||password.isEmpty()) {
             // nothing here...
         } else if(proxy.type().equals(Proxy.Type.HTTP)) {
-            String val = "Basic " + StringCoder.base64Encode(user+":"+password);
+            String val = "Basic " + StringCoder.base64Encode(username+":"+password);
             conn.setRequestProperty("Proxy-Authorization", val);
         }
         return conn;
