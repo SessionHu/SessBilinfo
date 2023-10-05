@@ -21,7 +21,6 @@ public class Setting {
     public static void load() {
         // load from file
         try(FileReader reader = new FileReader(PROP_PATH)) {
-            Logger.debugln("正在加载设置文件");
             props.load(reader);
         } catch(java.io.FileNotFoundException e) {
             Logger.debugln(e.toString());
@@ -41,7 +40,6 @@ public class Setting {
     public static void create() throws IOException {
         CookieFile.checkParentDir(PROP_PATH);
         try(FileWriter writer = new FileWriter(PROP_PATH)) {
-            Logger.debugln("正在创建设置文件");
             String dftprop = ""; {
                 dftprop += "# =====================================================\n";
                 dftprop += "# Proxy Settings\n";
