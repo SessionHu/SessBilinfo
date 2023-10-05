@@ -219,11 +219,7 @@ public class CookieFile {
     }
 
     public static void rm() {
-        if(new File(CookieFilePath).delete()) {
-            Logger.println("Cookie 文件已删除");
-        } else {
-            Logger.warnln("Cookie 文件删除失败");
-        }
+        new File(CookieFilePath).delete();
     }
     
 }
