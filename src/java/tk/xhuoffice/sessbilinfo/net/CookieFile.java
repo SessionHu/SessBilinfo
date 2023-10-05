@@ -19,7 +19,6 @@ public class CookieFile {
     public static String getCookieFilePath() {
         // 获取系统类型
         String osName = System.getProperty("os.name").toLowerCase();
-        Logger.debugln("系统 "+osName);
         // get & return
         return getCookieFilePath(osName);
     }
