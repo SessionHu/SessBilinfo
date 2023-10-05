@@ -78,14 +78,14 @@ public class ProxySetting {
         return proxy;
     }
     
-    private static final String username = Setting.read("proxy.username", "");
-    private static final String password = Setting.read("proxy.password", "");
+    private static final String USERNAME = Setting.read("proxy.username", "");
+    private static final String PASSWORD = Setting.read("proxy.password", "");
     
     public static HttpURLConnection setHttpProxyAuth(HttpURLConnection conn) {
-        if(username.isEmpty()||password.isEmpty()) {
+        if(USERNAME.isEmpty()||PASSWORD.isEmpty()) {
             // nothing here...
         } else if(proxy.type().equals(Proxy.Type.HTTP)) {
-            String val = "Basic " + StringCoder.base64Encode(username+":"+password);
+            String val = "Basic " + StringCoder.base64Encode(USERNAME+":"+PASSWORD);
             conn.setRequestProperty("Proxy-Authorization", val);
         }
         return conn;

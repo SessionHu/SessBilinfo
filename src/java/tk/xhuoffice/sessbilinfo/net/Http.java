@@ -116,13 +116,15 @@ public class Http {
         // 创建 URL 对象
         URL url = new URL(inurl);
         // 打开连接
-        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        HttpURLConnection conn = (HttpURLConnection)url.openConnection(ProxySetting.get());
         // 设置请求方法为 GET
         conn.setRequestMethod("GET");
         // 设置连接超时时间
         conn.setConnectTimeout(timeoutc);
         // 设置读取超时时间
         conn.setReadTimeout(timeoutr);
+        // 设置HTTP代理身份验证
+        conn = ProxySetting.setHttpProxyAuth(conn);
         // 设置 User-Agent 请求头
         {
             // choose userAgent
