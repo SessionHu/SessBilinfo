@@ -14,23 +14,13 @@ public class Setting {
     
     public static final Charset UTF_8 = StandardCharsets.UTF_8;
     
-    public static String propPath = getPropsPath();
+    public static final String PROP_PATH = System.getProperty("user.home") + "/.openbili/settings.properties";
     
     public static Properties props = new Properties();
     
-    public static String getPropsPath() {
-        String path = System.getProperty("user.home") + "/.openbili/settings.properties";
-        try {
-            CookieFile.checkParentDir(path);
-        } catch(IOException e) {
-            // do nothing...
-        }
-        return path;
-    }
-    
     public static void load() {
         // load from file
-        try(FileReader reader = new FileReader(propPath)) {
+        try(FileReader reader = new FileReader(PROP_PATH)) {
             Logger.debugln("正在加载设置文件");
             props.load(reader);
         } catch(java.io.FileNotFoundException e) {
@@ -49,9 +39,10 @@ public class Setting {
     }
     
     public static void create() throws IOException {
-        try(FileWriter writer = new FileWriter(propPath)) {
+        CookieFile.checkParentDir(PROP_PATH);
+        try(FileWriter writer = new FileWriter(PROP_PATH)) {
             Logger.debugln("正在创建设置文件");
-            String dftprop = null; {
+            String dftprop = ""; {
                 dftprop += "# =====================================================\n";
                 dftprop += "# Proxy Settings\n";
                 dftprop += "# proxy.sys > proxy.use (http) > proxy.use (socks)\n";
