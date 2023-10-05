@@ -127,7 +127,7 @@ public class Main {
                 case "--version":
                     // 输出版本信息
                     Logger.debug = false;
-                    Logger.println(
+                    System.out.println(
                             SOFT_TITLE+"\n"+
                             "Copyright (C) 2023 SessionHu\n"+
                             "Cookie Path:  "+CookieFile.getCookieFilePath()+"\n"+
@@ -137,10 +137,7 @@ public class Main {
                 case "-d":
                 case "--debug":
                     // DEBUG 输出是否启用
-                    if(!Logger.debug) {
-                        Logger.debug = true;
-                        Logger.debugln("DEBUG 输出已开启");
-                    }
+                    Logger.debug = true;
                     break;
                 case "-n":
                 case "--nocookie":
@@ -151,7 +148,7 @@ public class Main {
                 case "--force-ansi":
                     // 强制使用ANSI转义序列
                     OutFormat.forceANSI = true;
-                    Logger.warnln("\033[1;33m已强制启用ANSI转义序列, 若本段文字显示为非黄色, 说明您的终端不支持\033[0m");
+                    System.out.println("\033[1;33m已强制启用ANSI转义序列, 若本段文字显示为非黄色, 说明您的终端不支持\033[0m");
                     break;
                 default:
                     // nothing here...
@@ -202,7 +199,7 @@ public class Main {
         } else {
             helpMsg += helpMsgEnUs;
         }
-        Logger.println(helpMsg);
+        System.out.println(helpMsg);
     }
     
 }
