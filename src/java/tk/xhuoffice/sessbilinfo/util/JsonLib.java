@@ -24,7 +24,11 @@ public class JsonLib {
         for(String key : path) {
             element = element.getAsJsonObject().get(key);
         }
-        return element.getAsString();
+        try {
+            return element.getAsString();
+        } catch(NullPointerException e) {
+            return null;
+        }
     }
     
     // 获取 int
