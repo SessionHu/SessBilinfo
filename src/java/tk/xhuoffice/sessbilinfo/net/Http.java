@@ -66,6 +66,9 @@ public class Http {
                 if(msg.equals("Read timed out")) {
                     // 读取超时
                     Logger.println("读取超时, 请检查网络连接是否稳定",l);
+                } else if(msg.equals("connect timed out")) {
+                    // 连接超时
+                    Logger.println("连接超时, 请检查网络连接是否稳定",l);
                 } else {
                     handleUnknownException(e);
                     break;
