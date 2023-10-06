@@ -38,7 +38,7 @@ public class BiliAPIs {
     // 视频超详细信息
     public static final String VIEW_DETAIL = BASE_URL+"/web-interface/view/detail";
     // 获取视频流URL
-    public static final String VIEW_PLAY_URL = BASE_URL+"/player/playurl";
+    public static final String VIEW_PLAY_URL = BASE_URL+"/player/wbi/playurl";
     // 通过ip确定地理位置
     public static final String IP_LOCATION = BASE_URL+"/web-interface/zone";
     
