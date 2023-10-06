@@ -97,6 +97,8 @@ public class Video {
         }
     }
     
+    private static volatile Video video = null;
+    
     public static String getDetail(String aid) {
         // 发送请求
         String rawJson = Http.get(BiliAPIs.VIEW_DETAIL+"?aid="+aid);
@@ -104,7 +106,10 @@ public class Video {
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0){
             // 解析返回数据
-            Video video = new Video(rawJson);
+            video = new Video(rawJson);
+            // 获取视频流URL
+            Thread stream = new Thread(() -> getVideoStreamURL());
+            stream.start();
             // 处理解析数据
             String cprt = ""; { // 视频类型
                 if(video.original) {
@@ -142,6 +147,9 @@ public class Video {
             formatted += String.format("点赞 %s   投币 %s   收藏 %s   分享 %s\n", like, coin, fav, share);
             formatted += String.format("TAG: %s\n", tags);
             formatted += String.format("总时长 %s   评论 %s", alltime, reply);
+            // 处理视频流URL
+            while(video.playURL==null) {}
+            formatted += "\n\n播放地址 "+video.playURL;
             // 返回数据
             return formatted+"\n\n";
         } else if(code==62002) {
@@ -154,8 +162,25 @@ public class Video {
         }
     }
     
+    public static String getVideoStreamURL() {
+        // 发送请求
+        String rawJson = Http.get(BiliAPIs.VIEW_PLAY_URL+"?avid="+video.aid+"&cid="+video.cid+"&platform=html5");
+        // 处理返回值
+        if(JsonLib.getInt(rawJson,"code")!=0) {
+            video.playURL = "";
+            return "";
+        }
+        // 处理返回数据
+        String[] durlJson = JsonLib.getArray(rawJson,"data","durl");
+        String url = JsonLib.getString(durlJson[0],"url");
+        // 返回数据
+        video.playURL = url;
+        return url;
+    }
+    
     public String bvid;
     public long aid;
+    public long cid;
     public String tname; // 子分区名
     public String mtname; // 主分区名
     public boolean original; // 视频类型
@@ -173,6 +198,7 @@ public class Video {
     public String uploader; // UP主
     public long mid; // UP主Mid
     public String[] tag;
+    public volatile String playURL = null;
     
     public Video(long aid) {
         String detailJson = Http.get(BiliAPIs.VIEW_DETAIL+"?aid="+aid);
@@ -197,6 +223,7 @@ public class Video {
             // .
             bvid = JsonLib.getString(detailJson,"data","View","bvid");
             aid = JsonLib.getLong(detailJson,"data","View","aid");
+            cid = JsonLib.getLong(detailJson,"data","View","cid");
             tname = JsonLib.getString(detailJson,"data","View","tname");
             mtname = tidSubToMain(JsonLib.getInt(detailJson,"data","View","tid"));
             original = JsonLib.getInt(detailJson,"data","View","copyright") == 1;
