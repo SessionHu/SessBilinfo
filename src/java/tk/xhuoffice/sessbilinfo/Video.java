@@ -107,9 +107,6 @@ public class Video {
         if(code==0){
             // 解析返回数据
             video = new Video(rawJson);
-            // 获取视频流URL
-            Thread stream = new Thread(() -> getVideoStreamURL());
-            stream.start();
             // 处理解析数据
             String cprt = ""; { // 视频类型
                 if(video.original) {
@@ -162,22 +159,6 @@ public class Video {
         }
     }
     
-    public static String getVideoStreamURL() {
-        // 发送请求
-        String rawJson = Http.get(BiliAPIs.VIEW_PLAY_URL+"?avid="+video.aid+"&cid="+video.cid+"&platform=html5");
-        // 处理返回值
-        if(JsonLib.getInt(rawJson,"code")!=0) {
-            video.playURL = "";
-            return "";
-        }
-        // 处理返回数据
-        String[] durlJson = JsonLib.getArray(rawJson,"data","durl");
-        String url = JsonLib.getString(durlJson[0],"url");
-        // 返回数据
-        video.playURL = url;
-        return url;
-    }
-    
     public String bvid;
     public long aid;
     public long cid;
@@ -205,7 +186,7 @@ public class Video {
         try {
             videoVars(detailJson);
         } catch(Exception e) {
-            throw new BiliException(BiliAPIs.outCodeErr(detailJson));
+            throw new BiliException(BiliAPIs.outCodeErr(detailJson),e);
         }
     }
     
@@ -213,7 +194,7 @@ public class Video {
         try {
             videoVars(detailJson);
         } catch(Exception e) {
-            throw new BiliException(BiliAPIs.outCodeErr(detailJson));
+            throw new BiliException(BiliAPIs.outCodeErr(detailJson),e);
         }
     }
     
@@ -258,6 +239,21 @@ public class Video {
                 tagName[i] = JsonLib.getString(tagJson[i],"tag_name");
             }
             tag = tagName;
+        }
+        // 获取视频流URL
+        {
+            Thread stream = new Thread(() -> {
+                // 发送请求
+                String rawJson = Http.get(BiliAPIs.VIEW_PLAY_URL+"?avid="+video.aid+"&cid="+video.cid+"&platform=html5");
+                // 处理返回值
+                if(JsonLib.getInt(rawJson,"code")!=0) {
+                    video.playURL = "";
+                }
+                // 处理返回数据
+                String[] durlJson = JsonLib.getArray(rawJson,"data","durl");
+                video.playURL = JsonLib.getString(durlJson[0],"url");
+            });
+            stream.start();
         }
     }
     
