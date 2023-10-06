@@ -10,6 +10,7 @@ import java.util.HashMap;
  *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_request.md
  *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/check_nickname.md
  *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/info.md
+ *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/videostream_url.md
  *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/clientinfo/ip.md
  * 信息来源:
  *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/errcode.md
