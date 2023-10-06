@@ -152,7 +152,7 @@ public class Main {
                 case "--force-ansi":
                     // 强制使用ANSI转义序列
                     OutFormat.forceANSI = true;
-                    System.out.println("\033[1;33m已强制启用ANSI转义序列, 若本段文字显示为非黄色, 说明您的终端不支持\033[0m");
+                    Logger.warnln("\033[1;33m已强制启用ANSI转义序列, 若本段文字显示为非黄色, 说明您的终端不支持\033[0m");
                     break;
                 default:
                     // nothing here...

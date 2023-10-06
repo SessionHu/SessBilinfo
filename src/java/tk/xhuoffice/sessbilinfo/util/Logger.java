@@ -24,12 +24,19 @@ public class Logger {
         // get lines
         String[] lines = lineSplitDesc(str,fullDesc);
         // print
-        for(String text : lines) {
-            Frame.terminal.addLine(text);
-        }
-        // title
-        if(Frame.terminal.screen[Frame.terminal.screen.length-1]!=null) {
-            Frame.printTitle();
+        try {
+            for(String text : lines) {
+                Frame.terminal.addLine(text);
+            }
+            // title
+            if(Frame.terminal.screen[Frame.terminal.screen.length-1]!=null) {
+                Frame.printTitle();
+            }
+        } catch(NullPointerException e) {
+            // print when Frame.terminal is null
+            for(String text : lines) {
+                System.out.println(text);
+            }
         }
     }
     
