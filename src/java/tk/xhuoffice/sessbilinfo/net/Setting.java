@@ -3,16 +3,12 @@ package tk.xhuoffice.sessbilinfo.net;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 
 public class Setting {
-    
-    public static final Charset UTF_8 = StandardCharsets.UTF_8;
     
     public static final String PROP_PATH = System.getProperty("user.home") + "/.openbili/settings.properties";
     
