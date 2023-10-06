@@ -23,6 +23,7 @@ public class Account {
             name = OutFormat.getString("昵称");
             // 检查输入是否合法
             if(iStandardNickname(name)) {
+                Logger.clearFootln();
                 // 提示信息
                 Logger.println("正在检查...");
                 // 输出信息
@@ -38,13 +39,13 @@ public class Account {
         // 检查字符串长度
         int length = name.length();
         if(length<2||length>16) {
-            Logger.warnln("昵称长度应在 2 ~ 16 之间");
+            Logger.footln("昵称长度应在 2 ~ 16 之间");
             return false;
         }
         // 检查是否包含特殊字符
         Pattern pattern = Pattern.compile("[^\\p{L}\\p{N}_\\-\\p{IsHan}\\p{IsHangul}\\p{IsKatakana}\\p{IsHiragana}]");
         if(pattern.matcher(name).find()) {
-            Logger.warnln("昵称包含除字母、数字、下划线(_)、连字符(-)、中日韩统一表意文字以外的字符");
+            Logger.footln("昵称包含除字母、数字、下划线(_)、连字符(-)、中日韩统一表意文字以外的字符");
             return false;
         }
         // 返回 true

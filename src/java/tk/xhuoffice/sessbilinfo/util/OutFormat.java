@@ -73,7 +73,6 @@ public class OutFormat {
             // 读取控制台输入
             try {
                 str = scan.nextLine();
-                Prompt.unset();
             } catch(java.util.NoSuchElementException e) {
                 // 异常处理(退出)
                 Logger.ln();
@@ -81,10 +80,12 @@ public class OutFormat {
                 Logger.fataln("非法的输入");
                 System.exit(1);
             }
+            Prompt.unset();
             // 为空时的处理
             if(str==null||str.trim().isEmpty()) {
-                Logger.warnln(typ+" 不能为空");
+                Logger.footln(typ+" 不能为空");
             } else {
+                Logger.clearFootln();
                 return str.trim();
             }
         }
@@ -108,17 +109,17 @@ public class OutFormat {
                 if(num>0) {
                     // 提示并返回结果
                     Logger.println(typ+": "+num);
+                    Logger.clearFootln();
                     return input;
                 } else {
                     // 输出警告
-                    Logger.warnln("无效的 "+typ+" "+input);
+                    Logger.footln("无效的 "+typ+" "+input);
                 }
-            } catch(Exception e) {
+            } catch(NumberFormatException e) {
                 // 输出警告
-                Logger.warnln("过大或非数字不能作为 "+typ);
+                Logger.footln("过大或非数字不能作为 "+typ);
             }
             if(strNum.length!=0) {
-                Logger.debugln("抛出异常");
                 throw new NumberFormatException("无效的 "+typ+" "+input);
             }
         }

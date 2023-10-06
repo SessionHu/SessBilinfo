@@ -114,6 +114,18 @@ public class Logger {
             lines[i] = fullDesc + lines[i];
         }
         return lines;
-    } 
+    }
+    
+    public static void footln(String text) {
+        // only support ONE line
+        text = text.replaceAll("\\n","");
+        clearFootln();
+        Frame.terminal.setLine(Frame.terminal.lns-1,text);
+    }
+    
+    public static void clearFootln() {
+        // only support ONE line
+        Frame.terminal.clearLine(Frame.terminal.lns-1);
+    }
     
 }

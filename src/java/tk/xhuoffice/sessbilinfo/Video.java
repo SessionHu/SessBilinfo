@@ -68,16 +68,17 @@ public class Video {
                         throw new NullPointerException();
                     }
                 } else {
-                    Logger.warnln("无效的输入");
+                    Logger.footln("无效的输入");
                     aid = "";
                 }
             } catch(NullPointerException e) {
-                Logger.warnln("无效的输入");
+                Logger.footln("无效的输入");
                 aid = "";
             }
             if(aid==null||aid.trim().isEmpty()) {
                 // nothing here...
             } else {
+                Logger.clearFootln();
                 Logger.debugln("返回 aid");
                 return aid;
             }

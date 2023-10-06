@@ -203,9 +203,10 @@ public class CookieFile {
                 // 输入有效性检测
                 if(!current.matches("^[^=]+=[^=]+$")) {
                     // 无效输入
-                    Logger.warnln("无效的 Cookie "+current);
+                    Logger.footln("无效的 Cookie "+current);
                 } else {
                     // 有效输入
+                    Logger.clearFootln();
                     Logger.println((lines.size()+1)+": "+current);
                     lines.add(current);
                 }
