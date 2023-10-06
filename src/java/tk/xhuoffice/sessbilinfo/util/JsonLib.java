@@ -49,6 +49,16 @@ public class JsonLib {
         return element.getAsLong();
     }
     
+    
+    // 获取 float
+    public static float getFloat(String inputJson, String... path) {
+        JsonElement element = GSON.fromJson(inputJson, JsonObject.class);
+        for(String key : path) {
+            element = element.getAsJsonObject().get(key);
+        }
+        return element.getAsFloat();
+    }
+    
     // 获取 Json Array 中的内容作为 String[]
     public static String[] getArray(String json, String... arr) {
         JsonElement element = GSON.fromJson(json, JsonObject.class);
