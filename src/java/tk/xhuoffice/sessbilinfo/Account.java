@@ -82,16 +82,15 @@ public class Account {
         Logger.println("正在请求数据...");
         String json = Http.get(BiliAPIs.IP_LOCATION);
         // 解析返回数据
-        int code = JsonLib.getInt(json,"code");
-        if(code==0) {
+        if(JsonLib.getInt(json,"code")==0) {
             // 提取信息
             String ip = JsonLib.getString(json,"data","addr"); // 公网IP地址
-            String country = JsonLib.getString(json,"data","county"); // 国家/地区
+            String country = JsonLib.getString(json,"data","country"); // 国家/地区
             String province = JsonLib.getString(json,"data","province"); // 省/州
             String city = JsonLib.getString(json,"data","city"); // 城市
             String isp = JsonLib.getString(json,"data","isp"); // 运营商
-            int latitude = JsonLib.getInt(json,"data","latitude"); // 纬度
-            int longitude = JsonLib.getInt(json,"data","longitude"); // 经度
+            float latitude = JsonLib.getFloat(json,"data","latitude"); // 纬度
+            float longitude = JsonLib.getFloat(json,"data","longitude"); // 经度
             int countryCode = JsonLib.getInt(json,"data","country_code"); // 国家/地区代码
             // 处理信息
             String ns = ""; // 纬度
@@ -121,6 +120,8 @@ public class Account {
             info += "国家/地区代码: "+countryCode+"\n";
             info += "--------------------------------"+"\n";
             // 打印信息
+            Logger.println("请求完毕");
+            Frame.reset();
             Logger.println(info);
         } else {
             BiliAPIs.outCodeErr(json);
