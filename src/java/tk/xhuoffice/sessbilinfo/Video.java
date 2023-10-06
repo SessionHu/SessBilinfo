@@ -246,12 +246,12 @@ public class Video {
                 // 发送请求
                 String rawJson = Http.get(BiliAPIs.VIEW_PLAY_URL+"?avid="+video.aid+"&cid="+video.cid+"&platform=html5");
                 // 处理返回值
-                if(JsonLib.getInt(rawJson,"code")!=0) {
-                    video.playURL = "";
+                if(JsonLib.getInt(rawJson,"code")==0) {
+                    // 处理返回数据
+                    video.playURL = JsonLib.getString(JsonLib.getArray(rawJson,"data","durl")[0],"url");
+                } else {
+                    video.playURL = "about:blank";
                 }
-                // 处理返回数据
-                String[] durlJson = JsonLib.getArray(rawJson,"data","durl");
-                video.playURL = JsonLib.getString(durlJson[0],"url");
             });
             stream.start();
         }
