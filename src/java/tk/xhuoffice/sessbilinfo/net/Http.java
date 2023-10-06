@@ -129,10 +129,10 @@ public class Http {
         {
             // choose userAgent
             String userAgent = null;
-            if(inurl.startsWith("https://api")) {
-                userAgent = ANDROID_APP_UA;
-            } else {
+            if(inurl.contains("web")) {
                 userAgent = WIN10_EDGE_UA;
+            } else {
+                userAgent = ANDROID_APP_UA;
             }
             // set User-Agent
             conn.setRequestProperty("User-Agent",userAgent);
