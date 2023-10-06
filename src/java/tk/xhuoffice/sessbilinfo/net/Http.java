@@ -129,7 +129,7 @@ public class Http {
         {
             // choose userAgent
             String userAgent = null;
-            if(inurl.contains("web")) {
+            if(inurl.contains("web")||inurl.contains("html5")) {
                 userAgent = WIN10_EDGE_UA;
             } else {
                 userAgent = ANDROID_APP_UA;
