@@ -253,7 +253,7 @@ public class UserInfo {
     
     public static String offical(int typ, String... mid) {
         Logger.debugln("处理用户认证信息");
-        String offical_tag = "";
+        String offical_tag = "unknown";
         switch(typ) {
             // 个人认证
             case 1:
@@ -287,6 +287,9 @@ public class UserInfo {
                 Logger.errln("未知的认证类型 "+typ);
                 Logger.errln("请向 SocialSisterYi/bilibili-API-collect 与 SessionHu/SessBilinfo 提交 Issue, 提交前请确认使用最新版本且本项目最新修改在2个月内");
                 Logger.errln("可以复制本信息: Bilibili 用户 Mid "+mid+" 的 认证类型(role) 为 "+typ+", 在[此页](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/official_role.md)中似乎并没有找到, 希望尽早解决该问题");
+                try {
+                    Thread.sleep(9999);
+                } catch(InterruptedException e) {}
         }
         return offical_tag;
     }
