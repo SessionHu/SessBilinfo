@@ -26,7 +26,20 @@ public class Logger {
         // print
         try {
             for(String text : lines) {
-                Frame.terminal.addLine(text);
+                if(text.length()>Frame.terminal.cols) {
+                    for(int i = 0; i < text.length();) {
+                        String chars = "";
+                        if(i+Frame.terminal.cols>text.length()) {
+                            chars = text.substring(i,text.length());
+                        } else {
+                            chars = text.substring(i,i+Frame.terminal.cols);
+                        }
+                        Frame.terminal.addLine(chars);
+                        i = i + Frame.terminal.cols;
+                    }
+                } else {
+                    Frame.terminal.addLine(text);
+                }
             }
             // title
             if(Frame.terminal.screen[Frame.terminal.screen.length-1]!=null) {
