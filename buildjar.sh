@@ -16,8 +16,8 @@ javac -encoding utf-8 \
 if [ $? -eq 0 ]; then
     echo -e "Packing..."
     cp ./NOTES.md ./README.md ./LICENSE ./RELEASE.md build/
-    unzip lib/gson-2.10.1.jar -d build/
-    unzip lib/jansi-2.4.1.jar -o -d build/
+    unzip -o lib/gson-2.10.1.jar -d build/
+    unzip -o lib/jansi-2.4.1.jar -d build/
     cd build/
     rm -r META-INF
     jar -cvfm 'SessBilinfo.jar' ../manifest -C ./ .
