@@ -1,6 +1,7 @@
 package tk.xhuoffice.sessbilinfo.ui;
 
 import java.util.Arrays;
+import org.fusesource.jansi.AnsiConsole;
 import tk.xhuoffice.sessbilinfo.Main;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
@@ -11,6 +12,8 @@ public class Frame {
     public static Terminal terminal = null;
     
     public static void main(String... args) {
+        // load JANSI
+        AnsiConsole.systemInstall();
         // create a new Terminal
         terminal = new Terminal();
         // 重绘屏幕

@@ -2,6 +2,10 @@
 
 ## 2023
 
+### October
+
+- Oct 14 引入 `org.fusesource.jansi` 库
+
 ### September
 
 - Sep 24 加入 Terminal UI
