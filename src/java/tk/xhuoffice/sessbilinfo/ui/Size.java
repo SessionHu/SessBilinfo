@@ -25,7 +25,7 @@ public class Size {
     public static int[] sttySize() throws IOException {
         // run process
         String line = null;
-        String[] ttys = {System.getenv("tty"),"/dev/tty","/dev/pty0"};
+        String[] ttys = {System.getenv("tty"),"/dev/tty","/dev/pty0","/dev/cons0"};
         for(String tty : ttys) {
             Process process = Runtime.getRuntime().exec(new String[]{"sh","-c","stty size <"+tty});
             try(BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
