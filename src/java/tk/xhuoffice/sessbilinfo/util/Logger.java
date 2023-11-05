@@ -115,13 +115,19 @@ public class Logger {
         // get lines
         String[] lines = lineSplitDesc(str,"["+LEVELS[lv]+"] ");
         // print
-        for(String text : lines) {
-            Frame.terminal.addLine(text);
-        }
-        // title
-        String[] scr = Frame.terminal.getScreen();
-        if(scr[scr.length-1]!=null) {
-            Frame.printTitle();
+        if(Frame.terminal!=null) {
+            for(String text : lines) {
+                Frame.terminal.addLine(text);
+            }
+            // title
+            String[] scr = Frame.terminal.getScreen();
+            if(scr[scr.length-1]!=null) {
+                Frame.printTitle();
+            }
+        } else {
+            for(String text : lines) {
+                System.out.println(text);
+            }
         }
     }
     
