@@ -30,6 +30,9 @@ public class Downloader {
         this.path = fileDir + this.fname;
         this.file = new File(this.path);
         try {
+            try {
+                CookieFile.checkParentDir(this.path);
+            } catch(IOException e) {}
             this.out = new FileOutputStream(this.file);
         } catch(java.io.FileNotFoundException e) {
             Logger.errln("无法打开文件: "+e.getMessage());
@@ -50,6 +53,9 @@ public class Downloader {
         this.path = fileDirPath + fileName;
         this.file = new File(this.path);
         try {
+            try {
+                CookieFile.checkParentDir(this.path);
+            } catch(IOException e) {}
             this.out = new FileOutputStream(this.file);
         } catch(java.io.FileNotFoundException e) {
             Logger.errln("无法打开文件: "+e.getMessage());
@@ -63,20 +69,19 @@ public class Downloader {
     
     /**
      * Download file.
-     * @return Downloaded file
-     * @throws IllegalStateException When file has already been downloaded
+     * @return Downloaded             file
+     * @throws IllegalStateException  When file has already been downloaded or file could not be created
      */
     public File download() {
+        if(this.out==null) {
+            throw new IllegalStateException( "File "+this.fname+" could not be created");
+        }
         if(this.conn==null) {
             throw new IllegalStateException( "File "+this.fname+" has already been downloaded");
         }
         // file length
         long length = this.conn.getContentLengthLong();
         Logger.println("File length: " + length);
-        // create parent dir
-        try {
-            CookieFile.checkParentDir(this.path);
-        } catch(IOException e) {}
         // download
         InputStream in = null;
         try {
@@ -89,8 +94,9 @@ public class Downloader {
             byte[] buffer = new byte[1024];
             while((bufferSize=in.read(buffer,0,1024))!=-1) {
                 this.out.write(buffer,0,bufferSize);
-                System.out.printf("Download progress: %d/%d", (progress += bufferSize), length);
+                progressReport((progress+=bufferSize),length);
             }
+            Logger.clearFootln();
             Logger.println("文件 "+this.fname+" 下载完毕");
         } catch(IOException e) {
             Logger.errln("从 "+OutFormat.shorterString(this.conn.getURL().toString())+" 下载时发生异常");
@@ -113,6 +119,26 @@ public class Downloader {
         }
         this.conn = null;
         return this.file;
+    }
+    
+    private long lastProgressReport = 0L;
+    
+    private void progressReport(long progress, long length) {
+        if(((System.currentTimeMillis()/1000L)-this.lastProgressReport)>=1) {
+            Logger.footln(String.format("Download progress: %d/%d", progress, length));
+            lastProgressReport = System.currentTimeMillis()/1000L;
+        }
+    }
+    
+    public static void main(String[] args) {
+        String url = "http://cachefly.cachefly.net/50mb.test";
+        String dir = System.getProperty("user.home")+"/downloads/";
+        Logger.println("tk.xhuoffice.sessbilinfo.net.Downloader 下载演示");
+        Logger.println("-------------------------------------------------");
+        Logger.println("下载地址 "+url);
+        Logger.println("目标目录 "+dir);
+        Downloader dl = new Downloader(url,dir);
+        dl.download();
     }
     
 }
