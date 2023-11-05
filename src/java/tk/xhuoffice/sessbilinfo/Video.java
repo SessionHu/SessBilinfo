@@ -145,7 +145,7 @@ public class Video {
             formatted += String.format("TAG: %s\n", tags);
             formatted += String.format("总时长 %s   评论 %s", alltime, reply);
             // 处理视频流URL
-            synchronized(video.lock) {
+            synchronized(video) {
                 if(video.playURL!=null) {
                     formatted += "\n\nURL "+video.playURL;
                 }
@@ -183,7 +183,6 @@ public class Video {
     public long mid; // UP主Mid
     public String[] tag;
     public volatile String playURL = null;
-    public Object lock = new Object();
     
     public Video(long aid) {
         String detailJson = Http.get(BiliAPIs.VIEW_DETAIL+"?aid="+aid);
@@ -218,7 +217,7 @@ public class Video {
             duration = JsonLib.getLong(detailJson,"data","View","duration");
             // get video stream url
             new Thread(() -> {
-                synchronized(this.lock) {
+                synchronized(this) {
                     // 发送请求
                     String rawJson = Http.get(BiliAPIs.VIEW_PLAY_URL+"?avid="+video.aid+"&cid="+video.cid+"&platform=html5");
                     // 处理返回值
