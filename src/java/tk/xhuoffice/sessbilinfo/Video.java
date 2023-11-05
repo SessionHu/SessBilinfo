@@ -52,30 +52,30 @@ public class Video {
                 } else if(vid.toLowerCase().startsWith("bv")&&vid.length()==12) {
                     // BV号(标准12位)
                     Logger.debugln("转换BV号为AV号");
-                    aid = String.valueOf(new AvBv(vid).aid);
+                    aid = String.valueOf(new AvBv(vid).getAid());
                     if(Integer.valueOf(aid)>0) {
                         aid = verifyAid(aid);
                     } else {
-                        throw new NullPointerException();
+                        throw new IllegalArgumentException(aid);
                     }
                 } else if(vid.length()==10) {
                     // BV号(无bv头)
                     Logger.debugln("转换BV号为AV号");
-                    aid = String.valueOf(new AvBv("bv"+vid).aid);
+                    aid = String.valueOf(new AvBv("bv"+vid).getAid());
                     if(Integer.valueOf(aid)>0) {
                         aid = verifyAid(aid);
                     } else {
-                        throw new NullPointerException();
+                        throw new IllegalArgumentException(aid);
                     }
                 } else {
                     Logger.footln("无效的输入");
                     aid = "";
                 }
-            } catch(NullPointerException e) {
+            } catch(IllegalArgumentException e) {
                 Logger.footln("无效的输入");
                 aid = "";
             }
-            if(aid==null||aid.trim().isEmpty()) {
+            if(aid.isEmpty()) {
                 // nothing here...
             } else {
                 Logger.clearFootln();
@@ -145,8 +145,11 @@ public class Video {
             formatted += String.format("TAG: %s\n", tags);
             formatted += String.format("总时长 %s   评论 %s", alltime, reply);
             // 处理视频流URL
-            while(video.playURL==null) {}
-            formatted += "\n\n播放地址 "+video.playURL;
+            synchronized(video.lock) {
+                if(video.playURL!=null) {
+                    formatted += "\n\nURL "+video.playURL;
+                }
+            }
             // 返回数据
             return formatted+"\n\n";
         } else if(code==62002) {
@@ -180,6 +183,7 @@ public class Video {
     public long mid; // UP主Mid
     public String[] tag;
     public volatile String playURL = null;
+    public Object lock = new Object();
     
     public Video(long aid) {
         String detailJson = Http.get(BiliAPIs.VIEW_DETAIL+"?aid="+aid);
@@ -194,7 +198,7 @@ public class Video {
         try {
             videoVars(detailJson);
         } catch(Exception e) {
-            throw new BiliException(BiliAPIs.outCodeErr(detailJson),e);
+            throw new BiliException(OutFormat.shorterString(detailJson),e);
         }
     }
     
@@ -212,6 +216,18 @@ public class Video {
             pubdate = JsonLib.getLong(detailJson,"data","View","pubdate");
             desc = JsonLib.getString(detailJson,"data","View","desc");
             duration = JsonLib.getLong(detailJson,"data","View","duration");
+            // get video stream url
+            new Thread(() -> {
+                synchronized(this.lock) {
+                    // 发送请求
+                    String rawJson = Http.get(BiliAPIs.VIEW_PLAY_URL+"?avid="+video.aid+"&cid="+video.cid+"&platform=html5");
+                    // 处理返回值
+                    if(JsonLib.getInt(rawJson,"code")==0) {
+                        // 处理返回数据
+                        video.playURL = JsonLib.getString(JsonLib.getArray(rawJson,"data","durl")[0],"url");
+                    }
+                }
+            }).start();
             // ..stat
             {
                 view = JsonLib.getLong(detailJson,"data","View","stat","view");
@@ -239,21 +255,6 @@ public class Video {
                 tagName[i] = JsonLib.getString(tagJson[i],"tag_name");
             }
             tag = tagName;
-        }
-        // 获取视频流URL
-        {
-            Thread stream = new Thread(() -> {
-                // 发送请求
-                String rawJson = Http.get(BiliAPIs.VIEW_PLAY_URL+"?avid="+video.aid+"&cid="+video.cid+"&platform=html5");
-                // 处理返回值
-                if(JsonLib.getInt(rawJson,"code")==0) {
-                    // 处理返回数据
-                    video.playURL = JsonLib.getString(JsonLib.getArray(rawJson,"data","durl")[0],"url");
-                } else {
-                    video.playURL = "about:blank";
-                }
-            });
-            stream.start();
         }
     }
     
@@ -306,7 +307,7 @@ public class Video {
                 // 输入值
                 tid,
                 // 若输入值不符合前面的内容输出下面
-                "\n未知的子分区 "+tid
+                String.valueOf(tid)
                 );
     }    
     

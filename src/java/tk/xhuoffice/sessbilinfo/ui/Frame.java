@@ -21,18 +21,13 @@ public class Frame {
     }
     
     public static void printTitle() {
-        // some colors
-        String whiteBgWithBlackText = "\033[47;30m";
-        String resetColor = "\033[0m";
-        // title
-        String titleText = Main.SOFT_TITLE;
         String titleSpace = null; {
-            char[] spaces = new char[terminal.cols-titleText.length()];
+            char[] spaces = new char[terminal.cols-Main.SOFT_TITLE.length()];
             Arrays.fill(spaces,' ');
             titleSpace = new String(spaces);
         }
         // text for print
-        String text = whiteBgWithBlackText + titleText + titleSpace + resetColor;
+        String text = "\033[7m" + Main.SOFT_TITLE + titleSpace + "\033[0m";
         // set line
         terminal.setLine(1,text);
     }

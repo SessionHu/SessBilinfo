@@ -17,9 +17,8 @@ import tk.xhuoffice.sessbilinfo.ui.Prompt;
 
 public class OutFormat {
     
-    public static Scanner scan = new Scanner(System.in);
-    
-    public static final ZoneId ZONE_HK = ZoneId.of("Asia/Hong_Kong");
+    private static final ZoneId ZONE_HK = ZoneId.of("Asia/Hong_Kong");
+    public static final Scanner SCAN = new Scanner(System.in);
     
     public static String time(long seconds) {
         Duration duration = Duration.ofSeconds(seconds);
@@ -72,21 +71,19 @@ public class OutFormat {
             }
             // 读取控制台输入
             try {
-                str = scan.nextLine();
+                str = SCAN.nextLine();
             } catch(java.util.NoSuchElementException e) {
-                // 异常处理(退出)
-                Logger.ln();
-                outThrowable(e,0);
                 Logger.fataln("非法的输入");
                 System.exit(1);
             }
             Prompt.unset();
             // 为空时的处理
-            if(str==null||str.trim().isEmpty()) {
+            str = str.trim();
+            if(str.isEmpty()) {
                 Logger.footln(typ+" 不能为空");
             } else {
                 Logger.clearFootln();
-                return str.trim();
+                return str;
             }
         }
     }
@@ -132,61 +129,11 @@ public class OutFormat {
         String stackTrace = sw.toString();
         Logger.throwabln(stackTrace,l);
     }
-    
-    public static boolean forceANSI;
-    
-    private static boolean isSupportANSI() {
-        // 获取系统类型
-        String osName = System.getProperty("os.name").toLowerCase();
-        // Windows 环境
-        if(osName.contains("windows")) {
-            // 是否使用 Windows Terminal
-            boolean wt = System.getenv("WT_SESSION") != null;
-            // 是否使用 xterm
-            boolean xterm = System.getenv("TERM").equals("xterm");
-            // 返回
-            return wt||xterm;
-        } else {
-            return true;
-        }
-    }
 
     public static String xmlToANSI(String text) {
-        if(isSupportANSI()||forceANSI) {
-            return xmlToRichText(text);
-        } else {
-            return xmlToPlainText(text,true);
-        }
-    }
-
-    private static String xmlToRichText(String text) {
         // <em>CONTENT</em> -> \033[0;1mCONTENT\033[0m
         text = text.replaceAll("\u003cem.*?\u003e", "\033[0;1m");
         text = text.replaceAll("\u003c/em\u003e", "\033[0m");
-        // 转换实体字符
-        text = xmlEntityToChar(text);
-        // 返回结果
-        return text;
-    }
-
-    private static String xmlToPlainText(String text, boolean tipSwitch) {
-        // 输出提示
-        if(tipSwitch) {
-            // 打印文字提示
-            Logger.warnln("当前终端似乎不支持 ANSI 转义序列");
-            Logger.warnln("推荐使用 Git Bash (MinTTY), Windows Terminal");
-            // 等待以让用户注意到提示
-            try {
-                // sleep 1333 ms
-                Thread.sleep(1333);
-            } catch(InterruptedException e) {
-                // 处理中断异常
-                // 你好,中国. 国庆快乐. -2023.10.1
-            }
-        }
-        // <em>CONTENT</em> -> \033[0;1mCONTENT\033[0m
-        text = text.replaceAll("\u003cem.*?\u003e", "");
-        text = text.replaceAll("\u003c/em\u003e", "");
         // 转换实体字符
         text = xmlEntityToChar(text);
         // 返回结果
@@ -217,9 +164,9 @@ public class OutFormat {
 
     public static String shorterString(String str) {
         int length = str.length();
-        if(length>32) {
+        if(length>36) {
             return str.substring(0,12)+"......"+str.substring(length-12);
-        } else if(length>16) {
+        } else if(length>18) {
             return str.substring(0,6)+"..."+str.substring(length-6);
         } else {
             return str;

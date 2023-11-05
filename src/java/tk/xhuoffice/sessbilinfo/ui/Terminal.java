@@ -6,9 +6,31 @@ import java.util.Arrays;
 public class Terminal {
     
     // variables with default 80x24
-    public int lns = 24; // lines
-    public int cols = 80; // columns
-    public String[] screen = new String[24]; // virtual screen
+    protected int lns = 24; // lines
+    protected int cols = 80; // columns
+    protected String[] screen = new String[24]; // virtual screen
+    
+    public int lns() {
+        return this.lns;
+    }
+    
+    public int cols() {
+        return this.cols;
+    }
+    
+    public String[] getScreen() {
+        return this.screen;
+    }
+    
+    public String getScreenText() {
+        StringBuilder st = new StringBuilder();
+        for(String text : this.screen) {
+            st.append(text);
+            st.append("\n");
+        }
+        st.deleteCharAt(st.length()-1);
+        return st.toString();
+    }
     
     // <init> without arg
     public Terminal() {
@@ -46,13 +68,6 @@ public class Terminal {
         }
     }
     
-    // get a String for clear a line
-    public String emptyLine() {
-        char[] line = new char[this.cols];
-        Arrays.fill(line,' ');
-        return new String(line);
-    }
-    
     // set text of a line
     public void setLine(int ln, String text) {
         this.screen[ln-1] = text;
@@ -67,7 +82,7 @@ public class Terminal {
     // clear a line
     public void clearLine(int ln) {
         this.screen[ln-1] = null;
-        System.out.printf("\033[%d;0f%s%n",ln,emptyLine());
+        System.out.printf("\033[%d;0f\033[2K%n",ln);
     }
     
     // clear virtual screen and Terminal
@@ -75,9 +90,7 @@ public class Terminal {
         // clear virtual screen
         Arrays.fill(this.screen,null);
         // clear Terminal
-        String emptyLine = emptyLine(); // get empty line
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+        System.out.print("\033[2J");
     }
     
     // update virtual Terminal size
@@ -126,7 +139,7 @@ public class Terminal {
     public void redraw(int lns, int cols) {
         // create a new virtual screen
         updateSize(lns,cols);
-        String[] screen= new String[this.lns];
+        String[] screen = new String[this.lns];
         Arrays.fill(screen,null);
         // fill new virtual screen
         if(screen.length>=this.screen.length) {
@@ -182,8 +195,8 @@ public class Terminal {
             screen[screen.length-1] = text;
             // set new screen to this.screen
             this.screen = screen;
-            // redraw
-            redraw(this.lns,this.cols);
+            // print last line
+            System.out.printf("\033[%d;%df%n%s",this.lns,this.cols,text);
         }
     }
      

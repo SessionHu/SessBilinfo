@@ -2,11 +2,20 @@ echo -e "Processing files from last build..."
 rm -r build/
 mkdir build/
 
+
 echo -e "Building..."
+
+lsb_release
+if [ $? -eq 0 ]; then
+    export cp="./lib/gson-2.10.1.jar:./lib/jansi-2.4.1.jar"
+else
+    export cp="./lib/gson-2.10.1.jar;./lib/jansi-2.4.1.jar"
+fi
+
 javac -encoding utf-8 \
       -Xlint:deprecation -XDignore.symbol.file \
       -d build/ \
-      -cp "lib/gson-2.10.1.jar;lib/jansi-2.4.1.jar" \
+      -cp $cp \
       -sourcepath src/java/tk/xhuoffice/sessbilinfo/ \
       src/java/tk/xhuoffice/sessbilinfo/net/*.java \
       src/java/tk/xhuoffice/sessbilinfo/ui/*.java \
@@ -28,4 +37,3 @@ else
     echo -e "Build failed!"
     exit 1
 fi
-

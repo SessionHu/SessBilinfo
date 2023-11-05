@@ -3,9 +3,9 @@ package tk.xhuoffice.sessbilinfo.ui;
 
 public class Prompt {
     
-    public static int lineNum = 22; // default value
+    private static int lineNum = 22; // default value
     
-    public static String originText = null;
+    private static String originText = null;
     
     public static void set() {
         lineNum = Frame.terminal.lns - 2;
@@ -25,11 +25,11 @@ public class Prompt {
         recoveryOriginText();
     }
     
-    public static String getOriginText() {
+    private static String getOriginText() {
         return Frame.terminal.getLine(lineNum);
     }
     
-    public static void recoveryOriginText() {
+    private static void recoveryOriginText() {
         if(originText!=null) {
             Frame.terminal.setLine(lineNum,originText);
         } else {
@@ -37,7 +37,7 @@ public class Prompt {
         }
     }
     
-    public static void clearPromptLine() {
+    private static void clearPromptLine() {
         Frame.terminal.clearLine(lineNum);
     }
     

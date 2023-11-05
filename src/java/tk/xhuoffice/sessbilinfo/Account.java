@@ -107,7 +107,7 @@ public class Account {
                 ew = longitude+"°W";
             }
             // 准备信息
-            String info = "--------------------------------"+"\n";
+            String info = "--------------------------------\n";
             info += "公网 IP:       "+ip+"\n";
             info += "国家/地区:     "+country+"\n";
             if(province!=null) {
@@ -119,7 +119,7 @@ public class Account {
             info += "经纬度:        "+ew+" "+ns+"\n";
             info += "运营商:        "+isp+"\n";
             info += "国家/地区代码: "+countryCode+"\n";
-            info += "--------------------------------"+"\n";
+            info += "--------------------------------\n";
             // 打印信息
             Logger.println("请求完毕");
             Frame.reset();

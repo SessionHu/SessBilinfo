@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 import tk.xhuoffice.sessbilinfo.net.Http;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
+import tk.xhuoffice.sessbilinfo.util.BiliException;
 import tk.xhuoffice.sessbilinfo.util.JsonLib;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
@@ -18,7 +19,7 @@ public class Search {
         Frame.reset();
         // 获取搜索内容
         Logger.println("请输入关键词 (不区分大小写)");
-        String keyword = OutFormat.getString("关键词").trim();
+        String keyword = OutFormat.getString("关键词");
         // 进行搜索
         try {
             // 输出提示
@@ -34,13 +35,13 @@ public class Search {
             Logger.println(result);
             // 返回
             return;
-        } catch(RuntimeException e) {
-            Logger.errln(e.getMessage());
+        } catch(BiliException e) {
+            Logger.errln(e.toString());
+            return;
         } catch(Exception e) {
             Logger.fataln("搜索发生未知异常");
             OutFormat.outThrowable(e,4);
         }
-        System.exit(2);
     }
     
     public static String all(String keyword) {
@@ -100,7 +101,7 @@ public class Search {
                 results += getVideoSearchResult(json,videoCount);
             }
         } else if(code==-412) {
-            throw new RuntimeException("请求被拦截, 请检测 Cookie 长度");
+            throw new BiliException("请求被拦截, 请检测 Cookie 长度");
         } else {
             BiliAPIs.outCodeErr(rawJson);
         }

@@ -10,9 +10,20 @@ import java.util.Map;
 
 public class AvBv {
     
-    // 这两个变量不能从外部修改
-    public int aid;
-    public String bvid;
+    private int aid;
+    private String bvid;
+    
+    public int getAid() {
+        return this.aid;
+    }
+    
+    public String getAvid() {
+        return "av"+this.aid;
+    }
+    
+    public String getBvid() {
+        return this.bvid;
+    }
     
     // 构造函数
     public AvBv() {
@@ -75,7 +86,7 @@ public class AvBv {
     
     @Override
     public String toString() {
-        return "av"+this.aid;
+        return String.format("av%d/%s",this.aid,this.bvid);
     }
     
 }

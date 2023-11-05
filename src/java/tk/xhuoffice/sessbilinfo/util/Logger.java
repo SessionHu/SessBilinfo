@@ -1,5 +1,6 @@
 package tk.xhuoffice.sessbilinfo.util;
 
+import java.util.Scanner;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.ui.Prompt;
 
@@ -8,7 +9,7 @@ public class Logger {
 
     public static boolean debug;
     
-    public static String[] levels = {"DEBUG","INFO","WARN","ERROR","FATAL"};
+    public static final String[] LEVELS = {"DEBUG","INFO","WARN","ERROR","FATAL"};
     
     public static synchronized void addLines(String str, int lv, String desc) {
         // log level
@@ -20,29 +21,31 @@ public class Logger {
             }
         }
         // generate fullDesc
-        String fullDesc = String.format("[%s][%s] ", levels[lv], desc);
+        String fullDesc = String.format("[%s][%s] ", LEVELS[lv], desc);
         // get lines
         String[] lines = lineSplitDesc(str,fullDesc);
         // print
         try {
             for(String text : lines) {
-                if(text.length()>Frame.terminal.cols) {
+                int cols = Frame.terminal.cols();
+                if(text.length()>cols) {
                     for(int i = 0; i < text.length();) {
                         String chars = "";
-                        if(i+Frame.terminal.cols>text.length()) {
+                        if(i+cols>text.length()) {
                             chars = text.substring(i,text.length());
                         } else {
-                            chars = text.substring(i,i+Frame.terminal.cols);
+                            chars = text.substring(i,i+cols);
                         }
                         Frame.terminal.addLine(chars);
-                        i = i + Frame.terminal.cols;
+                        i = i + cols;
                     }
                 } else {
                     Frame.terminal.addLine(text);
                 }
             }
             // title
-            if(Frame.terminal.screen[Frame.terminal.screen.length-1]!=null) {
+            String[] scr = Frame.terminal.getScreen();
+            if(scr[scr.length-1]!=null) {
                 Frame.printTitle();
             }
         } catch(NullPointerException e) {
@@ -53,7 +56,7 @@ public class Logger {
         }
     }
     
-    private static synchronized void printLines(String str, int lv) {
+    private static void printLines(String str, int lv) {
         // 获取完整类名
         String fullClassName = Thread.currentThread().getStackTrace()[3].getClassName();
         // 获取最后一个 '.' 位置
@@ -110,13 +113,14 @@ public class Logger {
             }
         }
         // get lines
-        String[] lines = lineSplitDesc(str,"["+levels[lv]+"] ");
+        String[] lines = lineSplitDesc(str,"["+LEVELS[lv]+"] ");
         // print
         for(String text : lines) {
             Frame.terminal.addLine(text);
         }
         // title
-        if(Frame.terminal.screen[Frame.terminal.screen.length-1]!=null) {
+        String[] scr = Frame.terminal.getScreen();
+        if(scr[scr.length-1]!=null) {
             Frame.printTitle();
         }
     }
@@ -133,12 +137,26 @@ public class Logger {
         // only support ONE line
         text = text.replaceAll("\\n","");
         clearFootln();
-        Frame.terminal.setLine(Frame.terminal.lns-1,text);
+        Frame.terminal.setLine(Frame.terminal.lns()-1,text);
     }
     
     public static void clearFootln() {
         // only support ONE line
-        Frame.terminal.clearLine(Frame.terminal.lns-1);
+        Frame.terminal.clearLine(Frame.terminal.lns()-1);
+    }
+    
+    /**
+     * Press Enter key to continue.
+     * @return {@code false} if {@link java.util.NoSuchElementException} catched
+     */
+    public static boolean enter2continue() {
+        try {
+            footln("Press Enter key to continue ...");
+            OutFormat.SCAN.nextLine();
+            return true;
+        } catch(java.util.NoSuchElementException e) {
+            return false;
+        }
     }
     
 }

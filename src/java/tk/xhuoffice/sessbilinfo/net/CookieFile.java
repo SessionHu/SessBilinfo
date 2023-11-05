@@ -14,32 +14,10 @@ public class CookieFile {
 
     public static final long COOKIE_EXPIRE_TIME = 15552000000L; // 6 months
 
-    public static String CookieFilePath = getCookieFilePath();
+    private static final String COOKIE_FILE_PATH = getCookieFilePath();
     
     public static String getCookieFilePath() {
-        // 获取系统类型
-        String osName = System.getProperty("os.name").toLowerCase();
-        // get & return
-        return getCookieFilePath(osName);
-    }
-    
-    public static String getCookieFilePath(String os) {
-        // 根据系统选择路径
-        if(os.contains("windows")) {
-            // Windows
-            String usrdir = System.getenv("USERPROFILE");
-            return usrdir + "\\.openbili\\cookie.txt";
-        } else if(os.contains("mac") || os.contains("linux")) {
-            // 类 Unix
-            String usrHome = System.getProperty("user.home");
-            return usrHome + "/.openbili/cookie.txt";
-        } else {
-            // 其她
-            if(os.length()!=0) {
-                Logger.warnln("未知的操作系统 "+os+", Cookie 将保存在当前工作目录下");
-            }
-            return "cookie.txt";
-        }
+        return System.getProperty("user.home") + "/.openbili/cookie.txt";
     }
     
     public static void save(String[] cookie) {
@@ -48,34 +26,22 @@ public class CookieFile {
             // Cookie 为空
             Logger.warnln("Cookie 为空");
         } else {
-            for(int i = 0; i < 2; i++) {
-                try {
-                    // 修改 Cookie
-                    for(int l = 0; l < cookie.length; l++) {
-                        // 避免 null
-                        if(cookie[l]==null) {
-                            cookie[l] = "";
-                        }
+            try {
+                // 修改 Cookie
+                for(int l = 0; l < cookie.length; l++) {
+                    // 避免 null
+                    if(cookie[l]==null) {
+                        cookie[l] = "";
                     }
-                    // 写入文件
-                    writeTimeAndLines(CookieFilePath,cookie);
-                    // 离开循环
-                    break;
-                } catch(java.io.FileNotFoundException e) {
-                    Logger.debugln(e.toString());
-                } catch(Exception e) {
-                    OutFormat.outThrowable(e,0);
                 }
-                // 发生异常时的提示
-                if(i==0) {
-                    Logger.warnln("Cookie 文件写入失败, 将在当前目录下保存");
-                    CookieFilePath = getCookieFilePath("");
-                } else {
-                    Logger.errln("Cookie 文件写入失败");
-                    // 恢复原路径
-                    CookieFilePath = getCookieFilePath();
-                }
+                // 写入文件
+                writeTimeAndLines(COOKIE_FILE_PATH,cookie);
+            } catch(java.io.FileNotFoundException e) {
+                Logger.debugln(e.toString());
+            } catch(Exception e) {
+                OutFormat.outThrowable(e,0);
             }
+            Logger.errln("Cookie 文件写入失败");
         }
     }
     
@@ -116,27 +82,21 @@ public class CookieFile {
     
     public static String[] load() {
         // 加载文件
-        for(int t = 0; t < 2; t++) {
-            try {
-                return readCookie();
-            } catch(java.io.FileNotFoundException e) {
-                // 重新更换路径加载
-                Logger.debugln(e.toString());
-                CookieFilePath = getCookieFilePath("");
-            } catch(Exception e) {
-                OutFormat.outThrowable(e,0);
-                Logger.warnln("Cookie 文件加载失败");
-            }
+        try {
+            return readCookie();
+        } catch(java.io.FileNotFoundException e) {
+            Logger.debugln(e.toString());
+        } catch(Exception e) {
+            OutFormat.outThrowable(e,0);
         }
-        // 恢复原路径
-        CookieFilePath = getCookieFilePath();
+        Logger.warnln("Cookie 文件加载失败");
         // 返回空数据
         return new String[0];
     }
     
     private static String[] readCookie() throws IOException {
         // 输入文件
-        File file = new File(CookieFilePath);
+        File file = new File(COOKIE_FILE_PATH);
         // 读取文件
         String[] line;
         try(FileReader reader = new FileReader(file)) {
@@ -218,11 +178,11 @@ public class CookieFile {
         // 写入文件
         save(lines.toArray(new String[0]));
         // clear cache
-        Http.cookieCache = null;
+        Http.clearCache();
     }
 
     public static void rm() {
-        new File(CookieFilePath).delete();
+        new File(COOKIE_FILE_PATH).delete();
     }
     
 }

@@ -16,8 +16,6 @@ public class Main {
     public static final String SOFT_VERSION = "1.1.0-beta";
     public static final String SOFT_TITLE  = SOFT_NAME+" "+SOFT_VERSION;
     
-    public static Scanner scan = new Scanner(System.in);
-    
     public static void main(String... args) {
         // 直接启动本类的处理
         if(Frame.terminal==null) {
@@ -33,10 +31,14 @@ public class Main {
                 // 显示菜单
                 int id = menu();
                 // 执行操作
-                task(id);
-                // Press any key to continue ...
-                Logger.println("Press Enter key to continue ...");
-                scan.nextLine();
+                try {
+                    task(id);
+                } catch(tk.xhuoffice.sessbilinfo.net.HttpConnectException e) {
+                    Logger.errln("请求异常");
+                }
+                if(!Logger.enter2continue()) {
+                    System.exit(0);
+                }
                 // reset screen
                 Frame.reset();
             }
@@ -66,13 +68,9 @@ public class Main {
         Prompt.set();
         // 获取输入信息
         try {
-            id = scan.nextInt();
-            scan.nextLine(); // 消耗掉换行符
+            id = Integer.parseInt(OutFormat.SCAN.nextLine());
             Prompt.unset();
-        } catch(Exception e) {
-            // 送给不按套路出牌的用户
-            Logger.ln();
-        }
+        } catch(NumberFormatException|java.util.NoSuchElementException e) {}
         return id;
     }
     
@@ -148,12 +146,6 @@ public class Main {
                     // Cookie 处理
                     CookieFile.rm();
                     break;
-                case "-a":
-                case "--force-ansi":
-                    // 强制使用ANSI转义序列
-                    OutFormat.forceANSI = true;
-                    Logger.warnln("\033[1;33m已强制启用ANSI转义序列, 若本段文字显示为非黄色, 说明您的终端不支持\033[0m");
-                    break;
                 default:
                     // nothing here...
             }
@@ -178,7 +170,6 @@ public class Main {
         String helpMsgEnUs = "Usage:\n"+
                 "    java -jar \""+jarFileName+"\"\n"+
                 "Command arguments:\n"+
-                "    -a, --force-ansi Force use of ANSI escape sequences\n"+
                 "    -d, --debug      Enable DEBUG output\n"+
                 "    -n, --nocookie   Run the program after deleting the Cookie file\n"+
                 "Environment variables:\n"+
@@ -189,7 +180,6 @@ public class Main {
         String helpMsgZhCn = "用法:\n"+
                 "	java -jar \""+jarFileName+"\"\n"+
                 "命令参数:\n"+
-                "    -a, --force-ansi 强制使用ANSI转义序列\n"+
                 "    -d, --debug      启用 DEBUG 输出\n"+
                 "    -n, --nocookie   删除 Cookie 文件后运行程序\n"+
                 "环境变量:\n"+

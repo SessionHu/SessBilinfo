@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
- * This class can encode or decode String with Base64 or URL.
+ * Class can encode or decode String in Base64 or URL.
  */
 
 public class StringCoder {
@@ -41,9 +41,10 @@ public class StringCoder {
     }
     
     /**
-     * Base64 Decode
+     * Base64 Decode.
      *
-     * Input String should not contain '\r' '\n'.
+     * @param str
+     * @return base64
      */
     public static String base64Decode(String str) {
         return new String(base64decoder.decode(str.getBytes(UTF_8)),UTF_8);
