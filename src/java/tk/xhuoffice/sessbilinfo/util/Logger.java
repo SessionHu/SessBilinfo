@@ -136,13 +136,18 @@ public class Logger {
     public static void footln(String text) {
         // only support ONE line
         text = text.replaceAll("\\n","");
-        clearFootln();
-        Frame.terminal.setLine(Frame.terminal.lns()-1,text);
+        if(Frame.terminal!=null) {
+            clearFootln();
+            Frame.terminal.setLine(Frame.terminal.lns()-1,text);
+        } else {
+            System.out.println(text);
+        }
     }
     
     public static void clearFootln() {
-        // only support ONE line
-        Frame.terminal.clearLine(Frame.terminal.lns()-1);
+        if(Frame.terminal!=null) {
+            Frame.terminal.clearLine(Frame.terminal.lns()-1);
+        }
     }
     
     /**
