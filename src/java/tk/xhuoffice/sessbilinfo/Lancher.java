@@ -22,7 +22,7 @@ public class Lancher {
     
     public static void main(String[] args) {
         // 运行前初始化
-        ExecutorService executor = Executors.newFixedThreadPool(3);
+        ExecutorService executor = Executors.newFixedThreadPool(4);
         try {
             // 环境变量处理
             Future env = executor.submit(() -> Main.env());
@@ -30,10 +30,13 @@ public class Lancher {
             Future cmd = executor.submit(() -> Main.cmdArgs(args));
             // load Setting
             Future set = executor.submit(() -> Setting.load());
+            // log to file
+            Future log = executor.submit(() -> Logger.initWriter());
             // run
             env.get();
             cmd.get();
             set.get();
+            log.get();
         } catch(InterruptedException|java.util.concurrent.ExecutionException e) {
             e.printStackTrace();
         }

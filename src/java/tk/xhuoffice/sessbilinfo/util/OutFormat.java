@@ -50,6 +50,17 @@ public class OutFormat {
         }
     }
     
+    public static String currentLiteDateTime() {
+    	LocalDateTime dt = LocalDateTime.now(ZONE_HK);
+        int y = dt.getYear(); // 年
+        int m = dt.getMonthValue(); // 月
+        int d = dt.getDayOfMonth(); // 日
+        int h = dt.getHour(); // hour
+        int min = dt.getMinute(); // minute
+        int s = dt.getSecond(); // second
+        return String.format("%d-%d-%d-%d-%d-%d",y,m,d,h,min,s);
+    }
+    
     public static String fullDateTime(long timestamp) {
         return LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp),ZONE_HK).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }

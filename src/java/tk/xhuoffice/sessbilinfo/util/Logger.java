@@ -1,6 +1,11 @@
 package tk.xhuoffice.sessbilinfo.util;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Scanner;
+import tk.xhuoffice.sessbilinfo.net.CookieFile;
+import tk.xhuoffice.sessbilinfo.net.StringCoder;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.ui.Prompt;
 
@@ -10,6 +15,23 @@ public class Logger {
     public static boolean debug;
     
     public static final String[] LEVELS = {"DEBUG","INFO","WARN","ERROR","FATAL"};
+    
+    private static final String FNAME = System.getProperty("user.home")+"/.openbili/logs/sess-"+OutFormat.currentLiteDateTime()+".log";
+    private static FileOutputStream out = null;
+    
+    public static void initWriter() {
+        if(out==null) {
+            try {
+                CookieFile.checkParentDir(FNAME,false);
+                out = new FileOutputStream(FNAME);
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    try {
+                        out.close();
+                    } catch(IOException e) {}
+                }));
+            } catch(IOException e) {}
+        }
+    }
     
     public static synchronized void addLines(String str, int lv, String desc) {
         // log level
@@ -27,6 +49,7 @@ public class Logger {
         // print
         try {
             for(String text : lines) {
+                // print to screen
                 int cols = Frame.terminal.cols();
                 if(text.length()>cols) {
                     for(int i = 0; i < text.length();) {
@@ -42,6 +65,11 @@ public class Logger {
                 } else {
                     Frame.terminal.addLine(text);
                 }
+                // write to file
+                try {
+                    out.write((text+"\n").getBytes(StringCoder.UTF_8));
+                } catch(IOException|NullPointerException e) {
+                }
             }
             // title
             String[] scr = Frame.terminal.getScreen();
@@ -52,6 +80,10 @@ public class Logger {
             // print when Frame.terminal is null
             for(String text : lines) {
                 System.out.println(text);
+                // write to file
+                try {
+                    out.write((text+"\n").getBytes(StringCoder.UTF_8));
+                } catch(IOException|NullPointerException ee) {}
             }
         }
     }
@@ -68,7 +100,9 @@ public class Logger {
         // generate description
         String desc = cN + "." + mN;
         // 打印信息
-        addLines(str,lv,desc);
+        if(str!=null) {
+            addLines(str,lv,desc);
+        }
     }
 
     public static void println(String str, int lv) {
@@ -79,6 +113,10 @@ public class Logger {
 
     public static void println(String str) {
         printLines(str,1); // 信息
+    }
+
+    public static void println(Object obj) {
+        printLines(String.valueOf(obj),1); // 信息
     }
 
     public static void warnln(String str) {
@@ -117,7 +155,12 @@ public class Logger {
         // print
         if(Frame.terminal!=null) {
             for(String text : lines) {
+                // print to screen
                 Frame.terminal.addLine(text);
+                // write to file
+                try {
+                    out.write((text+"\n").getBytes(StringCoder.UTF_8));
+                } catch(IOException|NullPointerException e) {}
             }
             // title
             String[] scr = Frame.terminal.getScreen();
@@ -127,6 +170,10 @@ public class Logger {
         } else {
             for(String text : lines) {
                 System.out.println(text);
+                // write to file
+                try {
+                    out.write((text+"\n").getBytes(StringCoder.UTF_8));
+                } catch(IOException|NullPointerException e) {}
             }
         }
     }
@@ -148,6 +195,10 @@ public class Logger {
         } else {
             System.out.println(text);
         }
+        // write to file
+        try {
+            out.write((text+"\n").getBytes(StringCoder.UTF_8));
+        } catch(IOException|NullPointerException e) {}
     }
     
     public static void clearFootln() {

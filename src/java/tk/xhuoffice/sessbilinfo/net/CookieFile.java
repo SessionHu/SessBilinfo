@@ -12,7 +12,7 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 public class CookieFile {
 
-    public static final long COOKIE_EXPIRE_TIME = 15552000000L; // 6 months
+    public static final long COOKIE_EXPIRE_TIME = 15552000L; // 6 months
 
     private static final String COOKIE_FILE_PATH = getCookieFilePath();
     
@@ -60,12 +60,19 @@ public class CookieFile {
     }
     
     public static void checkParentDir(String path) throws IOException {
-        if(path.contains(".openbili")) {
-            File parentDir = new File(path).getParentFile();
+        checkParentDir(path,true);
+    }
+    
+    public static void checkParentDir(String path, boolean tips) throws IOException {
+        File parentDir = new File(path).getParentFile();
+        if(parentDir!=null) {
             if(!parentDir.exists()) { // 当父目录不存在时
-                Logger.debugln("正在创建 .openbili 目录");
+                checkParentDir(parentDir.getCanonicalPath(),tips);
+                if(tips) {
+                    Logger.debugln("正在创建目录 "+parentDir.getName());
+                }
                 parentDir.mkdirs();
-                if(System.getProperty("os.name").toLowerCase().contains("windows")) {
+                if(parentDir.getName().startsWith(".")&&System.getProperty("os.name").toLowerCase().contains("windows")) {
                     // 仅在 Windows 下隐藏目录  (类Unix无隐藏属性)
                     hideWinDir(parentDir.getCanonicalPath());
                 }
@@ -107,7 +114,7 @@ public class CookieFile {
         // 处理数据
         try {
             // 验证文件
-            if(System.currentTimeMillis()-Long.parseLong(line[0]) > COOKIE_EXPIRE_TIME) {
+            if(System.currentTimeMillis()/1000L-Long.parseLong(line[0]) > COOKIE_EXPIRE_TIME) {
                 // 文件过期
                 Logger.debugln("文件过期");
             } else if(line[1]==null||line[1].trim().isEmpty()) {
