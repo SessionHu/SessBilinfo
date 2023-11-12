@@ -26,7 +26,12 @@ public class Downloader {
         if(!fileDir.endsWith("/")) {
             fileDir += "/";
         }
-        this.fname = url.substring(url.lastIndexOf("/")+1);
+        int endIndex = url.lastIndexOf("?"); {
+            if(endIndex<1) {
+                endIndex = url.length();
+            }
+        }
+        this.fname = url.substring(url.lastIndexOf("/")+1, endIndex);
         this.path = fileDir + this.fname;
         this.file = new File(this.path);
         try {
@@ -73,11 +78,20 @@ public class Downloader {
      * @throws IllegalStateException  When file has already been downloaded or file could not be created
      */
     public File download() {
+        // check if can download
         if(this.out==null) {
             throw new IllegalStateException( "File "+this.fname+" could not be created");
         }
         if(this.conn==null) {
             throw new IllegalStateException( "File "+this.fname+" has already been downloaded");
+        }
+        // connect
+        try {
+            conn.connect();
+        } catch(IOException e) {
+            Logger.errln("连接至 "+OutFormat.shorterString(this.conn.getURL().toString())+" 时发生异常");
+            OutFormat.outThrowable(e,3);
+            return this.file;
         }
         // file length
         long length = this.conn.getContentLengthLong();
@@ -87,7 +101,11 @@ public class Downloader {
         try {
             in = new BufferedInputStream(conn.getInputStream());
             // content type
-            Logger.println("File type: " + (this.contentType=HttpURLConnection.guessContentTypeFromStream(in)));
+            this.contentType = HttpURLConnection.guessContentTypeFromStream(in);
+            if(this.contentType==null) {
+                this.contentType = conn.getContentType();
+            }
+            Logger.println("File type: "+this.contentType);
             // download
             int bufferSize = 0;
             long progress = 0;
@@ -124,7 +142,7 @@ public class Downloader {
     private long lastProgressReport = 0L;
     
     private void progressReport(long progress, long length) {
-        if(((System.currentTimeMillis()/1000L)-this.lastProgressReport)>=1) {
+        if(((System.currentTimeMillis()/1000L)-this.lastProgressReport)>=1L) {
             Logger.footln(String.format("Download progress: %d/%d", progress, length));
             lastProgressReport = System.currentTimeMillis()/1000L;
         }
