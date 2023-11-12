@@ -177,7 +177,7 @@ public class Logger {
         text = text.replace("\n","");
         if(Frame.terminal!=null) {
             clearFootln();
-            Frame.terminal.setLine(Frame.terminal.lns()-1,text);
+            Frame.terminal.setLine(Frame.terminal.lns(),text);
         } else {
             System.out.println(text);
         }
@@ -187,7 +187,7 @@ public class Logger {
     
     public static void clearFootln() {
         if(Frame.terminal!=null) {
-            Frame.terminal.clearLine(Frame.terminal.lns()-1);
+            Frame.terminal.clearLine(Frame.terminal.lns());
         }
     }
     
