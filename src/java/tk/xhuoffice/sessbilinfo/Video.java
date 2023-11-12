@@ -2,6 +2,7 @@ package tk.xhuoffice.sessbilinfo;
 
 import java.util.HashMap;
 import java.util.Map;
+import tk.xhuoffice.sessbilinfo.net.Downloader;
 import tk.xhuoffice.sessbilinfo.net.Http;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.util.AvBv;
@@ -15,6 +16,14 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 
 public class Video {
+    
+    private static volatile Video video = null;
+    
+    public static void simpleViewer() {
+        video = null;
+        getVideoInfo();
+        downloadVideo();
+    }
     
     public static void getVideoInfo() {
         Frame.reset();
@@ -96,8 +105,6 @@ public class Video {
             return "";
         }
     }
-    
-    private static volatile Video video = null;
     
     public static String getDetail(String aid) {
         // 发送请求
@@ -219,7 +226,7 @@ public class Video {
             new Thread(() -> {
                 synchronized(this) {
                     // 发送请求
-                    String rawJson = Http.get(BiliAPIs.VIEW_PLAY_URL+"?avid="+video.aid+"&cid="+video.cid+"&platform=html5");
+                    String rawJson = Http.get(BiliAPIs.VIEW_PLAY_URL+"?avid="+this.aid+"&cid="+this.cid+"&platform=html5");
                     // 处理返回值
                     if(JsonLib.getInt(rawJson,"code")==0) {
                         // 处理返回数据
@@ -308,6 +315,23 @@ public class Video {
                 // 若输入值不符合前面的内容输出下面
                 String.valueOf(tid)
                 );
-    }    
+    }
+    
+    public static void downloadVideo() {
+        if(video==null||video.playURL==null) {
+            return;
+        }
+        // ask user if should download video
+        Logger.println("是否下载视频[Y/N]");
+        if(!OutFormat.getString("选项").toLowerCase().equals("y")) {
+            return;
+        }
+        // download video
+        String path = System.getProperty("user.home")+"/videos/";
+        Logger.println("准备下载视频到 "+path);
+        Downloader dl = new Downloader(video.playURL,path);
+        Logger.println("开始下载");
+        dl.download();
+    }
     
 }
