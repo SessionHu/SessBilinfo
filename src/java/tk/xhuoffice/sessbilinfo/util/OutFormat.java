@@ -7,8 +7,10 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
+import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.ui.Prompt;
 
 /**
@@ -188,6 +190,30 @@ public class OutFormat {
         } else {
             return str;
         }
+    }
+    
+    public static String[] pageBreak(String str) {
+        // prepare variables
+        int lns = Frame.terminal.lns()-1;
+        String[] lines = str.split("\\n");
+        ArrayList<String> pages = new ArrayList<>();
+        // lines to pages
+        for(int i = 0; i < lines.length;) {
+            // lines to page
+            StringBuilder page = new StringBuilder();
+            try {
+                for(int j = 0; j < lns; j++) {
+                    page.append(lines[i++]);
+                    page.append("\n");
+                }
+            } catch(ArrayIndexOutOfBoundsException e) {
+                // out of lines
+            }
+            // add page to pages
+            pages.add(page.deleteCharAt(page.length()-1).toString());
+        }
+        // return
+        return pages.toArray(new String[0]);
     }
     
 }
