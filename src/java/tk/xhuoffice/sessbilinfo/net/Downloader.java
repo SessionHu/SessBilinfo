@@ -149,7 +149,7 @@ public class Downloader {
     }
     
     public static void main(String[] args) {
-        String url = "http://cachefly.cachefly.net/50mb.test";
+        String url = "http://cachefly.cachefly.net/1mb.test";
         String dir = System.getProperty("user.home")+"/downloads/";
         Logger.println("tk.xhuoffice.sessbilinfo.net.Downloader 下载演示");
         Logger.println("-------------------------------------------------");
