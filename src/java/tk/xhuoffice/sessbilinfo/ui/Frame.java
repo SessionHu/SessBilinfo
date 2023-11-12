@@ -13,7 +13,9 @@ public class Frame {
     
     public static void main(String... args) {
         // load JANSI
-        AnsiConsole.systemInstall();
+        if(!System.getenv("TERM").contains("xterm")) {
+            AnsiConsole.systemInstall();
+        }
         // create a new Terminal
         terminal = new Terminal();
         // 重绘屏幕
@@ -34,11 +36,6 @@ public class Frame {
     
     public static void redraw() {
         terminal.redraw();
-        printTitle();
-    }
-    
-    public static void clear() {
-        terminal.clear();
         printTitle();
     }
     

@@ -71,7 +71,7 @@ public class Terminal {
     // set text of a line
     public void setLine(int ln, String text) {
         this.screen[ln-1] = text;
-        System.out.printf("\033[%d;0f%s%n",ln,text);
+        System.out.printf("\033[%d;0f%s",ln,text);
     }
     
     // get text of a line
@@ -82,7 +82,7 @@ public class Terminal {
     // clear a line
     public void clearLine(int ln) {
         this.screen[ln-1] = null;
-        System.out.printf("\033[%d;0f\033[2K%n",ln);
+        System.out.printf("\033[%d;0f\033[2K",ln);
     }
     
     // clear virtual screen and Terminal
@@ -136,7 +136,7 @@ public class Terminal {
     }
     
     // redraw with lns & cols
-    public void redraw(int lns, int cols) {
+    public synchronized void redraw(int lns, int cols) {
         // create a new virtual screen
         updateSize(lns,cols);
         String[] screen = new String[this.lns];
