@@ -199,6 +199,7 @@ public class Logger {
         try {
             footln("Press Enter key to continue ...");
             OutFormat.SCAN.nextLine();
+            clearFootln();
             return true;
         } catch(java.util.NoSuchElementException e) {
             return false;
