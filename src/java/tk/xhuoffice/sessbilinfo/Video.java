@@ -152,10 +152,9 @@ public class Video {
             formatted += String.format("TAG: %s\n", tags);
             formatted += String.format("总时长 %s   评论 %s", alltime, reply);
             // 处理视频流URL
-            synchronized(video) {
-                if(video.playURL!=null) {
-                    formatted += "\n\nURL "+video.playURL;
-                }
+            while(!video.ready) {}
+            if(video.playURL!=null) {
+                formatted += "\n\nURL "+video.playURL;
             }
             // 返回数据
             return formatted+"\n\n";
@@ -190,6 +189,7 @@ public class Video {
     public long mid; // UP主Mid
     public String[] tag;
     public volatile String playURL = null;
+    public volatile boolean ready;
     
     public Video(long aid) {
         String detailJson = Http.get(BiliAPIs.VIEW_DETAIL+"?aid="+aid);
@@ -224,7 +224,7 @@ public class Video {
             duration = JsonLib.getLong(detailJson,"data","View","duration");
             // get video stream url
             new Thread(() -> {
-                synchronized(this) {
+                try {
                     // 发送请求
                     String rawJson = Http.get(BiliAPIs.VIEW_PLAY_URL+"?avid="+this.aid+"&cid="+this.cid+"&platform=html5");
                     // 处理返回值
@@ -232,8 +232,11 @@ public class Video {
                         // 处理返回数据
                         video.playURL = JsonLib.getString(JsonLib.getArray(rawJson,"data","durl")[0],"url");
                     }
+                    this.ready = true;
+                } catch(Exception e) {
+                    OutFormat.outThrowable(e,0);
                 }
-            }).start();
+            }, "VideoStream-"+this.aid).start();
             // ..stat
             {
                 view = JsonLib.getLong(detailJson,"data","View","stat","view");
