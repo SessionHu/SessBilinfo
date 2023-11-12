@@ -14,10 +14,10 @@ public class Lancher {
     
     static {
         Signal.handle(new Signal("INT"), signal -> {
-            Logger.ln();
             Logger.debugln("SIGINT signal received, exit!");
             System.exit(0);
         });
+	Runtime.getRuntime().addShutdownHook(new Thread(() -> System.out.println()));
     }
     
     public static void main(String[] args) {

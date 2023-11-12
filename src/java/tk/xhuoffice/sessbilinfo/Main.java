@@ -80,7 +80,7 @@ public class Main {
             UserInfo.getUserInfo();
         } else if(id==2) {
             // 获取视频信息
-            Video.getVideoInfo();
+            Video.simpleViewer();
         } else if(id==3) {
             // 进行综合搜索
             Search.search();
@@ -108,7 +108,9 @@ public class Main {
         // 是否启用 DEBUG 输出
         {
             String d = System.getenv("OPEN_BILI_DEBUG");
-            Logger.debug = (d!=null) && (d.equals("true"));
+            if((d!=null) && (d.equals("true"))) {
+                Logger.debug = true;
+            }
         }
     }
 
