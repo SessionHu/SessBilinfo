@@ -13,13 +13,13 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 public class Http {
 
-    public static final String ANDROID_APP_UA = "Dalvik/2.1.0 (Linux; U; Android 12; MLD-AL00 Build/HUAWEIMLD-AL00) 7.38.0 os/android model/MLD-AL00 mobi_app/Ai4cCreatorAndroid build/7380300 channel/master innerVer/7380310 osVer/12 network/2 grpc-java-cronet/1.36.1";
-    public static final String ANDROID_TV_WEBVIEW_UA = "Mozilla/5.0 (Linux; U; Android 4.2.1; zh-cn; 9R15_E710U Build/JOP40D) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Safari/534.30";
-    public static final String WIN8X_EDGE_UA = "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.140";
-    public static final String WIN10_EDGE_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/115.0.1901.203";
-    public static final String MAC_OS_X_INTEL_SAFARI_UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_16_2) AppleWebKit/537.36 (KHTML, like Gecko) Version/14.5.70 Safari/537.36";
-    public static final String LINUX_UBUNTU_FIREFOX_UA = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/109.0";
-    public static final String DEFAULT_COOKIE = "b_ut=7; i-wanna-go-back=-1; b_nut=1693285885; buvid3=88FDE25E-30BA-1D47-62B8-FAA9D96069D785506infoc; innersign=0";
+    private static final String ANDROID_APP_UA = "Dalvik/2.1.0 (Linux; U; Android 12; MLD-AL00 Build/HUAWEIMLD-AL00) 7.38.0 os/android model/MLD-AL00 mobi_app/Ai4cCreatorAndroid build/7380300 channel/master innerVer/7380310 osVer/12 network/2 grpc-java-cronet/1.36.1";
+    private static final String ANDROID_TV_WEBVIEW_UA = "Mozilla/5.0 (Linux; U; Android 4.2.1; zh-cn; 9R15_E710U Build/JOP40D) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Safari/534.30";
+    private static final String WIN8X_EDGE_UA = "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.140";
+    private static final String WIN10_EDGE_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/115.0.1901.203";
+    private static final String MAC_OS_X_INTEL_SAFARI_UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_16_2) AppleWebKit/537.36 (KHTML, like Gecko) Version/14.5.70 Safari/537.36";
+    private static final String LINUX_UBUNTU_FIREFOX_UA = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/109.0";
+    protected static final String DEFAULT_COOKIE = "b_ut=7; i-wanna-go-back=-1; b_nut=1693285885; buvid3=88FDE25E-30BA-1D47-62B8-FAA9D96069D785506infoc; innersign=0";
     
     private static String[] cookieCache = null;
     private static String userAgentCache = null;
@@ -202,16 +202,15 @@ public class Http {
             cookies = cookies.replaceAll("(?<=\\=)[^;]+", "xxx");
             Logger.debugln("Cookie: "+cookies);
         }
-        // connect & return
-        try {
-            conn.connect();
-        } catch(IOException e) {}
+        // return
         return conn;
     }
     
     public static String readResponseData(HttpURLConnection conn) throws IOException {
         // 打印调试日志
         Logger.debugln("读取返回数据从 "+OutFormat.shorterString(conn.getURL().toString()));
+        // connect
+        conn.connect();
         // 读取 HTTP 状态码
         int responseCode = conn.getResponseCode();
         Logger.debugln("HTTP "+responseCode+" "+conn.getResponseMessage());
@@ -230,7 +229,7 @@ public class Http {
             in = new BufferedReader(new InputStreamReader(conn.getErrorStream(),encoding));
         }
         String inputLine;
-        StringBuffer response = new StringBuffer();
+        StringBuilder response = new StringBuilder();
         while((inputLine = in.readLine()) != null) {
             response.append(inputLine);
         }
