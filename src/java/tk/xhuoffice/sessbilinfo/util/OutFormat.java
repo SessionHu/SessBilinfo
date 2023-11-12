@@ -12,7 +12,7 @@ import java.util.Scanner;
 import tk.xhuoffice.sessbilinfo.ui.Prompt;
 
 /**
- * format message for output
+ * Format message for output
  */
 
 public class OutFormat {
@@ -51,14 +51,14 @@ public class OutFormat {
     }
     
     public static String currentLiteDateTime() {
-    	LocalDateTime dt = LocalDateTime.now(ZONE_HK);
+        LocalDateTime dt = LocalDateTime.now(ZONE_HK);
         int y = dt.getYear(); // 年
         int m = dt.getMonthValue(); // 月
         int d = dt.getDayOfMonth(); // 日
         int h = dt.getHour(); // hour
         int min = dt.getMinute(); // minute
         int s = dt.getSecond(); // second
-        return String.format("%d-%d-%d-%d-%d-%d",y,m,d,h,min,s);
+        return String.format("%04d-%02d-%02d-%02d-%02d-%02d",y,m,d,h,min,s); // yyyy-MM-dd-HH-mm-ss
     }
     
     public static String fullDateTime(long timestamp) {
@@ -74,15 +74,21 @@ public class OutFormat {
         while(true) {
             // 定义变量
             String str = null;
+            String log = "";
             // 输出提示
             if(tip.length!=0) {
-                Prompt.set(tip[0]);
+                log = tip[0]+" ";
+                Prompt.set(log);
             } else {
                 Prompt.set();
             }
+            log += "> ";
             // 读取控制台输入
             try {
                 str = SCAN.nextLine();
+                // write to log
+                log += str;
+                Logger.writeln(log);
             } catch(java.util.NoSuchElementException e) {
                 Logger.fataln("非法的输入");
                 System.exit(1);
@@ -153,13 +159,13 @@ public class OutFormat {
 
     private static String xmlEntityToChar(String text) {
         // &amp; -> &
-        text = text.replaceAll("&amp;", "&");
+        text = text.replace("&amp;", "&");
         // &quot; -> "
-        text = text.replaceAll("&quot;", "\"");
+        text = text.replace("&quot;", "\"");
         // &lt; -> <
-        text = text.replaceAll("&lt;", "<");
+        text = text.replace("&lt;", "<");
         // &gt; -> >
-        text = text.replaceAll("&gt;", ">");
+        text = text.replace("&gt;", ">");
         // &apos; &#39; -> '
         text = text.replaceAll("(&quot;|&#39;)", "'");
         // 返回结果
@@ -175,10 +181,10 @@ public class OutFormat {
 
     public static String shorterString(String str) {
         int length = str.length();
-        if(length>36) {
-            return str.substring(0,12)+"......"+str.substring(length-12);
-        } else if(length>18) {
-            return str.substring(0,6)+"..."+str.substring(length-6);
+        if(length>40) {
+            return str.substring(0,16)+"......"+str.substring(length-16);
+        } else if(length>21) {
+            return str.substring(0,8)+"..."+str.substring(length-8);
         } else {
             return str;
         }

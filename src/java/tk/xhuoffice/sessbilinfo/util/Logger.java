@@ -10,20 +10,21 @@ import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.ui.Prompt;
 
 
+
 public class Logger {
 
     public static boolean debug;
     
     public static final String[] LEVELS = {"DEBUG","INFO","WARN","ERROR","FATAL"};
     
-    private static final String FNAME = System.getProperty("user.home")+"/.openbili/logs/sess-"+OutFormat.currentLiteDateTime()+".log";
     private static FileOutputStream out = null;
     
     public static void initWriter() {
         if(out==null) {
             try {
-                CookieFile.checkParentDir(FNAME,false);
-                out = new FileOutputStream(FNAME);
+                String fpath = System.getProperty("user.home")+"/.openbili/logs/sess-"+OutFormat.currentLiteDateTime()+".log";
+                CookieFile.checkParentDir(fpath,false);
+                out = new FileOutputStream(fpath);
                 Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                     try {
                         out.close();
@@ -33,7 +34,18 @@ public class Logger {
         }
     }
     
-    public static synchronized void addLines(String str, int lv, String desc) {
+    protected static void writeln(String str) {
+        // is null or empty?
+        if(str==null || (str=str.trim()).isEmpty() || out==null) {
+            return;
+        }
+        // write
+        try {
+           out.write((str+"\n").getBytes(StringCoder.UTF_8));
+         } catch(IOException e) {}
+    }
+    
+    public static void addLines(String str, int lv, String desc) {
         // log level
         if(lv<1||lv>4) {
             if(debug) {
@@ -47,7 +59,12 @@ public class Logger {
         // get lines
         String[] lines = lineSplitDesc(str,fullDesc);
         // print
-        try {
+        printLinesForEach(lines);
+    }
+    
+    private static synchronized void printLinesForEach(String[] lines) {
+        // print
+        if(Frame.terminal!=null) {
             for(String text : lines) {
                 // print to screen
                 int cols = Frame.terminal.cols();
@@ -66,24 +83,19 @@ public class Logger {
                     Frame.terminal.addLine(text);
                 }
                 // write to file
-                try {
-                    out.write((text+"\n").getBytes(StringCoder.UTF_8));
-                } catch(IOException|NullPointerException e) {
-                }
+                writeln(text);
             }
             // title
             String[] scr = Frame.terminal.getScreen();
             if(scr[scr.length-1]!=null) {
                 Frame.printTitle();
             }
-        } catch(NullPointerException e) {
+        } else {
             // print when Frame.terminal is null
             for(String text : lines) {
                 System.out.println(text);
                 // write to file
-                try {
-                    out.write((text+"\n").getBytes(StringCoder.UTF_8));
-                } catch(IOException|NullPointerException ee) {}
+                writeln(text);
             }
         }
     }
@@ -137,10 +149,6 @@ public class Logger {
         }
     }
     
-    public static void ln() {
-        System.out.println();
-    }
-    
     public static void throwabln(String str, int lv) {
         // log level
         if(lv<1||lv>4) {
@@ -153,29 +161,7 @@ public class Logger {
         // get lines
         String[] lines = lineSplitDesc(str,"["+LEVELS[lv]+"] ");
         // print
-        if(Frame.terminal!=null) {
-            for(String text : lines) {
-                // print to screen
-                Frame.terminal.addLine(text);
-                // write to file
-                try {
-                    out.write((text+"\n").getBytes(StringCoder.UTF_8));
-                } catch(IOException|NullPointerException e) {}
-            }
-            // title
-            String[] scr = Frame.terminal.getScreen();
-            if(scr[scr.length-1]!=null) {
-                Frame.printTitle();
-            }
-        } else {
-            for(String text : lines) {
-                System.out.println(text);
-                // write to file
-                try {
-                    out.write((text+"\n").getBytes(StringCoder.UTF_8));
-                } catch(IOException|NullPointerException e) {}
-            }
-        }
+        printLinesForEach(lines);
     }
     
     public static String[] lineSplitDesc(String str, String fullDesc) {
@@ -188,7 +174,7 @@ public class Logger {
     
     public static void footln(String text) {
         // only support ONE line
-        text = text.replaceAll("\\n","");
+        text = text.replace("\n","");
         if(Frame.terminal!=null) {
             clearFootln();
             Frame.terminal.setLine(Frame.terminal.lns()-1,text);
@@ -196,9 +182,7 @@ public class Logger {
             System.out.println(text);
         }
         // write to file
-        try {
-            out.write((text+"\n").getBytes(StringCoder.UTF_8));
-        } catch(IOException|NullPointerException e) {}
+        writeln(text);
     }
     
     public static void clearFootln() {
