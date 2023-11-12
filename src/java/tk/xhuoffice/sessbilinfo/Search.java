@@ -31,8 +31,14 @@ public class Search {
             result += "------------------------";
             Logger.println("请求完毕");
             // 输出结果
-            Frame.reset();
-            Logger.println(result);
+            String[] pages = OutFormat.pageBreak(result);
+            for(int p = 0; p < pages.length; p++) {
+                Frame.reset();
+                Logger.println(pages[p]);
+                if(p!=pages.length-1) {
+                    Logger.enter2continue();
+                }
+            }
             // 返回
             return;
         } catch(BiliException e) {
