@@ -13,7 +13,7 @@ public class Frame {
     
     public static void main(String... args) {
         // load JANSI
-        if(!System.getenv("TERM").contains("xterm")) {
+        if((System.getenv("TERM")!=null)&&(!System.getenv("TERM").contains("xterm"))) {
             AnsiConsole.systemInstall();
         }
         // create a new Terminal
