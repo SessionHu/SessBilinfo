@@ -13,7 +13,7 @@ public class Http {
 
     private static final String ANDROID_APP_UA = "Dalvik/2.1.0 (Linux; U; Android 12; MLD-AL00 Build/HUAWEIMLD-AL00) 7.38.0 os/android model/MLD-AL00 mobi_app/Ai4cCreatorAndroid build/7380300 channel/master innerVer/7380310 osVer/12 network/2 grpc-java-cronet/1.36.1";
     private static final String ANDROID_TV_WEBVIEW_UA = "Mozilla/5.0 (Linux; U; Android 4.2.1; zh-cn; 9R15_E710U Build/JOP40D) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Safari/534.30";
-    private static final String WIN8X_EDGE_UA = "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.140";
+    private static final String WIN8X_EDGE_UA = "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.100";
     private static final String WIN10_EDGE_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/115.0.1901.203";
     private static final String MAC_OS_X_INTEL_SAFARI_UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_16_2) AppleWebKit/537.36 (KHTML, like Gecko) Version/14.5.70 Safari/537.36";
     private static final String LINUX_UBUNTU_FIREFOX_UA = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/109.0";
@@ -199,6 +199,10 @@ public class Http {
             // 打印 Cookie (加密)
             cookies = cookies.replaceAll("(?<=\\=)[^;]+", "xxx");
             Logger.debugln("Cookie: "+cookies);
+        }
+        // 设置 Referer
+        if(inurl.contains("bili")) {
+            conn.setRequestProperty("referer","https://www.bilibili.com");
         }
         // return
         return conn;
