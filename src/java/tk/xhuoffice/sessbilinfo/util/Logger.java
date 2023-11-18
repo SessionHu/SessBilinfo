@@ -3,6 +3,7 @@ package tk.xhuoffice.sessbilinfo.util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import tk.xhuoffice.sessbilinfo.net.CookieFile;
 import tk.xhuoffice.sessbilinfo.net.StringCoder;
@@ -68,19 +69,23 @@ public class Logger {
             for(String text : lines) {
                 // print to screen
                 int cols = Frame.terminal.cols();
-                if(text.length()>cols) {
-                    for(int i = 0; i < text.length();) {
-                        String chars = "";
-                        if(i+cols>text.length()) {
-                            chars = text.substring(i,text.length());
-                        } else {
-                            chars = text.substring(i,i+cols);
+                String textWithSUB = OutFormat.fullWidthCharsAddSUB(text); // get text with SUB-char
+                ArrayList<String> slines = new ArrayList<>(); // sub-lines
+                for(int i = 0; i < textWithSUB.length();) { // text with SUB-char to sub-lines
+                    StringBuilder cline = new StringBuilder(); // char-line
+                    for(int j = 0; (j < cols) && (i < textWithSUB.length()); j++) {
+                        char c = textWithSUB.charAt(i++);
+                        if(c!=0x001A) {
+                            cline.append(c);
+                        } else { // skip SUB-char & save space for full-width-char
+                            j++;
+                            i++;
                         }
-                        Frame.terminal.addLine(chars);
-                        i = i + cols;
                     }
-                } else {
-                    Frame.terminal.addLine(text);
+                    slines.add(cline.toString()); // put char-line into sub-lines
+                }
+                for(String sline : slines) { // add every sub-line to terminal
+                    Frame.terminal.addLine(sline);
                 }
                 // write to file
                 writeln(text);
