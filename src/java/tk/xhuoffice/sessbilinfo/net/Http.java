@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
@@ -234,6 +232,8 @@ public class Http {
             response.append(inputLine);
         }
         in.close();
+        // 打印调试日志
+        Logger.debugln("读取返回数据从 "+OutFormat.shorterString(conn.getURL().toString())+" 完毕");
         // 返回返回数据
         return response.toString();
     }
@@ -246,9 +246,7 @@ public class Http {
             HttpURLConnection conn = setGetConnURL("https://www.bilibili.com/");
             // 从响应头中获取 Cookie
             conn.connect();
-            Map<String, List<String>> headers = conn.getHeaderFields();
-            List<String> cookies = headers.get("Set-Cookie");
-            String[] cookie = cookies.toArray(new String[0]);
+            String[] cookie = conn.getHeaderFields().get("Set-Cookie").toArray(new String[0]);
             // 保存 Cookie
             CookieFile.save(cookie);
             // 返回 Cookie
