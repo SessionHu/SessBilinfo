@@ -1,12 +1,14 @@
 package tk.xhuoffice.sessbilinfo;
 
-import java.util.Scanner;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import tk.xhuoffice.sessbilinfo.net.Http;
+import tk.xhuoffice.sessbilinfo.net.HttpConnectException;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
+import tk.xhuoffice.sessbilinfo.util.BiliException;
 import tk.xhuoffice.sessbilinfo.util.JsonLib;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
@@ -15,8 +17,6 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 
 public class UserInfo {
-    
-    public static Scanner scan = new Scanner(System.in);
     
     public static void getUserInfo() {
         Frame.reset();
@@ -42,7 +42,12 @@ public class UserInfo {
     public static String card(String mid) {
         // 向 API 发送 GET 请求
         Logger.debugln("获取用户名片信息");
-        String rawJson = Http.get(BiliAPIs.USER_CARD+"?mid="+mid);
+        String rawJson = null;
+        try {
+            rawJson = Http.get(BiliAPIs.USER_CARD+"?mid="+mid);
+        } catch(HttpConnectException e) {
+            throw new BiliException(e.getMessage(),e);
+        }
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -57,8 +62,7 @@ public class UserInfo {
             String offical_info = "";
             if(JsonLib.getInt(rawJson,"data","card","Official","type")==0) { // 认证信息
                 // 处理认证类型
-                int offical_typ = JsonLib.getInt(rawJson,"data","card","Official","role");
-                offical_tag = offical(offical_typ,mid);
+                offical_tag = offical(JsonLib.getInt(rawJson,"data","card","Official","role"),mid);
                 // 处理认证信息
                 offical_info = JsonLib.getString(rawJson,"data","card","Official","title"); // 认证内容
             }
@@ -75,16 +79,14 @@ public class UserInfo {
             String cardinfo = "";
             cardinfo += "Lv"+level+"  "+nickname+"  "+sex+"\n";
             cardinfo += "粉丝 "+strFans+"   关注 "+strFriend+"\n";
-            if(!offical_tag.trim().isEmpty()) { // 有认证信息时打印
+            if(!offical_tag.isEmpty()) { // 有认证信息时打印
                 cardinfo += offical_tag+offical_info+"\n";
             }
             cardinfo += "签名 "+sign+"\n";
             cardinfo += "\n";
             return cardinfo;
         } else {
-            BiliAPIs.outCodeErr(rawJson);
-            System.exit(0);
-            return "";
+            throw new BiliException(BiliAPIs.outCodeErr(rawJson));
         }
     }
     
@@ -100,7 +102,7 @@ public class UserInfo {
             result += spaceNotice.get();
             result += spaceTop.get();
             result += spaceMasterpiece.get();
-        } catch (InterruptedException | java.util.concurrent.ExecutionException e) {
+        } catch(InterruptedException | java.util.concurrent.ExecutionException e) {
             OutFormat.outThrowable(e,3);
         }
         executor.shutdown();
@@ -110,7 +112,10 @@ public class UserInfo {
     public static String spaceNotice(String mid) {
         // 发送请求
         Logger.debugln("获取用户空间公告");
-        String json = Http.get(BiliAPIs.USER_SPACE_NOTICE+"?mid="+mid);
+        String json = null;
+        try {
+            json = Http.get(BiliAPIs.USER_SPACE_NOTICE+"?mid="+mid);
+        } catch(HttpConnectException e) {}
         // 获取返回值
         int code = JsonLib.getInt(json,"code");
         if(code==0) {
@@ -134,7 +139,10 @@ public class UserInfo {
     public static String spaceTag(String mid) {
         // 发送请求
         Logger.debugln("获取用户空间TAG");
-        String rawJson = Http.get(BiliAPIs.USER_SPACE_TAG+"?mid="+mid);
+        String rawJson = null;
+        try {
+            rawJson = Http.get(BiliAPIs.USER_SPACE_TAG+"?mid="+mid);
+        } catch(HttpConnectException e) {}
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
             try {
@@ -173,7 +181,10 @@ public class UserInfo {
     public static String spaceTop(String mid) {
         // 向 API 发送 GET 请求
         Logger.debugln("获取用户置顶视频");
-        String rawJson = Http.get(BiliAPIs.USER_SPACE_TOP+"?vmid="+mid);
+        String rawJson = null;
+        try {
+            rawJson = Http.get(BiliAPIs.USER_SPACE_TOP+"?vmid="+mid);
+        } catch(HttpConnectException e) {}
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -211,7 +222,10 @@ public class UserInfo {
     public static String spaceMasterpiece(String mid) {
         // 向 API 发送 GET 请求
         Logger.debugln("获取用户代表作");
-        String rawJson = Http.get(BiliAPIs.USER_SPACE_MASTERPIECE+"?vmid="+mid);
+        String rawJson = null;
+        try {
+            Http.get(BiliAPIs.USER_SPACE_MASTERPIECE+"?vmid="+mid);
+        } catch(HttpConnectException e) {}
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -251,47 +265,36 @@ public class UserInfo {
         return "";
     }
     
+    public static final HashMap<Integer, String> OFFICAL_TYPE = new HashMap<>();
+    static {
+        // 个人认证
+        OFFICAL_TYPE.put(1,"UP主(知名UP主)认证");
+        OFFICAL_TYPE.put(2,"UP主(大V达人)认证");
+        OFFICAL_TYPE.put(7,"UP主(高能主播)认证");
+        OFFICAL_TYPE.put(9,"UP主(社会知名人士)认证");
+        // 机构认证
+        OFFICAL_TYPE.put(3,"机构(企业)认证");
+        OFFICAL_TYPE.put(4,"机构(组织)认证");
+        OFFICAL_TYPE.put(5,"机构(媒体)认证");
+        OFFICAL_TYPE.put(6,"机构(政府)认证");
+    }
+    
     public static String offical(int typ, String... mid) {
         Logger.debugln("处理用户认证信息");
-        String offical_tag = "unknown";
-        switch(typ) {
-            // 个人认证
-            case 1:
-                offical_tag = "UP主(知名UP主)认证: ";
-                break;
-            case 2:
-                offical_tag = "UP主(大V达人)认证: ";
-                break;
-            case 7:
-                offical_tag = "UP主(高能主播)认证: ";
-                break;
-            case 9:
-                offical_tag = "UP主(社会知名人士)认证: ";
-                break;
-            // 机构认证
-            case 3:
-                offical_tag = "机构(企业)认证: ";
-                break;
-            case 4:
-                offical_tag = "机构(组织)认证: ";
-                break;
-            case 5:
-                offical_tag = "机构(媒体)认证: ";
-                break;
-            case 6:
-                offical_tag = "机构(政府)认证: ";
-                break;
-            default:
-                // 我也不知道 role 为 8 时是什么
-                Logger.errln("喜报");
-                Logger.errln("未知的认证类型 "+typ);
-                Logger.errln("请向 SocialSisterYi/bilibili-API-collect 与 SessionHu/SessBilinfo 提交 Issue, 提交前请确认使用最新版本且本项目最新修改在2个月内");
-                Logger.errln("可以复制本信息: Bilibili 用户 Mid "+mid+" 的 认证类型(role) 为 "+typ+", 在[此页](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/official_role.md)中似乎并没有找到, 希望尽早解决该问题");
-                try {
-                    Thread.sleep(9999);
-                } catch(InterruptedException e) {}
+        String officalTag = OFFICAL_TYPE.getOrDefault(typ,"unknown");
+        if(officalTag.equals("unknown")) {
+            // 我也不知道 role 为 8 时是什么
+            Logger.errln("喜报");
+            Logger.errln("未知的认证类型 "+typ);
+            Logger.errln("请向 SocialSisterYi/bilibili-API-collect 与 SessionHu/SessBilinfo 提交 Issue, 提交前请确认使用最新版本且本项目最新修改在2个月内");
+            Logger.errln("可以复制本信息: Bilibili 用户 Mid "+mid+" 的 认证类型(role) 为 "+typ+", 在[此页](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/official_role.md)中似乎并没有找到, 希望尽早解决该问题");
+            try {
+                Thread.sleep(8888);
+            } catch(InterruptedException e) {}
+        } else {
+            officalTag += ": ";
         }
-        return offical_tag;
+        return officalTag;
     }
     
 }
