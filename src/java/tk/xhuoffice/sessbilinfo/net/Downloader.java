@@ -143,7 +143,7 @@ public class Downloader {
     
     private void progressReport(long progress, long length) {
         if(((System.currentTimeMillis()/1000L)-this.lastProgressReport)>=1L) {
-            Logger.footln(String.format("Download progress: %d/%d", progress, length));
+            Logger.footln(String.format("Download progress: %d/%d (%d%s)", progress, length, progress*100L/length, "%"));
             lastProgressReport = System.currentTimeMillis()/1000L;
         }
     }
