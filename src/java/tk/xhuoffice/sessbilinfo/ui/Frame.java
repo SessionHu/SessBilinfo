@@ -14,12 +14,20 @@ public class Frame {
     public static void main(String... args) {
         // load JANSI
         if((System.getenv("TERM")!=null)&&(!System.getenv("TERM").contains("xterm"))) {
-            AnsiConsole.systemInstall();
+            loadJansi();
         }
         // create a new Terminal
         terminal = new Terminal();
         // 重绘屏幕
         redraw();
+    }
+    
+    public static void loadJansi() {
+        AnsiConsole.systemInstall();
+    }
+    
+    public static void unloadJansi() {
+        AnsiConsole.systemUninstall();
     }
     
     public static void printTitle() {

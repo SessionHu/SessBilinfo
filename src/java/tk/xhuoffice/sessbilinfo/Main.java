@@ -148,6 +148,10 @@ public class Main {
                     // Cookie 处理
                     CookieFile.rm();
                     break;
+                case "-a":
+                case "--force-ansi":
+                    // Force use of JANSI library
+                    Frame.loadJansi();
                 default:
                     // nothing here...
             }
@@ -172,6 +176,7 @@ public class Main {
         String helpMsgEnUs = "Usage:\n"+
                 "    java -jar \""+jarFileName+"\"\n"+
                 "Command arguments:\n"+
+                "    -a, --force-ansi Force use of JANSI library\n"+
                 "    -d, --debug      Enable DEBUG output\n"+
                 "    -n, --nocookie   Run the program after deleting the Cookie file\n"+
                 "Environment variables:\n"+
@@ -182,6 +187,7 @@ public class Main {
         String helpMsgZhCn = "用法:\n"+
                 "	java -jar \""+jarFileName+"\"\n"+
                 "命令参数:\n"+
+                "    -a, --force-ansi 强制使用 JANSI 库\n"+
                 "    -d, --debug      启用 DEBUG 输出\n"+
                 "    -n, --nocookie   删除 Cookie 文件后运行程序\n"+
                 "环境变量:\n"+
