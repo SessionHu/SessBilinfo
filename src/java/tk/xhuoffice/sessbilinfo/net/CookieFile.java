@@ -12,7 +12,7 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 public class CookieFile {
 
-    public static final long COOKIE_EXPIRE_TIME = 15552000L; // 6 months
+    private static final long COOKIE_EXPIRE_TIME = 15552000L; // 6 months
 
     private static final String COOKIE_FILE_PATH = getCookieFilePath();
     
@@ -37,11 +37,12 @@ public class CookieFile {
                 // 写入文件
                 writeTimeAndLines(COOKIE_FILE_PATH,cookie);
             } catch(java.io.FileNotFoundException e) {
+                Logger.errln("Cookie 文件写入失败");
                 Logger.debugln(e.toString());
             } catch(Exception e) {
+                Logger.errln("Cookie 文件写入失败");
                 OutFormat.outThrowable(e,0);
             }
-            Logger.errln("Cookie 文件写入失败");
         }
     }
     
@@ -55,7 +56,7 @@ public class CookieFile {
             for(int l = 0; l < line.length; l++) {
                 lines += line[l]+"\n";
             }
-            writer.write(System.currentTimeMillis() + "\n" + lines);
+            writer.write(System.currentTimeMillis()/1000 + "\n" + lines);
         }
     }
     
@@ -158,7 +159,8 @@ public class CookieFile {
         String tips = "";
         tips += "请输入新的 Cookie 内容\n";
         tips += "一行一条 Cookie\n";
-        tips += "输入 :wq 并回车以退出\n";
+        tips += "输入 :q  并回车以直接退出\n";
+        tips += "输入 :wq 并回车保存并退出\n";
         tips += "示例内容 SESSDATA=xxxx";
         Logger.println(tips);
         // 等待输入
@@ -166,7 +168,7 @@ public class CookieFile {
             // 获取输入
             current = OutFormat.getString("行",String.valueOf(lines.size()+1));
             // 验证行
-            if(!current.equals(":wq")) {
+            if(!current.startsWith(":")) {
                 // 输入有效性检测
                 if(!current.matches("^[^=]+=[^=]+$")) {
                     // 无效输入
@@ -177,9 +179,14 @@ public class CookieFile {
                     Logger.println((lines.size()+1)+": "+current);
                     lines.add(current);
                 }
-            } else {
+            } else if(current.equals(":wq")) {
                 // 保存并退出
                 break;
+            } else if(current.equals(":q")) {
+                // 直接退出
+                return;
+            } else {
+                Logger.footln("未知的命令 "+current);
             }
         }
         // 写入文件
