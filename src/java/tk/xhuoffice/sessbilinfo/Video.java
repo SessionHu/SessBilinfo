@@ -144,8 +144,7 @@ public class Video {
         } else if(code==62004) {
             return "稿件审核中\n\n";
         } else {
-            BiliAPIs.outCodeErr(rawJson);
-            return "";
+            return BiliAPIs.outCodeErr(rawJson)+"\n\n";
         }
     }
     
