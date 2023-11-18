@@ -1,7 +1,6 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.util.HashMap;
-import java.util.Map;
 import tk.xhuoffice.sessbilinfo.net.Downloader;
 import tk.xhuoffice.sessbilinfo.net.Http;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
@@ -39,6 +38,8 @@ public class Video {
             videoInfo += getDetail(aid);
             videoInfo += "------------------------";
         } catch(BiliException e) {
+            Logger.errln("获取视频信息时发生未知异常");
+            OutFormat.outThrowable(e,3);
             return; // 返回
         }
         Logger.println("请求完毕");
@@ -51,57 +52,38 @@ public class Video {
         String aid = "";
         while(true) {
             String vid = OutFormat.getString("AV或BV号");
-            try {
-                if(vid.toLowerCase().startsWith("av")) {
-                    // AV号(avid)
-                    aid = verifyAid(vid.substring(2,vid.length()));
-                } else if(vid.matches("\\d+")) {
-                    // AV号(aid)
-                    aid = verifyAid(vid);
-                } else if(vid.toLowerCase().startsWith("bv")&&vid.length()==12) {
-                    // BV号(标准12位)
-                    Logger.debugln("转换BV号为AV号");
-                    aid = String.valueOf(new AvBv(vid).getAid());
-                    if(Integer.valueOf(aid)>0) {
-                        aid = verifyAid(aid);
-                    } else {
-                        throw new IllegalArgumentException(aid);
-                    }
-                } else if(vid.length()==10) {
-                    // BV号(无bv头)
-                    Logger.debugln("转换BV号为AV号");
-                    aid = String.valueOf(new AvBv("bv"+vid).getAid());
-                    if(Integer.valueOf(aid)>0) {
-                        aid = verifyAid(aid);
-                    } else {
-                        throw new IllegalArgumentException(aid);
-                    }
-                } else {
-                    Logger.footln("无效的输入");
-                    aid = "";
-                }
-            } catch(IllegalArgumentException e) {
+            if(vid.toLowerCase().startsWith("av")) {
+                // AV号(avid)
+                aid = verifyAid(vid.substring(2,vid.length()));
+            } else if(vid.matches("\\d+")) {
+                // AV号(aid)
+                aid = verifyAid(vid);
+            } else if(vid.toLowerCase().startsWith("bv")&&vid.length()==12) {
+                // BV号(标准12位)
+                Logger.debugln("转换BV号为AV号");
+                aid = verifyAid(String.valueOf(new AvBv(vid).getAid()));
+            } else if(vid.length()==10) {
+                // BV号(无bv头)
+                Logger.debugln("转换BV号为AV号");
+                aid = verifyAid(String.valueOf(new AvBv("bv"+vid).getAid()));
+            } else {
                 Logger.footln("无效的输入");
                 aid = "";
             }
-            if(aid.isEmpty()) {
-                // nothing here...
-            } else {
+            if(!aid.isEmpty()) {
                 Logger.clearFootln();
                 Logger.debugln("返回 aid");
                 return aid;
+            } else {
+                Logger.footln("无效的输入");
             }
         }
     }
-
-    private static String verifyAid(String aid) {
-        // AV号
-        try {
-            // 验证AV号
-            Logger.debugln("验证AV号");
-            return OutFormat.getPositiveLongAsString("AV号",aid);
-        } catch(NumberFormatException e) {
-            // AV号无效
+    
+    public static String verifyAid(String aid) {
+        if(Long.parseLong(aid)>0) {
+            return aid;
+        } else {
             return "";
         }
     }
@@ -133,9 +115,8 @@ public class Video {
             String like = OutFormat.num(video.like); // 点赞数
             String tags = ""; { // TAG
                 try {
-                    for(int i = 0; i < video.tag.length; i++) {
-                        Logger.debugln("第 "+i+" 个 TAG");
-                        tags += video.tag[i]+", ";
+                    for(String t : video.tag) {
+                        tags += t + ", ";
                     }
                     tags = tags.substring(0,tags.length()-2);
                 } catch(StringIndexOutOfBoundsException e) {
@@ -230,11 +211,14 @@ public class Video {
                     // 处理返回值
                     if(JsonLib.getInt(rawJson,"code")==0) {
                         // 处理返回数据
-                        video.playURL = JsonLib.getString(JsonLib.getArray(rawJson,"data","durl")[0],"url");
+                        try {
+                            video.playURL = JsonLib.getString(JsonLib.getArray(rawJson,"data","durl")[0],"url");
+                        } catch(NullPointerException e) {}
                     }
-                    this.ready = true;
                 } catch(Exception e) {
                     OutFormat.outThrowable(e,0);
+                } finally {
+                    this.ready = true;
                 }
             }, "VideoStream-"+this.aid).start();
             // ..stat
@@ -272,7 +256,7 @@ public class Video {
         return this.title+"@av"+this.aid;
     }
     
-    public static final Map<Integer,String> ZONE = new HashMap<>();
+    public static final HashMap<Integer,String> ZONE = new HashMap<>();
     static {
         int[][] data = {
             {1,24,25,47,210,86,253,27}, // 动画
@@ -285,7 +269,7 @@ public class Video {
             {188,95,230,231,232,233,189,190,191}, // 科技
             {234,235,249,164,236,237,238}, // 运动
             {223,245,246,247,248,240,227,176,224,225,226}, // 汽车
-            {160,138,250,251,239,161,162,21,163,174}, // 生活
+            {160,138,250,251,239,161,162,21,163,174,254}, // 生活
             {211,76,212,213,214,215}, // 美食
             {217,218,219,220,221,222,75}, // 动物圈
             {119,22,26,126,216,127}, // 鬼畜
