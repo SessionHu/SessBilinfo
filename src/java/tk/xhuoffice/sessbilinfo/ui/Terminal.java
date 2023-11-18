@@ -35,10 +35,10 @@ public class Terminal {
     // <init> without arg
     public Terminal() {
         try {
-            int[] size = Size.getSize();
-            this.lns = size[1];
-            this.cols = size[0];
-            this.screen = new String[size[1]];
+            Size size = Size.get();
+            this.lns = size.lns();
+            this.cols = size.cols();
+            this.screen = new String[this.lns];
         } catch(java.io.IOException e) {
             // failed to get Terminal size
         }
@@ -95,9 +95,11 @@ public class Terminal {
     
     // update virtual Terminal size
     public void updateSize() {
-        int[] size = Size.get();
-        this.lns = size[1];
-        this.cols = size[0];
+        try {
+            Size size = Size.get();
+            this.lns = size.lns();
+            this.cols = size.cols();
+        } catch(java.io.IOException e) {}
     }
     
     // update virtual Terminal size with lns
