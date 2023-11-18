@@ -148,6 +148,12 @@ public class Logger {
             printLines(str,0); // 调试
         }
     }
+
+    public static void debugln(Object obj) {
+        if(debug) {
+            printLines(String.valueOf(obj),0); // 调试
+        }
+    }
     
     public static void throwabln(String str, int lv) {
         // log level
