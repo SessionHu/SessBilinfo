@@ -224,7 +224,7 @@ public class UserInfo {
         Logger.debugln("获取用户代表作");
         String rawJson = null;
         try {
-            Http.get(BiliAPIs.USER_SPACE_MASTERPIECE+"?vmid="+mid);
+            rawJson = Http.get(BiliAPIs.USER_SPACE_MASTERPIECE+"?vmid="+mid);
         } catch(HttpConnectException e) {}
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
