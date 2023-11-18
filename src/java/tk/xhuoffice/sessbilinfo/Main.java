@@ -135,7 +135,7 @@ public class Main {
                             SOFT_TITLE+"\n"+
                             "Copyright (C) 2023 SessionHu\n"+
                             "Cookie Path:  "+CookieFile.getCookieFilePath()+"\n"+
-                            "Current Time: "+System.currentTimeMillis()/1000);
+                            "Current Time: "+System.currentTimeMillis()/1000L);
                     System.exit(0);
                     break;
                 case "-d":
