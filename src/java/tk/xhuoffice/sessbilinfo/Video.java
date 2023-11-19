@@ -125,20 +125,22 @@ public class Video {
                 }
             }
             // 格式化处理数据
-            String formatted = "";
-            formatted += String.format("%s\n", video.title);
-            formatted += String.format("%s-%s  %s   UP主 %s\n", video.mtname, video.tname, cprt, video.uploader);
-            formatted += String.format("播放 %s   弹幕 %s   %s\n", view, danmaku, date);
-            formatted += String.format("点赞 %s   投币 %s   收藏 %s   分享 %s\n", like, coin, fav, share);
-            formatted += String.format("TAG: %s\n", tags);
-            formatted += String.format("总时长 %s   评论 %s", alltime, reply);
+            StringBuilder formatted = new StringBuilder();
+            formatted.append(String.format("%s\n", video.title));
+            formatted.append(String.format("%s-%s  %s   UP主 %s\n", video.mtname, video.tname, cprt, video.uploader));
+            formatted.append(String.format("播放 %s   弹幕 %s   %s\n", view, danmaku, date));
+            formatted.append(String.format("点赞 %s   投币 %s   收藏 %s   分享 %s\n", like, coin, fav, share));
+            formatted.append(String.format("TAG: %s\n", tags));
+            formatted.append(String.format("总时长 %s   评论 %s\n\n", alltime, reply));
+            formatted.append(String.format("封面 %s\n", video.cover));
             // 处理视频流URL
             while(!video.ready) {}
             if(video.playURL!=null) {
-                formatted += "\n\nURL "+video.playURL;
+                formatted.append("URL ");
+                formatted.append(video.playURL);
             }
             // 返回数据
-            return formatted+"\n\n";
+            return formatted.append("\n\n").toString();
         } else if(code==62002) {
             return "稿件不可见\n\n";
         } else if(code==62004) {
@@ -155,6 +157,7 @@ public class Video {
     public String mtname; // 主分区名
     public boolean original; // 视频类型
     public String title;
+    public String cover; // 封面
     public long pubdate; // 发布时间
     public String desc; // 视频简介
     public long duration; // 总时长
@@ -199,6 +202,7 @@ public class Video {
             mtname = tidSubToMain(JsonLib.getInt(detailJson,"data","View","tid"));
             original = JsonLib.getInt(detailJson,"data","View","copyright") == 1;
             title = JsonLib.getString(detailJson,"data","View","title");
+            cover = JsonLib.getString(detailJson,"data","View","pic");
             pubdate = JsonLib.getLong(detailJson,"data","View","pubdate");
             desc = JsonLib.getString(detailJson,"data","View","desc");
             duration = JsonLib.getLong(detailJson,"data","View","duration");
