@@ -29,7 +29,7 @@ public class Http {
     
     public static boolean useCookie = true;
     public static int timeoutc = 5000;
-    public static int timeoutr = 12000;
+    public static int timeoutr = 10000;
 
     public static String encode(String str) {
         return StringCoder.urlEncode(str);
