@@ -69,20 +69,17 @@ public class Logger {
             for(String text : lines) {
                 // print to screen
                 int cols = Frame.terminal.cols();
-                String textWithSUB = OutFormat.fullWidthCharsAddSUB(text); // get text with SUB-char
                 ArrayList<String> slines = new ArrayList<>(); // sub-lines
-                for(int i = 0; i < textWithSUB.length();) { // text with SUB-char to sub-lines
+                for(int i = 0; i < text.length();) { // text with SUB-char to sub-lines
                     StringBuilder cline = new StringBuilder(); // char-line
-                    for(int j = 0; (j < cols) && (i < textWithSUB.length()); j++) {
-                        char c = textWithSUB.charAt(i++);
-                        if(c!=0x001A) {
-                            cline.append(c);
-                        } else { // skip SUB-char & save space for full-width-char
+                    for(int j = 0; (j < cols) && (i < text.length()); j++) { // build char-line
+                        char c = text.charAt(i++);
+                        cline.append(c);
+                        if(Character.UnicodeBlock.of(c)==Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
                             j++;
-                            i++;
                         }
                     }
-                    slines.add(cline.toString()); // put char-line into sub-lines
+                    slines.add(cline.toString()); // add char-line into sub-lines
                 }
                 for(String sline : slines) { // add every sub-line to terminal
                     Frame.terminal.addLine(sline);

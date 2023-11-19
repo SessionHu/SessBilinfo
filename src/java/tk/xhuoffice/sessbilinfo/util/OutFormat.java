@@ -216,17 +216,4 @@ public class OutFormat {
         return pages.toArray(new String[0]);
     }
     
-    public static String fullWidthCharsAddSUB(String s) {
-        StringBuilder sb = new StringBuilder(s.length());
-        s.codePoints().forEach(codepoint -> {
-            if(Character.UnicodeBlock.of(codepoint) == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
-                sb.append((char)(codepoint));
-                sb.append((char)(0x001A));
-            } else {
-                sb.append((char)codepoint);
-            }
-        });
-        return sb.toString();
-    }
-    
 }
