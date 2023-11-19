@@ -65,10 +65,10 @@ public class Logger {
     
     private static synchronized void printLinesForEach(String[] lines) {
         // print
-        if(Frame.terminal!=null) {
+        if(Frame.screen!=null) {
             for(String text : lines) {
                 // print to screen
-                int cols = Frame.terminal.cols();
+                int cols = Frame.screen.cols();
                 ArrayList<String> slines = new ArrayList<>(); // sub-lines
                 for(int i = 0; i < text.length();) { // text with SUB-char to sub-lines
                     StringBuilder cline = new StringBuilder(); // char-line
@@ -81,19 +81,19 @@ public class Logger {
                     }
                     slines.add(cline.toString()); // add char-line into sub-lines
                 }
-                for(String sline : slines) { // add every sub-line to terminal
-                    Frame.terminal.addLine(sline);
+                for(String sline : slines) { // add every sub-line to screen
+                    Frame.screen.addLine(sline);
                 }
                 // write to file
                 writeln(text);
             }
             // title
-            String[] scr = Frame.terminal.getScreen();
+            String[] scr = Frame.screen.getScreen();
             if(scr[scr.length-1]!=null) {
                 Frame.printTitle();
             }
         } else {
-            // print when Frame.terminal is null
+            // print when Frame.screen is null
             for(String text : lines) {
                 System.out.println(text);
                 // write to file
@@ -183,9 +183,9 @@ public class Logger {
     public static void footln(String text) {
         // only support ONE line
         text = text.replace("\n","");
-        if(Frame.terminal!=null) {
+        if(Frame.screen!=null) {
             clearFootln();
-            Frame.terminal.setLine(Frame.terminal.lns(),text);
+            Frame.screen.setLine(Frame.screen.lns(),text);
         } else {
             System.out.println(text);
         }
@@ -194,8 +194,8 @@ public class Logger {
     }
     
     public static void clearFootln() {
-        if(Frame.terminal!=null) {
-            Frame.terminal.clearLine(Frame.terminal.lns());
+        if(Frame.screen!=null) {
+            Frame.screen.clearLine(Frame.screen.lns());
         }
     }
     

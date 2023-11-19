@@ -4,7 +4,7 @@ import java.io.File;
 import tk.xhuoffice.sessbilinfo.net.CookieFile;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.ui.Prompt;
-import tk.xhuoffice.sessbilinfo.ui.Terminal;
+import tk.xhuoffice.sessbilinfo.ui.Screen;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
@@ -17,9 +17,9 @@ public class Main {
     
     public static void main(String... args) {
         // 直接启动本类的处理
-        if(Frame.terminal==null) {
-            Frame.terminal = new Terminal();
-            Frame.terminal.clear();
+        if(Frame.screen==null) {
+            Frame.screen = new Screen();
+            Frame.screen.clear();
             Logger.warnln("\033[1;33mYOU ARE TRYING TO START THE tk.xhuoffice.sessbilinfo.Main CLASS DIRECTLY.\033[0m\n\033[1;33mWE DO NOT RECOMMEND THIS. THIS MAY LEAD TO UNPREDICTABLE CONSEQUENCES!\033[0m");
             try {
                 Thread.sleep(3333);

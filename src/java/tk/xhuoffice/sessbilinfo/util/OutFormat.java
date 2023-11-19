@@ -194,7 +194,7 @@ public class OutFormat {
     
     public static String[] pageBreak(String str) {
         // prepare variables
-        int lns = Frame.terminal.lns()-1;
+        int lns = Frame.screen.lns()-1;
         String[] lines = str.split("\\n");
         ArrayList<String> pages = new ArrayList<>();
         // lines to pages

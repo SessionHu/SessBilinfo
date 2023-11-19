@@ -10,16 +10,16 @@ public class Prompt {
     protected static boolean status;
     
     public static void set() {
-        lineNum = Frame.terminal.lns - 1;
+        lineNum = Frame.screen.lns - 1;
         getOriginText();
-        Frame.terminal.setLine(lineNum,"> ");
+        Frame.screen.setLine(lineNum,"> ");
         status = true;
     }
     
     public static void set(String str) {
-        lineNum = Frame.terminal.lns - 1;
+        lineNum = Frame.screen.lns - 1;
         getOriginText();
-        Frame.terminal.setLine(lineNum,str+" > ");
+        Frame.screen.setLine(lineNum,str+" > ");
         status = true;
     }
     
@@ -29,14 +29,14 @@ public class Prompt {
     }
     
     private static String getOriginText() {
-        return originText = Frame.terminal.getLine(lineNum);
+        return originText = Frame.screen.getLine(lineNum);
     }
     
     private static void recoveryOriginText() {
         if(originText!=null) {
-            Frame.terminal.setLine(lineNum,originText);
+            Frame.screen.setLine(lineNum,originText);
         } else {
-            Frame.terminal.clearLine(lineNum);
+            Frame.screen.clearLine(lineNum);
         }
     }
     

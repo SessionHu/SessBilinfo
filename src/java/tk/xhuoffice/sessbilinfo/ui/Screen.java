@@ -3,7 +3,7 @@ package tk.xhuoffice.sessbilinfo.ui;
 import java.util.Arrays;
 
 
-public class Terminal {
+public class Screen {
     
     // variables with default 80x24
     protected int lns = 24; // lines
@@ -22,49 +22,39 @@ public class Terminal {
         return this.screen;
     }
     
-    public String getScreenText() {
-        StringBuilder st = new StringBuilder();
-        for(String text : this.screen) {
-            st.append(text);
-            st.append("\n");
-        }
-        st.deleteCharAt(st.length()-1);
-        return st.toString();
-    }
-    
     // <init> without arg
-    public Terminal() {
+    public Screen() {
         try {
             Size size = Size.get();
             this.lns = size.lns();
             this.cols = size.cols();
             this.screen = new String[this.lns];
         } catch(java.io.IOException e) {
-            // failed to get Terminal size
+            // failed to get Screen size
         }
         Arrays.fill(this.screen,null);
     }
     
     // <init> with lns
-    public Terminal(int lns) {
+    public Screen(int lns) {
         if(lns>0) {
             this.lns = lns;
             this.screen = new String[lns];
             Arrays.fill(this.screen,null);
         } else {
-            throw new IllegalArgumentException("Terminal lines cannot be "+lns);
+            throw new IllegalArgumentException("Screen lines cannot be "+lns);
         }
     }
     
     // <init> with lns & cols
-    public Terminal(int lns, int cols) {
+    public Screen(int lns, int cols) {
         if(lns>0&&cols>0) {
             this.lns = lns;
             this.cols = cols;
             this.screen = new String[lns];
             Arrays.fill(this.screen,null);
         } else {
-            throw new IllegalArgumentException("Terminal size cannot be "+cols+"x"+lns);
+            throw new IllegalArgumentException("Screen size cannot be "+cols+"x"+lns);
         }
     }
     
@@ -85,15 +75,15 @@ public class Terminal {
         System.out.printf("\033[%d;0f\033[2K",ln);
     }
     
-    // clear virtual screen and Terminal
+    // clear virtual screen and Screen
     public void clear() {
         // clear virtual screen
         Arrays.fill(this.screen,null);
-        // clear Terminal
+        // clear Screen
         System.out.print("\033[2J");
     }
     
-    // update virtual Terminal size
+    // update virtual Screen size
     public void updateSize() {
         try {
             Size size = Size.get();
@@ -102,18 +92,18 @@ public class Terminal {
         } catch(java.io.IOException e) {}
     }
     
-    // update virtual Terminal size with lns
+    // update virtual Screen size with lns
     public void updateSize(int lns) {
         this.lns = lns;
     }
     
-    // update virtual Terminal size with lns & cols
+    // update virtual Screen size with lns & cols
     public void updateSize(int lns, int cols) {
         this.lns = lns;
         this.cols = cols;
     }
     
-    // draw virtual screen to Terminal directly
+    // draw virtual screen to Screen directly
     public void draw() {
         System.out.print("\033[1;0f");
         for(String text : this.screen) {
@@ -125,7 +115,7 @@ public class Terminal {
         }
     }
     
-    // redraw virtual screen and Terminal
+    // redraw virtual screen and Screen
     public void redraw() {
         updateSize();
         redraw(this.lns,this.cols);
@@ -177,7 +167,7 @@ public class Terminal {
         return -1;
     }
     
-    // add text to first empty(null) line in virtual screen & Terminal
+    // add text to first empty(null) line in virtual screen & Screen
     public synchronized void addLine(String text) {
         // get index of empty(null) line
         int index = getEmptyLineIndex();
