@@ -10,6 +10,7 @@ import java.util.HashMap;
  *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_request.md
  *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/check_nickname.md
  *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/info.md
+ *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/online.md
  *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/videostream_url.md
  *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/clientinfo/ip.md
  * 信息来源:
@@ -37,6 +38,8 @@ public class BiliAPIs {
     public static final String ACCOUNT_CHECK_NICKNAME = "https://passport.bilibili.com/web/generic/check/nickname";
     // 视频超详细信息
     public static final String VIEW_DETAIL = BASE_URL+"/web-interface/view/detail";
+    // 获取视频在线人数
+    public static final String VIEW_ONLINE = BASE_URL+"/player/online/total";
     // 获取视频流URL
     public static final String VIEW_PLAY_URL = BASE_URL+"/player/wbi/playurl";
     // 通过ip确定地理位置

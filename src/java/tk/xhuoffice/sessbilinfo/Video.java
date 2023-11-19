@@ -126,15 +126,16 @@ public class Video {
             }
             // 格式化处理数据
             StringBuilder formatted = new StringBuilder();
+            while(!video.ready) {}
             formatted.append(String.format("%s\n", video.title));
             formatted.append(String.format("%s-%s  %s   UP主 %s\n", video.mtname, video.tname, cprt, video.uploader));
             formatted.append(String.format("播放 %s   弹幕 %s   %s\n", view, danmaku, date));
             formatted.append(String.format("点赞 %s   投币 %s   收藏 %s   分享 %s\n", like, coin, fav, share));
             formatted.append(String.format("TAG: %s\n", tags));
             formatted.append(String.format("总时长 %s   评论 %s\n\n", alltime, reply));
+            formatted.append(String.format("在线人数 %s\n", video.online));
             formatted.append(String.format("封面 %s\n", video.cover));
             // 处理视频流URL
-            while(!video.ready) {}
             if(video.playURL!=null) {
                 formatted.append("URL ");
                 formatted.append(video.playURL);
@@ -172,6 +173,7 @@ public class Video {
     public long mid; // UP主Mid
     public String[] tag;
     public volatile String playURL = null;
+    public volatile String online = null;
     public volatile boolean ready;
     
     public Video(long aid) {
@@ -192,6 +194,8 @@ public class Video {
     }
     
     public void videoVars(String detailJson) {
+        Thread videoStream;
+        Thread videoOnline;
         // .data.View
         {
             // .
@@ -207,7 +211,7 @@ public class Video {
             desc = JsonLib.getString(detailJson,"data","View","desc");
             duration = JsonLib.getLong(detailJson,"data","View","duration");
             // get video stream url
-            new Thread(() -> {
+            videoStream = new Thread(() -> {
                 try {
                     // 发送请求
                     String rawJson = Http.get(BiliAPIs.VIEW_PLAY_URL+"?avid="+this.aid+"&cid="+this.cid+"&platform=html5");
@@ -220,10 +224,29 @@ public class Video {
                     }
                 } catch(Exception e) {
                     OutFormat.outThrowable(e,0);
-                } finally {
-                    this.ready = true;
                 }
-            }, "VideoStream-"+this.aid).start();
+            }, "VideoStream-"+this.aid);
+            videoStream.start();
+            // get online number
+            videoOnline = new Thread(() -> {
+                try {
+                    // 发送请求
+                    String rawJson = Http.get(BiliAPIs.VIEW_ONLINE+"?aid="+this.aid+"&cid="+this.cid);
+                    // 处理返回值
+                    if(JsonLib.getInt(rawJson,"code")==0) {
+                        // 处理返回数据
+                        StringBuilder sb = new StringBuilder();
+                        sb.append(JsonLib.getString(rawJson,"data","total"));
+                        sb.append("(");
+                        sb.append(JsonLib.getString(rawJson,"data","count"));
+                        sb.append(")");
+                        this.online = sb.toString();
+                    }
+                } catch(Exception e) {
+                    OutFormat.outThrowable(e,0);
+                }
+            }, "VideoOnline-"+this.aid);
+            videoOnline.start();
             // ..stat
             {
                 view = JsonLib.getLong(detailJson,"data","View","stat","view");
@@ -252,6 +275,16 @@ public class Video {
             }
             tag = tagName;
         }
+        // 验证线程是否执行完毕
+        new Thread(() -> {
+            try {
+                videoStream.join();
+                videoOnline.join();
+            } catch(InterruptedException e) {
+            } finally {
+                this.ready = true;
+            }
+        }, "VideoReadyReport").start();
     }
     
     @Override
