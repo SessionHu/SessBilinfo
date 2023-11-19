@@ -79,7 +79,7 @@ public class OutFormat {
             String log = "";
             // 输出提示
             if(tip.length!=0) {
-                log = tip[0]+" ";
+                log = tip[0];
                 Prompt.set(log);
             } else {
                 Prompt.set();

@@ -7,38 +7,37 @@ public class Prompt {
     
     private static String originText = null;
     
+    protected static boolean status;
+    
     public static void set() {
         lineNum = Frame.terminal.lns - 1;
-        originText = getOriginText();
+        getOriginText();
         Frame.terminal.setLine(lineNum,"> ");
-        System.out.printf("\033[%d;3f",lineNum);
+        status = true;
     }
     
     public static void set(String str) {
         lineNum = Frame.terminal.lns - 1;
-        originText = getOriginText();
+        getOriginText();
         Frame.terminal.setLine(lineNum,str+" > ");
-        System.out.printf("\033[%d;%df",lineNum,str.length()+4);
+        status = true;
     }
     
     public static void unset() {
         recoveryOriginText();
+        status = false;
     }
     
     private static String getOriginText() {
-        return Frame.terminal.getLine(lineNum);
+        return originText = Frame.terminal.getLine(lineNum);
     }
     
     private static void recoveryOriginText() {
         if(originText!=null) {
             Frame.terminal.setLine(lineNum,originText);
         } else {
-            clearPromptLine();
+            Frame.terminal.clearLine(lineNum);
         }
-    }
-    
-    private static void clearPromptLine() {
-        Frame.terminal.clearLine(lineNum);
     }
     
 }
