@@ -60,8 +60,19 @@ public class Screen {
     
     // set text of a line
     public void setLine(int ln, String text) {
+        // prompt status
+        boolean ps = Prompt.status;
+        // save cursor position
+        if(ps) {
+            System.out.print("\033[s");
+        }
+        // set line
         this.screen[ln-1] = text;
         System.out.printf("\033[%d;0f%s",ln,text);
+        // restore cursor position
+        if(ps) {
+            System.out.print("\033[u");
+        }
     }
     
     // get text of a line
