@@ -8,7 +8,7 @@ else
 fi
 
 javac -encoding utf-8 \
-      -Xlint:deprecation -XDignore.symbol.file \
+      -Xlint:deprecation -XDignore.symbol.file -Xdiags:verbose \
       -d build/ \
       -cp $cp \
       -sourcepath src/java/tk/xhuoffice/sessbilinfo/ \
