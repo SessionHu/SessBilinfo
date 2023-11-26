@@ -150,9 +150,9 @@ public class OutFormat {
     }
 
     public static String xmlToANSI(String text) {
-        // <em>CONTENT</em> -> \033[0;1mCONTENT\033[0m
-        text = text.replaceAll("\u003cem.*?\u003e", "\033[0;1m");
-        text = text.replaceAll("\u003c/em\u003e", "\033[0m");
+        // <em>CONTENT</em> -> \033[0;1mCONTENT\033[22m
+        text = text.replaceAll("\u003cem.*?\u003e", "\033[1m");
+        text = text.replaceAll("\u003c/em\u003e", "\033[22m");
         // 转换实体字符
         text = xmlEntityToChar(text);
         // 返回结果
