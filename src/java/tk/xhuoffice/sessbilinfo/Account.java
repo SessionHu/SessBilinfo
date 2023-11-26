@@ -1,7 +1,6 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.util.regex.Pattern;
-import tk.xhuoffice.sessbilinfo.net.Http;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
 import tk.xhuoffice.sessbilinfo.util.JsonLib;
@@ -55,7 +54,7 @@ public class Account {
     public static void outNicknameStatus(String name) {
         // 请求数据
         Logger.debugln("API处理昵称");
-        String json = Http.get(BiliAPIs.ACCOUNT_CHECK_NICKNAME+"?nickName="+Http.encode(name));
+        String json = BiliAPIs.getAccountCheckNickname(name);
         // 获取返回值
         int code = JsonLib.getInt(json,"code");
         // 输出信息
@@ -81,7 +80,7 @@ public class Account {
         Frame.reset();
         // 发送请求
         Logger.println("正在请求数据...");
-        String json = Http.get(BiliAPIs.IP_LOCATION);
+        String json = BiliAPIs.getIpLocation();
         // 解析返回数据
         if(JsonLib.getInt(json,"code")==0) {
             // 提取信息

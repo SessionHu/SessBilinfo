@@ -30,11 +30,7 @@ public class Main {
                 // 显示菜单
                 int id = menu();
                 // 执行操作
-                try {
-                    task(id);
-                } catch(tk.xhuoffice.sessbilinfo.net.HttpConnectException e) {
-                    Logger.errln("请求异常");
-                }
+                task(id);
                 if(!Logger.enter2continue()) {
                     System.exit(0);
                 }

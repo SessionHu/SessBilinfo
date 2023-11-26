@@ -1,8 +1,8 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.util.HashMap;
+import java.util.Map;
 import tk.xhuoffice.sessbilinfo.net.Downloader;
-import tk.xhuoffice.sessbilinfo.net.Http;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.util.AvBv;
 import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
@@ -11,7 +11,10 @@ import tk.xhuoffice.sessbilinfo.util.JsonLib;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
-// 视频分区来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/video_zone.md
+/**
+ * Get and download a video from Bilibili. <br> Also can create an Object of Video. <br>
+ * 视频分区来源: <a href="https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/video_zone.md">bilibili-API-collect</a>
+ */
 
 
 public class Video {
@@ -90,7 +93,7 @@ public class Video {
     
     public static String getDetail(String aid) {
         // 发送请求
-        String rawJson = Http.get(BiliAPIs.VIEW_DETAIL+"?aid="+aid);
+        String rawJson = BiliAPIs.getViewDetail(aid);
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0){
@@ -152,8 +155,8 @@ public class Video {
     }
     
     public String bvid;
-    public long aid;
-    public long cid;
+    public String aid;
+    public String cid;
     public String tname; // 子分区名
     public String mtname; // 主分区名
     public boolean original; // 视频类型
@@ -177,7 +180,7 @@ public class Video {
     public volatile boolean ready;
     
     public Video(long aid) {
-        String detailJson = Http.get(BiliAPIs.VIEW_DETAIL+"?aid="+aid);
+        String detailJson = BiliAPIs.getViewDetail(String.valueOf(aid));
         try {
             videoVars(detailJson);
         } catch(Exception e) {
@@ -200,8 +203,8 @@ public class Video {
         {
             // .
             bvid = JsonLib.getString(detailJson,"data","View","bvid");
-            aid = JsonLib.getLong(detailJson,"data","View","aid");
-            cid = JsonLib.getLong(detailJson,"data","View","cid");
+            aid = JsonLib.getString(detailJson,"data","View","aid");
+            cid = JsonLib.getString(detailJson,"data","View","cid");
             tname = JsonLib.getString(detailJson,"data","View","tname");
             mtname = tidSubToMain(JsonLib.getInt(detailJson,"data","View","tid"));
             original = JsonLib.getInt(detailJson,"data","View","copyright") == 1;
@@ -214,7 +217,7 @@ public class Video {
             videoStream = new Thread(() -> {
                 try {
                     // 发送请求
-                    String rawJson = Http.get(BiliAPIs.VIEW_PLAY_URL+"?avid="+this.aid+"&cid="+this.cid+"&platform=html5");
+                    String rawJson = BiliAPIs.getViewPlayURL(this.aid,this.cid);
                     // 处理返回值
                     if(JsonLib.getInt(rawJson,"code")==0) {
                         // 处理返回数据
@@ -231,7 +234,7 @@ public class Video {
             videoOnline = new Thread(() -> {
                 try {
                     // 发送请求
-                    String rawJson = Http.get(BiliAPIs.VIEW_ONLINE+"?aid="+this.aid+"&cid="+this.cid);
+                    String rawJson = BiliAPIs.getViewOnline(this.aid,this.cid);
                     // 处理返回值
                     if(JsonLib.getInt(rawJson,"code")==0) {
                         // 处理返回数据
@@ -292,7 +295,7 @@ public class Video {
         return this.title+"@av"+this.aid;
     }
     
-    public static final HashMap<Integer,String> ZONE = new HashMap<>();
+    public static final Map<Integer,String> ZONE = new HashMap<>();
     static {
         int[][] data = {
             {1,24,25,47,210,86,253,27}, // 动画

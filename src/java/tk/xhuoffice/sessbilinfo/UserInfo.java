@@ -1,11 +1,10 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import tk.xhuoffice.sessbilinfo.net.Http;
-import tk.xhuoffice.sessbilinfo.net.HttpConnectException;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
 import tk.xhuoffice.sessbilinfo.util.BiliException;
@@ -13,7 +12,10 @@ import tk.xhuoffice.sessbilinfo.util.JsonLib;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
-// 认证类型来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/official_role.md
+/**
+ * Get User Information from Bilibili. <br>
+ * 认证类型来源: <a href="https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/official_role.md">bilibili-API-collect</a>
+ */
 
 
 public class UserInfo {
@@ -42,12 +44,7 @@ public class UserInfo {
     public static String card(String mid) {
         // 向 API 发送 GET 请求
         Logger.debugln("获取用户名片信息");
-        String rawJson = null;
-        try {
-            rawJson = Http.get(BiliAPIs.USER_CARD+"?mid="+mid);
-        } catch(HttpConnectException e) {
-            throw new BiliException(e.getMessage(),e);
-        }
+        String rawJson = BiliAPIs.getUserCard(mid);
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -112,10 +109,10 @@ public class UserInfo {
     public static String spaceNotice(String mid) {
         // 发送请求
         Logger.debugln("获取用户空间公告");
-        String json = null;
-        try {
-            json = Http.get(BiliAPIs.USER_SPACE_NOTICE+"?mid="+mid);
-        } catch(HttpConnectException e) {}
+        String json = BiliAPIs.getUserSpaceNotice(mid);
+        if(json==null) {
+            return "";
+        }
         // 获取返回值
         int code = JsonLib.getInt(json,"code");
         if(code==0) {
@@ -139,10 +136,10 @@ public class UserInfo {
     public static String spaceTag(String mid) {
         // 发送请求
         Logger.debugln("获取用户空间TAG");
-        String rawJson = null;
-        try {
-            rawJson = Http.get(BiliAPIs.USER_SPACE_TAG+"?mid="+mid);
-        } catch(HttpConnectException e) {}
+        String rawJson = BiliAPIs.getUserSpaceTag(mid);
+        if(rawJson==null) {
+            return "";
+        }
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
             try {
@@ -181,10 +178,10 @@ public class UserInfo {
     public static String spaceTop(String mid) {
         // 向 API 发送 GET 请求
         Logger.debugln("获取用户置顶视频");
-        String rawJson = null;
-        try {
-            rawJson = Http.get(BiliAPIs.USER_SPACE_TOP+"?vmid="+mid);
-        } catch(HttpConnectException e) {}
+        String rawJson = BiliAPIs.getUserSpaceTop(mid);
+        if(rawJson==null) {
+            return "";
+        }
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -222,10 +219,10 @@ public class UserInfo {
     public static String spaceMasterpiece(String mid) {
         // 向 API 发送 GET 请求
         Logger.debugln("获取用户代表作");
-        String rawJson = null;
-        try {
-            rawJson = Http.get(BiliAPIs.USER_SPACE_MASTERPIECE+"?vmid="+mid);
-        } catch(HttpConnectException e) {}
+        String rawJson = BiliAPIs.getUserSpaceMasterpiece(mid);
+        if(rawJson==null) {
+            return "";
+        }
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {
@@ -265,7 +262,9 @@ public class UserInfo {
         return "";
     }
     
-    public static final HashMap<Integer, String> OFFICAL_TYPE = new HashMap<>();
+    /**
+     * A Map can convert Bilibili offical type number id to text description. */
+    public static final Map<Integer, String> OFFICAL_TYPE = new HashMap<>();
     static {
         // 个人认证
         OFFICAL_TYPE.put(1,"UP主(知名UP主)认证");

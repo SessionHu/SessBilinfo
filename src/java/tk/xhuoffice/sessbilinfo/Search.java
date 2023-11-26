@@ -2,7 +2,6 @@ package tk.xhuoffice.sessbilinfo;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import tk.xhuoffice.sessbilinfo.net.Http;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
 import tk.xhuoffice.sessbilinfo.util.BiliException;
@@ -10,7 +9,10 @@ import tk.xhuoffice.sessbilinfo.util.JsonLib;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
-// 信息来源: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_response.md
+/**
+ * Search information on Bilibili with its APIs. <br>
+ * 信息来源: <a href="https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_response.md">bilibili-API-collect</a>
+ */
 
 
 public class Search {
@@ -75,7 +77,7 @@ public class Search {
             }
         }
         // 发送请求
-        String rawJson = Http.get(BiliAPIs.SEARCH_ALL+"?keyword="+Http.encode(keyword));
+        String rawJson = BiliAPIs.getSearchAll(keyword);
         // 获取返回值
         int code = JsonLib.getInt(rawJson,"code");
         if(code==0) {

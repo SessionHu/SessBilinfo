@@ -2,49 +2,184 @@ package tk.xhuoffice.sessbilinfo.util;
 
 import java.util.Map;
 import java.util.HashMap;
+import tk.xhuoffice.sessbilinfo.net.Http;
+import tk.xhuoffice.sessbilinfo.net.HttpConnectException;
 
 /**
- * API来源:
- *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/info.md
- *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/space.md
- *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/search/search_request.md
- *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/check_nickname.md
- *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/info.md
- *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/online.md
- *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/videostream_url.md
- *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/clientinfo/ip.md
- * 信息来源:
- *     https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/errcode.md
+ * APIs about Bilibili. <br>
+ * <br>
+ * API来源: <a href="https://github.com/SocialSisterYi/bilibili-API-collect">SocialSisterYi/bilibili-API-collect</a>
  */
 
 
 public class BiliAPIs {
     
-    // 基本API
-    public static final String BASE_URL = "https://api.bilibili.com/x";
-    // 用户名片信息
-    public static final String USER_CARD = BASE_URL+"/web-interface/card";
-    // 用户空间公告
-    public static final String USER_SPACE_NOTICE = BASE_URL+"/space/notice";
-    // 用户空间个人TAG
-    public static final String USER_SPACE_TAG = BASE_URL+"/space/acc/tags";
-    // 用户空间置顶视频
-    public static final String USER_SPACE_TOP = BASE_URL+"/space/top/arc";
-    // 用户空间代表作
-    public static final String USER_SPACE_MASTERPIECE = BASE_URL+"/space/masterpiece";
-    // 搜索综合
-    public static final String SEARCH_ALL = BASE_URL+"/web-interface/search/all/v2";
-    // 检查昵称是否可用
-    public static final String ACCOUNT_CHECK_NICKNAME = "https://passport.bilibili.com/web/generic/check/nickname";
-    // 视频超详细信息
-    public static final String VIEW_DETAIL = BASE_URL+"/web-interface/view/detail";
-    // 获取视频在线人数
-    public static final String VIEW_ONLINE = BASE_URL+"/player/online/total";
-    // 获取视频流URL
-    public static final String VIEW_PLAY_URL = BASE_URL+"/player/wbi/playurl";
-    // 通过ip确定地理位置
-    public static final String IP_LOCATION = BASE_URL+"/web-interface/zone";
+    /** 
+     * Base HTTP GET request.
+     * @param apiurl  API URL
+     * @param args    String to add to the end of the URL
+     * @return Response from server <br> {@code null} if {@link tk.xhuoffice.sessbilinfo.net.HttpConnectException} catched
+     */
+     public static String get(String apiurl, String... args) {
+         // build request url
+         StringBuilder url = new StringBuilder(apiurl);
+         if(args.length>0) {
+             url.append("?");
+             for(String param : args) {
+                 url.append(param);
+                 url.append("&");
+             }
+             url.deleteCharAt(url.length()-1);
+         }
+         // request
+         String response;
+         try {
+             response = Http.get(url.toString());
+         } catch(HttpConnectException e) {
+             StringBuilder msg = new StringBuilder("请求异常: ");
+             msg.append(e.getCause().toString());
+             Logger.errln(msg.toString());
+             // if Logger.debug == true
+             if(Logger.debug) {
+                 OutFormat.outThrowable(e,0);
+             }
+             response = null;
+         }
+         // return
+         return response;
+     }
     
+    /**
+     * 基本API */
+    public static final String BASE_URL = "https://api.bilibili.com/x";
+    
+    /**
+     * 用户名片信息 */
+    public static final String USER_CARD = BASE_URL+"/web-interface/card";
+    /**
+     * GET 用户名片信息.
+     * @param mid  user mid
+     * @return     json from API */
+    public static String getUserCard(String mid) {
+        return get(USER_CARD,"mid="+mid);
+    }
+     
+    /**
+     * 用户空间公告 */
+    public static final String USER_SPACE_NOTICE = BASE_URL+"/space/notice";
+    /**
+     * GET 用户空间公告.
+     * @param mid  user mid
+     * @return     json from API */
+    public static String getUserSpaceNotice(String mid) {
+        return get(USER_SPACE_NOTICE,"mid="+mid);
+    }
+    
+    /**
+     * 用户空间个人TAG */
+    public static final String USER_SPACE_TAG = BASE_URL+"/space/acc/tags";
+    /**
+     * GET 用户空间个人TAG.
+     * @param mid  user mid
+     * @return     json from API */
+    public static String getUserSpaceTag(String mid) {
+        return get(USER_SPACE_TAG,"mid="+mid);
+    }
+    
+    /**
+     * 用户空间置顶视频 */
+    public static final String USER_SPACE_TOP = BASE_URL+"/space/top/arc";
+    /**
+     * GET 用户空间置顶视频.
+     * @param vmid  user mid
+     * @return      json from API */
+    public static String getUserSpaceTop(String vmid) {
+        return get(USER_SPACE_TOP,"vmid="+vmid);
+    }
+    
+    /**
+     * 用户空间代表作 */
+    public static final String USER_SPACE_MASTERPIECE = BASE_URL+"/space/masterpiece";
+    /**
+     * GET 用户空间代表作.
+     * @param vmid  user mid
+     * @return      json from API */
+    public static String getUserSpaceMasterpiece(String vmid) {
+        return get(USER_SPACE_MASTERPIECE,"vmid="+vmid);
+    }
+    
+    /**
+     * 搜索综合 */
+    public static final String SEARCH_ALL = BASE_URL+"/web-interface/search/all/v2";
+    /**
+     * GET 搜索综合.
+     * @param keyword  keyword
+     * @return         json from API */
+    public static String getSearchAll(String keyword) {
+        return get(SEARCH_ALL,"keyword="+Http.encode(keyword));
+    }
+    
+    /**
+     * 检查昵称是否可用 */
+    public static final String ACCOUNT_CHECK_NICKNAME = "https://passport.bilibili.com/web/generic/check/nickname";
+    /**
+     * GET 检查昵称是否可用.
+     * @param nickName  nickName
+     * @return          json from API */
+    public static String getAccountCheckNickname(String nickName) {
+        return get(ACCOUNT_CHECK_NICKNAME,"nickName="+Http.encode(nickName));
+    }
+    
+    /**
+     * 视频超详细信息 */
+    public static final String VIEW_DETAIL = BASE_URL+"/web-interface/view/detail";
+    /**
+     * GET 视频超详细信息.
+     * @param aid  aid
+     * @return     json from API */
+    public static String getViewDetail(String aid) {
+        return get(VIEW_DETAIL,"aid="+aid);
+    }
+    
+    /**
+     * 获取视频在线人数 */
+    public static final String VIEW_ONLINE = BASE_URL+"/player/online/total";
+    /**
+     * GET 获取视频流URL. (wbi)
+     * @param aid  aid
+     * @param cid  cid
+     * @return     json from API */
+    public static String getViewOnline(String aid, String cid) {
+        return get(VIEW_PLAY_URL,"aid="+aid,"cid="+cid);
+    }
+    
+    /**
+     * 获取视频流URL */
+    public static final String VIEW_PLAY_URL = BASE_URL+"/player/wbi/playurl";
+    /**
+     * GET 获取视频流URL. (wbi)
+     * @param avid  aid
+     * @param cid   cid
+     * @return      json from API */
+    public static String getViewPlayURL(String avid, String cid) {
+        return get(VIEW_PLAY_URL,"avid="+avid,"cid="+cid,"platform=html5");
+    }
+    
+    /**
+     * 通过ip确定地理位置 */
+    public static final String IP_LOCATION = BASE_URL+"/web-interface/zone";
+    /**
+     * GET 通过ip确定地理位置.
+     * @return  json from API */
+    public static String getIpLocation() {
+        return get(IP_LOCATION);
+    }
+    
+    /**
+     * Print summary with code from Bilibili API. 
+     * @param rawJson json from Bilibili API
+     * @return Summary printed on screen
+     */
     public static String outCodeErr(String rawJson) {
         // 获取错误
         int code = JsonLib.getInt(rawJson,"code");
@@ -57,6 +192,8 @@ public class BiliAPIs {
         return summary;
     }
     
+    /**
+     * A Map for convert code from Bilibili API to message. */
     public static final Map<Integer,String> ERRMSG = new HashMap<>();
     static {
         // -1 ~ -115 的 code 多半用不上
@@ -114,6 +251,12 @@ public class BiliAPIs {
         ERRMSG.put(-8888,"对不起，服务器开小差了~ (ಥ﹏ಥ)");
     }
     
+    
+    /**
+     * Convert code from Bilibili API to message.
+     * @param  code  code from Bilibili API
+     * @return       Error message about code if code can be found in {@code ERRMSG}
+     */
     public static String codeErr(int code) {
         // 根据情况返回结果
         return ERRMSG.getOrDefault(
