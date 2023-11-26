@@ -75,7 +75,22 @@ public class Logger {
                     for(int j = 0; (j < cols) && (i < text.length()); j++) { // build char-line
                         char c = text.charAt(i++);
                         cline.append(c);
-                        if(Character.UnicodeBlock.of(c)==Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
+                        if(Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_COMPATIBILITY ||
+                           Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_COMPATIBILITY_FORMS ||
+                           Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS ||
+                           Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT ||
+                           Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_RADICALS_SUPPLEMENT ||
+                           Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_STROKES ||
+                           Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION ||
+                           Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS ||
+                           Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A ||
+                           Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B ||
+                           Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_C ||
+                           Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_D ||
+                           Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_E ||
+                           Character.UnicodeBlock.of(c)==Character.UnicodeBlock.HIRAGANA ||
+                           Character.UnicodeBlock.of(c)==Character.UnicodeBlock.KATAKANA ||
+                           Character.UnicodeBlock.of(c)==Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
                             j++;
                         }
                     }
