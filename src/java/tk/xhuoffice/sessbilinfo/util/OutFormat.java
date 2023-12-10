@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
@@ -194,26 +195,96 @@ public class OutFormat {
     
     public static String[] pageBreak(String str) {
         // prepare variables
-        int lns = Frame.screen.lns()-1;
+        int lns = Frame.screen.lns()-3;
         String[] lines = str.split("\\n");
         ArrayList<String> pages = new ArrayList<>();
         // lines to pages
         for(int i = 0; i < lines.length;) {
             // lines to page
             StringBuilder page = new StringBuilder();
-            try {
-                for(int j = 0; j < lns; j++) {
-                    page.append(lines[i++]);
-                    page.append("\n");
-                }
-            } catch(ArrayIndexOutOfBoundsException e) {
-                // out of lines
+            for(int j = 0; j < lns && i < lines.length; j++) {
+                page.append(lines[i++]);
+                page.append("\n");
             }
             // add page to pages
             pages.add(page.deleteCharAt(page.length()-1).toString());
         }
         // return
         return pages.toArray(new String[0]);
+    }
+    
+    /**
+     * Split a line String into sub-lines according to {@link Frame#screen} columns.
+     * @param text  A line without '\r' or(and) '\n'
+     * @return      A {@link java.util.List} with String for printing
+     */
+    public static List<String> subLines(String text) {
+        int cols = Frame.screen.cols();
+        ArrayList<String> slines = new ArrayList<>(); // sub-lines
+        for(int i = 0; i < text.length();) { // text with SUB-char to sub-lines
+            StringBuilder cline = new StringBuilder(); // char-line
+            boolean inAnsi = false;
+            StringBuilder ansis = new StringBuilder();
+            for(int j = 0; (j < cols) && (i < text.length()); j++) { // build char-line
+                char c = text.charAt(i++);
+                // ansi escape codes OR other invisible char
+                if(c=='\033') { // ESC
+                    inAnsi = true;
+                    ansis.append(c);
+                    j--;
+                    continue;
+                }
+                if(c<9||(c>13&&c<32)) {} // ignore
+                if(c==10||c==13) { // LF or CR
+                    cline.append("\n");
+                    j = -1;
+                    continue;
+                }
+                if(inAnsi) { // in ansi escape codes
+                    if(ansis.length()==1 && ansis.charAt(0)=='\033') { // CSI start
+                        if(c=='[') { // CSI start
+                            ansis.append(c);
+                        } else if(c=='N'||c=='O'||c=='P'||c=='\\'||c==']'||c=='X'||c=='^'||c=='_'||c=='c') { // not CSI
+                            inAnsi = false;
+                        }
+                        j--;
+                        continue;
+                    }
+                    if(ansis.length()>1 && ansis.charAt(1)=='[') { // in CSI
+                        ansis.append(c);
+                        if(c>=0x40 && c<=0x7E) { // CSI end
+                            inAnsi = false;
+                        }
+                        cline.append(ansis);
+                        ansis = new StringBuilder();
+                        j--;
+                        continue;
+                    }
+                }
+                // else
+                cline.append(c);
+                if(Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_COMPATIBILITY ||
+                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_COMPATIBILITY_FORMS ||
+                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS ||
+                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT ||
+                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_RADICALS_SUPPLEMENT ||
+                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_STROKES ||
+                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION ||
+                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS ||
+                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A ||
+                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B ||
+                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_C ||
+                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_D ||
+                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_E ||
+                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.HIRAGANA ||
+                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.KATAKANA ||
+                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
+                    j++;
+                }
+            }
+            slines.add(cline.toString()); // add char-line into sub-lines
+        }
+        return slines;
     }
     
 }
