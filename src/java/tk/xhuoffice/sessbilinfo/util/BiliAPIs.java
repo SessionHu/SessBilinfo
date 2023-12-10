@@ -47,7 +47,7 @@ public class BiliAPIs {
             if(Logger.debug) {
                 OutFormat.outThrowable(e,0);
             }
-            response = null;
+            response = "{\"code\":-8888}";
         }
         // return
         return response;

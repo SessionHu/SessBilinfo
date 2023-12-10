@@ -1,8 +1,8 @@
 package tk.xhuoffice.sessbilinfo.util;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.util.stream.StreamSupport;
@@ -50,17 +50,29 @@ public class JsonLib {
     
     // 获取 int
     public static int getInt(String inputJson, String... path) {
-        return get(inputJson,int.class,path);
+        try {
+            return get(inputJson,int.class,path);
+        } catch(NullPointerException e) {
+            return 0;
+        }
     }
     
     // 获取 long
     public static long getLong(String inputJson, String... path) {
-        return get(inputJson,long.class,path);
+        try {
+            return get(inputJson,long.class,path);
+        } catch(NullPointerException e) {
+            return 0L;
+        }
     }
     
     // 获取 float
     public static float getFloat(String inputJson, String... path) {
-        return get(inputJson,float.class,path);
+        try {
+            return get(inputJson,float.class,path);
+        } catch(NullPointerException e) {
+            return 0.0f;
+        }
     }
     
     // 获取 Json Array 中的内容作为 String[]
