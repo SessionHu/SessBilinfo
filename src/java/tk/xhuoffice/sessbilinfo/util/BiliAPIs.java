@@ -1,7 +1,7 @@
 package tk.xhuoffice.sessbilinfo.util;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import tk.xhuoffice.sessbilinfo.net.Http;
 import tk.xhuoffice.sessbilinfo.net.HttpConnectException;
 
@@ -20,34 +20,38 @@ public class BiliAPIs {
      * @param args    String to add to the end of the URL
      * @return Response from server <br> {@code null} if {@link tk.xhuoffice.sessbilinfo.net.HttpConnectException} catched
      */
-     public static String get(String apiurl, String... args) {
-         // build request url
-         StringBuilder url = new StringBuilder(apiurl);
-         if(args.length>0) {
-             url.append("?");
-             for(String param : args) {
-                 url.append(param);
-                 url.append("&");
-             }
-             url.deleteCharAt(url.length()-1);
-         }
-         // request
-         String response;
-         try {
-             response = Http.get(url.toString());
-         } catch(HttpConnectException e) {
-             StringBuilder msg = new StringBuilder("请求异常: ");
-             msg.append(e.getCause().toString());
-             Logger.errln(msg.toString());
-             // if Logger.debug == true
-             if(Logger.debug) {
-                 OutFormat.outThrowable(e,0);
-             }
-             response = null;
-         }
-         // return
-         return response;
-     }
+    public static String get(String apiurl, String... args) {
+        // build request url
+        StringBuilder url = new StringBuilder(apiurl);
+        if(args.length>0) {
+            url.append("?");
+            for(String param : args) {
+                url.append(param);
+                url.append("&");
+            }
+            url.deleteCharAt(url.length()-1);
+        }
+        // request
+        String response;
+        try {
+            response = Http.get(url.toString());
+        } catch(HttpConnectException e) {
+            StringBuilder msg = new StringBuilder("请求异常: ");
+            if(e.getCause()!=null) {
+                msg.append(e.getCause().toString());
+            } else {
+                msg.append(e.toString());
+            }
+            Logger.errln(msg.toString());
+            // if Logger.debug == true
+            if(Logger.debug) {
+                OutFormat.outThrowable(e,0);
+            }
+            response = null;
+        }
+        // return
+        return response;
+    }
     
     /**
      * 基本API */
