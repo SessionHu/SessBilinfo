@@ -149,12 +149,12 @@ public class BiliAPIs {
      * 获取视频在线人数 */
     public static final String VIEW_ONLINE = BASE_URL+"/player/online/total";
     /**
-     * GET 获取视频流URL. (wbi)
+     * GET 获取视频在线人数.
      * @param aid  aid
      * @param cid  cid
      * @return     json from API */
     public static String getViewOnline(String aid, String cid) {
-        return get(VIEW_PLAY_URL,"aid="+aid,"cid="+cid);
+        return get(VIEW_ONLINE,"aid="+aid,"cid="+cid);
     }
     
     /**
