@@ -193,11 +193,16 @@ public class OutFormat {
         }
     }
     
+    /**
+     * Break messages into many pages {@link Frame#screen} lines.
+     * @param str  messages
+     * @return     pages
+     */
     public static String[] pageBreak(String str) {
         // prepare variables
-        int lns = Frame.screen.lns()-3;
+        int lns = Frame.screen.lns()-2;
         String[] lines = str.split("\\n");
-        ArrayList<String> pages = new ArrayList<>();
+        List<String> pages = new ArrayList<>();
         // lines to pages
         for(int i = 0; i < lines.length;) {
             // lines to page

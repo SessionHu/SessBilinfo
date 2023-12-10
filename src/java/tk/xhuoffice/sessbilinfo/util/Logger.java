@@ -52,7 +52,12 @@ public class Logger {
             }
         }
         // generate fullDesc
-        String fullDesc = String.format("[%s][%s] ", LEVELS[lv], desc);
+        String fullDesc;
+        if(!desc.isEmpty()) {
+            fullDesc = String.format("[%s][%s] ", LEVELS[lv], desc);
+        } else {
+            fullDesc = String.format("[%s] ", LEVELS[lv]);
+        }
         // get lines
         String[] lines = lineSplitDesc(str,fullDesc);
         // print
@@ -86,16 +91,23 @@ public class Logger {
     }
     
     private static void printLines(String str, int lv) {
-        // 获取完整类名
-        String fullClassName = Thread.currentThread().getStackTrace()[3].getClassName();
-        // 获取最后一个 '.' 位置
-        int lastDotIndex = fullClassName.lastIndexOf('.');
-        // 仅获取类名
-        String cN = fullClassName.substring(lastDotIndex + 1);
-        // 获取方法名
-        String mN = Thread.currentThread().getStackTrace()[3].getMethodName();
-        // generate description
-        String desc = cN + "." + mN;
+        String desc;
+        if(debug) {
+            // get StackTrace
+            StackTraceElement st = Thread.currentThread().getStackTrace()[3];
+            // 获取完整类名
+            String fullClassName = st.getClassName();
+            // 获取最后一个 '.' 位置
+            int lastDotIndex = fullClassName.lastIndexOf('.');
+            // 仅获取类名
+            String cN = fullClassName.substring(lastDotIndex + 1);
+            // 获取方法名
+            String mN = st.getMethodName();
+            // generate description
+            desc = cN + "." + mN;
+        } else {
+            desc = "";
+        }
         // 打印信息
         if(str!=null) {
             addLines(str,lv,desc);
