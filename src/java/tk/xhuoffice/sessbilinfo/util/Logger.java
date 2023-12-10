@@ -38,7 +38,8 @@ public class Logger {
         }
         // write
         try {
-           out.write((str+"\n").getBytes(StringCoder.UTF_8));
+           out.write(str.getBytes(StringCoder.UTF_8));
+           out.write('\n');
          } catch(IOException e) {}
     }
     
