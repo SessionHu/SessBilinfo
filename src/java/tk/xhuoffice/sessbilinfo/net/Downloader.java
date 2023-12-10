@@ -89,7 +89,7 @@ public class Downloader {
         try {
             conn.connect();
         } catch(IOException e) {
-            Logger.errln("连接至 "+OutFormat.shorterString(this.conn.getURL().toString())+" 时发生异常");
+            Logger.errln("连接至 "+(this.conn.getURL().toString())+" 时发生异常");
             OutFormat.outThrowable(e,3);
             return this.file;
         }
@@ -117,7 +117,7 @@ public class Downloader {
             Logger.clearFootln();
             Logger.println("文件 "+this.fname+" 下载完毕");
         } catch(IOException e) {
-            Logger.errln("从 "+OutFormat.shorterString(this.conn.getURL().toString())+" 下载时发生异常");
+            Logger.errln("从 "+(this.conn.getURL().toString())+" 下载时发生异常");
             OutFormat.outThrowable(e,3);
         } finally {
             try {

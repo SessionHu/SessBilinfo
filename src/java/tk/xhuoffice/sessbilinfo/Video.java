@@ -192,7 +192,7 @@ public class Video {
         try {
             videoVars(detailJson);
         } catch(Exception e) {
-            throw new BiliException(OutFormat.shorterString(detailJson),e);
+            throw new BiliException(detailJson,e);
         }
     }
     

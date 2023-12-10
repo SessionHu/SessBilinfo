@@ -122,7 +122,7 @@ public class Http {
     
     public static HttpURLConnection setGetConnURL(String inurl) {
         // print debug log
-        Logger.debugln("设置请求到 "+OutFormat.shorterString(inurl));
+        Logger.debugln("设置请求到 "+inurl);
         // 创建 URL 对象
         URL url = null;
         try {
@@ -210,7 +210,7 @@ public class Http {
     
     public static String readResponseData(HttpURLConnection conn) throws IOException {
         // 打印调试日志
-        Logger.debugln("读取返回数据从 "+OutFormat.shorterString(conn.getURL().toString()));
+        Logger.debugln("读取返回数据从 "+(conn.getURL().toString()));
         // connect
         conn.connect();
         // 读取 HTTP 状态码
@@ -237,7 +237,7 @@ public class Http {
         }
         in.close();
         // 打印调试日志
-        Logger.debugln("读取返回数据从 "+OutFormat.shorterString(conn.getURL().toString())+" 完毕");
+        Logger.debugln("读取返回数据从 "+(conn.getURL().toString())+" 完毕");
         // 返回返回数据
         return response.toString();
     }

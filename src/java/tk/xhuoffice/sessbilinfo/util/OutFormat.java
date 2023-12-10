@@ -181,16 +181,15 @@ public class OutFormat {
         String country = locale.getCountry();
         return new String[] {lang, country};
     }
-
+    
+    /**
+     * @deprecated Sometimes it could not work well at past.
+     * @param str  input
+     * @return     This method will return input directly now.
+     */
+    @Deprecated
     public static String shorterString(String str) {
-        int length = str.length();
-        if(length>40) {
-            return str.substring(0,16)+"......"+str.substring(length-16);
-        } else if(length>21) {
-            return str.substring(0,8)+"..."+str.substring(length-8);
-        } else {
-            return str;
-        }
+        return str;
     }
     
     /**
