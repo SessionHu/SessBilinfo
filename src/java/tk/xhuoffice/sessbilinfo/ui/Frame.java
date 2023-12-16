@@ -13,9 +13,7 @@ public class Frame {
     
     public static void main(String... args) {
         // load JANSI
-        if((System.getenv("TERM")!=null)&&(!System.getenv("TERM").contains("xterm"))) {
-            loadJansi();
-        }
+        loadJansi();
         // create a new Screen
         screen = new Screen();
         // 重绘屏幕
@@ -23,7 +21,9 @@ public class Frame {
     }
     
     public static void loadJansi() {
-        AnsiConsole.systemInstall();
+        if(System.getenv("TERM")==null||!System.getenv("TERM").contains("xterm")) {
+            AnsiConsole.systemInstall();
+        }
     }
     
     public static void unloadJansi() {
