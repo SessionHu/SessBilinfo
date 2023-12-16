@@ -15,7 +15,7 @@ import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.ui.Prompt;
 
 /**
- * Format message for output
+ * Format message for output.
  */
 
 public class OutFormat {
@@ -183,13 +183,74 @@ public class OutFormat {
     }
     
     /**
-     * @deprecated Sometimes it could not work well at past.
+     * @deprecated DO NOT USE.&nbsp;Sometimes it could not work well.
      * @param str  input
-     * @return     This method will return input directly now.
+     * @return     Maybe like {@code "xxxxxxxx...xxxxxxxx"} or {@code "xxxxxxxxxxxxxxxx......xxxxxxxxxxxxxxxx"} or {@code str} itself
+     * @see        #shorterString(int,String,int)
      */
     @Deprecated
     public static String shorterString(String str) {
-        return str;
+        int length = str.length();
+        if(length>40) {
+            return str.substring(0,16)+"......"+str.substring(length-16);
+        } else if(length>21) {
+            return str.substring(0,8)+"..."+str.substring(length-8);
+        } else {
+            return str;
+        }
+    }
+    
+    /**
+     * Shorter String like {@code "xxxx..."}.
+     * @param str     input
+     * @param firsts  First characters counts.
+     * @return        First {@code firsts} characters of {@code str} and {@code "..."}.
+     */
+    public static String shorterString(int firsts, String str) {
+        if(str.length()<=firsts+3) {
+            return str;
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append(str.substring(0,firsts));
+            sb.append("...");
+            return sb.toString();
+        }
+    }
+    
+    /**
+     * Shorter String like {@code "...xxxx"}.
+     * @param str    input
+     * @param lasts  Last characters counts.
+     * @return       {@code "..."} and last {@code lasts} characters of {@code str}.
+     */
+    public static String shorterString(String str, int lasts) {
+        if(str.length()<=lasts+3) {
+            return str;
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append("...");
+            sb.append(str.substring(str.length()-lasts,str.length()));
+            return sb.toString();
+        }
+    }
+    
+    /**
+     * Shorter String like {@code "xxxx...xxxx"}.
+     * @param str     input
+     * @param firsts  First characters counts.
+     * @param lasts   Last characters counts.
+     * @return        First {@code firsts} characters and {@code "..."} and last {@code lasts} characters of {@code str}.
+     */
+    public static String shorterString(int firsts, String str, int lasts) {
+        if(str.length()<=firsts+lasts+3) {
+            return str;
+        } else {
+            StringBuilder sb = new StringBuilder();
+            sb.append(str.substring(0,firsts));
+            sb.append("...");
+            sb.append(str.substring(str.length()-lasts,str.length()));
+            return sb.toString();
+        }
     }
     
     /**
