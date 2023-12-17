@@ -80,45 +80,61 @@ public class Account {
         Frame.reset();
         // 发送请求
         Logger.println("正在请求数据...");
-        String json = BiliAPIs.getIpLocation();
+        final String json = BiliAPIs.getIpLocation();
         // 解析返回数据
         if(JsonLib.getInt(json,"code")==0) {
             // 提取信息
-            String ip = JsonLib.getString(json,"data","addr"); // 公网IP地址
-            String country = JsonLib.getString(json,"data","country"); // 国家/地区
-            String province = JsonLib.getString(json,"data","province"); // 省/州
-            String city = JsonLib.getString(json,"data","city"); // 城市
-            String isp = JsonLib.getString(json,"data","isp"); // 运营商
-            float latitude = JsonLib.getFloat(json,"data","latitude"); // 纬度
-            float longitude = JsonLib.getFloat(json,"data","longitude"); // 经度
-            int countryCode = JsonLib.getInt(json,"data","country_code"); // 国家/地区代码
+            final String ip = JsonLib.getString(json,"data","addr"); // 公网IP地址
+            final String country = JsonLib.getString(json,"data","country"); // 国家/地区
+            final String province = JsonLib.getString(json,"data","province"); // 省/州
+            final String city = JsonLib.getString(json,"data","city"); // 城市
+            final String isp = JsonLib.getString(json,"data","isp"); // 运营商
+            final float latitude = JsonLib.getFloat(json,"data","latitude"); // 纬度
+            final float longitude = JsonLib.getFloat(json,"data","longitude"); // 经度
+            final short countryCode = JsonLib.get(json,short.class,"data","country_code"); // 国家/地区代码
             // 处理信息
-            String ns = ""; // 纬度
+            final String ns; // 纬度
             if(latitude>=0) {
                 ns = latitude+"°N";
             } else {
                 ns = latitude+"°S";
             }
-            String ew = ""; // 经度
+            final String ew; // 经度
             if(longitude>=0) {
                 ew = longitude+"°E";
             } else {
                 ew = longitude+"°W";
             }
             // 准备信息
-            String info = "--------------------------------\n";
-            info += "公网 IP:       "+ip+"\n";
-            info += "国家/地区:     "+country+"\n";
+            StringBuilder info = new StringBuilder("--------------------------------\n");
+            info.append("公网 IP:       ");
+            info.append(ip);
+            info.append("\n");
+            info.append("国家/地区:     ");
+            info.append(country);
+            info.append("\n");
             if(province!=null) {
-                info += "省/州:         "+province+"\n";
+                info.append("省/州:         ");
+                info.append(province);
+                info.append("\n");
                 if(city!=null) {
-                    info += "城市:          "+city+"\n";
+                    info.append("城市:          ");
+                    info.append(city);
+                    info.append("\n");
                 }
             }
-            info += "经纬度:        "+ew+" "+ns+"\n";
-            info += "运营商:        "+isp+"\n";
-            info += "国家/地区代码: "+countryCode+"\n";
-            info += "--------------------------------\n";
+            info.append("经纬度:        ");
+            info.append(ew);
+            info.append(" ");
+            info.append(ns);
+            info.append("\n");
+            info.append("运营商:        ");
+            info.append(isp);
+            info.append("\n");
+            info.append("国家/地区代码: ");
+            info.append(countryCode);
+            info.append("\n");
+            info.append("--------------------------------\n");
             // 打印信息
             Logger.println("请求完毕");
             Frame.reset();
