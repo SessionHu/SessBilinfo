@@ -37,9 +37,9 @@ public class Video {
         Logger.println("正在请求数据...");
         String videoInfo = "";
         try {
-            videoInfo += "------------------------\n\n";
+            videoInfo += "--------------------------------\n\n";
             videoInfo += getDetail(aid);
-            videoInfo += "------------------------";
+            videoInfo += "--------------------------------";
         } catch(BiliException e) {
             Logger.errln("获取视频信息时发生异常");
             if(e.getDetailMessage().equals(e.getMessage())) {
@@ -145,7 +145,7 @@ public class Video {
             // 处理视频流URL
             if(video.playURL!=null) {
                 formatted.append("URL ");
-                formatted.append(video.playURL);
+                formatted.append(OutFormat.shorterString(44,video.playURL));
             }
             // 返回数据
             return formatted.append("\n\n").toString();
