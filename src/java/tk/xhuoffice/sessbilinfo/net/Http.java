@@ -10,6 +10,9 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 
 public class Http {
+    
+    // NO <init>
+    private Http() {}
 
     protected static final String ANDROID_APP_UA = "Dalvik/2.1.0 (Linux; U; Android 12; MLD-AL00 Build/HUAWEIMLD-AL00) 7.38.0 os/android model/MLD-AL00 mobi_app/Ai4cCreatorAndroid build/7380300 channel/master innerVer/7380310 osVer/12 network/2 grpc-java-cronet/1.36.1";
     protected static final String ANDROID_TV_WEBVIEW_UA = "Mozilla/5.0 (Linux; U; Android 4.2.1; zh-cn; 9R15_E710U Build/JOP40D) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Safari/534.30";
@@ -28,9 +31,18 @@ public class Http {
     }
     
     public static boolean useCookie = true;
+    /**
+     * Connect timeout. */
     public static int timeoutc = 5000;
+    /**
+     * Read timeout. */
     public static int timeoutr = 10000;
 
+    /**
+     * Encode URL with {@link StringCoder#urlEncode(String)}.
+     * @param str Raw URL
+     * @return    Encoded URL
+     */
     public static String encode(String str) {
         return StringCoder.urlEncode(str);
     }
@@ -122,7 +134,7 @@ public class Http {
     
     public static HttpURLConnection setGetConnURL(String inurl) {
         // print debug log
-        Logger.debugln("设置请求到 "+inurl);
+        Logger.debugln("设置请求到 "+OutFormat.shorterString(16,inurl,24));
         // 创建 URL 对象
         URL url = null;
         try {
@@ -210,7 +222,7 @@ public class Http {
     
     public static String readResponseData(HttpURLConnection conn) throws IOException {
         // 打印调试日志
-        Logger.debugln("读取返回数据从 "+(conn.getURL().toString()));
+        Logger.debugln("读取返回数据从 "+OutFormat.shorterString(16,conn.getURL().toString(),24));
         // connect
         conn.connect();
         // 读取 HTTP 状态码
@@ -237,7 +249,7 @@ public class Http {
         }
         in.close();
         // 打印调试日志
-        Logger.debugln("读取返回数据从 "+(conn.getURL().toString())+" 完毕");
+        Logger.debugln("读取返回数据从 "+OutFormat.shorterString(16,conn.getURL().toString(),24)+" 完毕");
         // 返回返回数据
         return response.toString();
     }
