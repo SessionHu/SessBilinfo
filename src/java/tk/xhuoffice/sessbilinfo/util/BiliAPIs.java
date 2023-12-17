@@ -180,10 +180,11 @@ public class BiliAPIs {
     }
     
     /**
-     * Print summary with code from Bilibili API. 
-     * @param  rawJson json from Bilibili API
-     * @return Summary printed on screen
-     * @see    #codeErrExceptionBuilder()
+     * Print summary with code from Bilibili API.
+     * @deprecated Poor performance and complex to use.
+     * @param      rawJson json from Bilibili API
+     * @return     Summary printed on screen
+     * @see        #codeErrExceptionBuilder(String)
      */
     @Deprecated
     public static String outCodeErr(String rawJson) {

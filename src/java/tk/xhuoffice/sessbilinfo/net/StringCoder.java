@@ -7,14 +7,21 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
- * Class can encode or decode String in Base64 or URL.
+ * Encode or decode String in Base64 or URL.
  */
 
 public class StringCoder {
     
+    // DO NOT <init>!
+    private StringCoder() {}
+
     public static final Charset UTF_8 = StandardCharsets.UTF_8;
     
-    // URL Encode
+    /**
+     * URL Encode.
+     * @param str Input URL
+     * @return    Encoded URL
+     */
     public static String urlEncode(String str) {
         try {
             return URLEncoder.encode(str,"UTF-8"); // Java 8 doesn't support Chatset in URLEncoder
@@ -23,7 +30,11 @@ public class StringCoder {
         }
     }
     
-    // URL Decode
+    /**
+     * URL Decode.
+     * @param str Input URL
+     * @return    Decoded URL
+     */
     public static String urlDecode(String str) {
         try {
             return URLDecoder.decode(str,"UTF-8"); // Java 8 doesn't support Chatset in URLDecoder either
@@ -32,22 +43,25 @@ public class StringCoder {
         }
     }
     
-    public static final Base64.Encoder base64encoder = Base64.getEncoder();
-    public static final Base64.Decoder base64decoder = Base64.getDecoder();
+    private static final Base64.Encoder BASE64ENCODER = Base64.getEncoder();
+    private static final Base64.Decoder BASE64DECODER = Base64.getDecoder();
     
-    // Base64 Encode
+    /**
+     * Base64 Encode.
+     * @param str Input text
+     * @return    Base64
+     */
     public static String base64Encode(String str) {
-        return new String(base64encoder.encode(str.getBytes(UTF_8)),UTF_8);
+        return new String(BASE64ENCODER.encode(str.getBytes(UTF_8)),UTF_8);
     }
     
     /**
      * Base64 Decode.
-     *
-     * @param str
-     * @return base64
+     * @param str Input Base64
+     * @return    Text
      */
     public static String base64Decode(String str) {
-        return new String(base64decoder.decode(str.getBytes(UTF_8)),UTF_8);
+        return new String(BASE64DECODER.decode(str.getBytes(UTF_8)),UTF_8);
     }
     
 }

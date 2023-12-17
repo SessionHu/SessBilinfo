@@ -183,7 +183,7 @@ public class OutFormat {
     }
     
     /**
-     * @deprecated DO NOT USE.&nbsp;Sometimes it could not work well.
+     * @deprecated Sometimes it could not work well.
      * @param str  input
      * @return     Maybe like {@code "xxxxxxxx...xxxxxxxx"} or {@code "xxxxxxxxxxxxxxxx......xxxxxxxxxxxxxxxx"} or {@code str} itself
      * @see        #shorterString(int,String,int)
