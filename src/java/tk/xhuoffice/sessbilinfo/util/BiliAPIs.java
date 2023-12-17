@@ -181,9 +181,11 @@ public class BiliAPIs {
     
     /**
      * Print summary with code from Bilibili API. 
-     * @param rawJson json from Bilibili API
+     * @param  rawJson json from Bilibili API
      * @return Summary printed on screen
+     * @see    #codeErrExceptionBuilder()
      */
+    @Deprecated
     public static String outCodeErr(String rawJson) {
         // 获取错误
         int code = JsonLib.getInt(rawJson,"code");
@@ -194,6 +196,35 @@ public class BiliAPIs {
         Logger.errln("错误信息: "+msg);
         // 返回code
         return summary;
+    }
+    
+    /**
+     * Build {@code BiliException} with JSON from Bilibili API.
+     * @param rawJson  json from Bilibili API
+     * @return         {@code BiliException} with detailed message.
+     */
+    public static BiliException codeErrExceptionBuilder(String rawJson) {
+        // 获取错误
+        int code = JsonLib.getInt(rawJson,"code");
+        String msg = JsonLib.getString(rawJson,"message");
+        // 构建错误信息
+        String message = codeErrMsgBuilder(code);
+        StringBuilder detailMessage = new StringBuilder();
+        detailMessage.append("返回值: ");
+        detailMessage.append(message);
+        detailMessage.append("\n");
+        detailMessage.append("错误信息: ");
+        detailMessage.append(msg);
+        // 返回
+        return new BiliException(message,detailMessage.toString());
+    }
+
+    private static String codeErrMsgBuilder(int code) {
+        StringBuilder message = new StringBuilder();
+        message.append(code);
+        message.append(" ");
+        message.append(BiliAPIs.codeErr(code));
+        return message.toString();
     }
     
     /**

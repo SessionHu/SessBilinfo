@@ -23,17 +23,17 @@ public class Search {
         Logger.println("请输入关键词 (不区分大小写)");
         String keyword = OutFormat.getString("关键词");
         // 进行搜索
+        StringBuilder result = new StringBuilder();
         try {
             // 输出提示
             Logger.println("正在请求数据...");
             // 获取数据
-            String result = "";
-            result += "------------------------\n\n";
-            result += all(keyword);
-            result += "------------------------";
+            result.append("------------------------\n\n");
+            result.append(all(keyword));
+            result.append("------------------------");
             Logger.println("请求完毕");
             // 输出结果
-            String[] pages = OutFormat.pageBreak(result);
+            String[] pages = OutFormat.pageBreak(result.toString());
             for(int p = 0; p < pages.length; p++) {
                 Frame.reset();
                 Logger.println(pages[p]);
@@ -44,7 +44,9 @@ public class Search {
             // 返回
             return;
         } catch(BiliException e) {
-            Logger.errln(e.toString());
+            result.append(e.getDetailMessage());
+            result.append("\n\n------------------------");
+            Logger.errln(result.toString());
             return;
         } catch(Exception e) {
             Logger.fataln("搜索发生未知异常");
@@ -108,10 +110,12 @@ public class Search {
                 // 视频
                 results += getVideoSearchResult(json,videoCount);
             }
+        } else if(code==-110) {
+            throw new BiliException("-110 未绑定手机", "错误信息:   -110 未绑定手机\n可能的原因: 输入的信息包含敏感词");
         } else if(code==-412) {
             throw new BiliException("请求被拦截, 请检测 Cookie 长度");
         } else {
-            BiliAPIs.outCodeErr(rawJson);
+            throw BiliAPIs.codeErrExceptionBuilder(rawJson);
         }
         return results;
     }
