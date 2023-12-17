@@ -20,6 +20,9 @@ import tk.xhuoffice.sessbilinfo.ui.Prompt;
 
 public class OutFormat {
     
+    // NO <init>
+    private OutFormat() {}
+
     private static final ZoneId ZONE_HK = ZoneId.of("Asia/Hong_Kong");
     public static final Scanner SCAN = new Scanner(System.in);
     

@@ -34,5 +34,20 @@ public class BiliException extends RuntimeException {
     public String getDetailMessage() {
         return this.detailMessage;
     }
+
+    /**
+     * Print {@code detailMessage} with {@link Logger#errln(String)}
+     */
+    public void outDetailMessage() {
+        Logger.errln(this.detailMessage);
+    }
+
+    /**
+     * Print {@code detailMessage} with {@link Logger#println(String,int)}
+     * @param l log level
+     */
+    public void outDetailMessage(int l) {
+        Logger.println(this.detailMessage,l);
+    }
     
 }

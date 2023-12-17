@@ -41,8 +41,12 @@ public class Video {
             videoInfo += getDetail(aid);
             videoInfo += "------------------------";
         } catch(BiliException e) {
-            Logger.errln("获取视频信息时发生未知异常");
-            OutFormat.outThrowable(e,3);
+            Logger.errln("获取视频信息时发生异常");
+            if(e.getDetailMessage().equals(e.getMessage())) {
+                OutFormat.outThrowable(e,3);
+            } else {
+                e.outDetailMessage();
+            }
             return; // 返回
         }
         Logger.println("请求完毕");
@@ -150,7 +154,7 @@ public class Video {
         } else if(code==62004) {
             return "稿件审核中\n\n";
         } else {
-            return BiliAPIs.outCodeErr(rawJson)+"\n\n";
+            throw BiliAPIs.codeErrExceptionBuilder(rawJson);
         }
     }
     
@@ -184,7 +188,7 @@ public class Video {
         try {
             videoVars(detailJson);
         } catch(Exception e) {
-            throw new BiliException(BiliAPIs.outCodeErr(detailJson),e);
+            throw new BiliException(BiliAPIs.codeErrExceptionBuilder(detailJson).getMessage(),e);
         }
     }
     

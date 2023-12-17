@@ -14,6 +14,9 @@ import tk.xhuoffice.sessbilinfo.net.HttpConnectException;
 
 public class BiliAPIs {
     
+    // NO <init>
+    private BiliAPIs() {}
+
     /** 
      * Base HTTP GET request.
      * @param apiurl  API URL
@@ -185,6 +188,7 @@ public class BiliAPIs {
      * @param      rawJson json from Bilibili API
      * @return     Summary printed on screen
      * @see        #codeErrExceptionBuilder(String)
+     * @see        BiliException#outDetailMessage()
      */
     @Deprecated
     public static String outCodeErr(String rawJson) {

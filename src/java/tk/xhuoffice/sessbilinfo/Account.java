@@ -72,7 +72,7 @@ public class Account {
         } else if(code==40006) {
             Logger.println("昵称过短");
         } else {
-            BiliAPIs.outCodeErr(json);
+            BiliAPIs.codeErrExceptionBuilder(json).outDetailMessage();
         }
     }
     
@@ -124,7 +124,7 @@ public class Account {
             Frame.reset();
             Logger.println(info);
         } else {
-            BiliAPIs.outCodeErr(json);
+            BiliAPIs.codeErrExceptionBuilder(json).outDetailMessage();
         }
     }
     

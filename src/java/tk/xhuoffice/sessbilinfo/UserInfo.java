@@ -30,12 +30,16 @@ public class UserInfo {
         String mid = OutFormat.getPositiveLongAsString("Mid");
         // 获取数据
         Logger.println("正在请求数据...");
-        String usrinfo = "";
-        usrinfo += "------------------------\n\n";
-        usrinfo += card(mid);
-        usrinfo += space(mid);
-        usrinfo += "------------------------";
-        Logger.println("请求完毕");
+        StringBuilder usrinfo = new StringBuilder("------------------------\n\n");
+        try {
+            usrinfo.append(card(mid));
+            usrinfo.append(space(mid));
+            usrinfo.append("------------------------");
+            Logger.println("请求完毕");
+        } catch(BiliException e) {
+            usrinfo.append(e.getDetailMessage());
+            usrinfo.append("------------------------\n\n");
+        }
         // 输出数据
         Frame.reset();
         Logger.println(usrinfo);
@@ -83,7 +87,7 @@ public class UserInfo {
             cardinfo += "\n";
             return cardinfo;
         } else {
-            throw new BiliException(BiliAPIs.outCodeErr(rawJson));
+            throw BiliAPIs.codeErrExceptionBuilder(rawJson);
         }
     }
     
@@ -128,7 +132,7 @@ public class UserInfo {
             }
         } else {
             // 输出错误信息
-            BiliAPIs.outCodeErr(json);
+            BiliAPIs.codeErrExceptionBuilder(json).outDetailMessage(2);
         }
         return "";
     }
@@ -170,7 +174,7 @@ public class UserInfo {
             }
         } else {
             // 输出错误
-            BiliAPIs.outCodeErr(rawJson);
+            BiliAPIs.codeErrExceptionBuilder(rawJson).outDetailMessage(2);
         }
         return "";
     }
@@ -211,7 +215,7 @@ public class UserInfo {
         } else if(code==53016) {
             // 无置顶视频
         } else {
-            BiliAPIs.outCodeErr(rawJson);
+            BiliAPIs.codeErrExceptionBuilder(rawJson).outDetailMessage(2);
         }
         return "";
     }
@@ -257,7 +261,7 @@ public class UserInfo {
                 return result;
             }
         } else {
-            BiliAPIs.outCodeErr(rawJson);
+            BiliAPIs.codeErrExceptionBuilder(rawJson).outDetailMessage(2);
         }
         return "";
     }
