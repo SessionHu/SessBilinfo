@@ -49,13 +49,14 @@ public class Http {
     
     public static String get(String url) {
         String connMsg = null;
+        Throwable excause = null;
         for(int t = 0; t < 3; t++) {
             // 确定重试提示 log 级别
             int l;
             if(t<2) {
                 l = 2;
             } else {
-                l = 4;
+                l = 3;
             }
             // 进行请求
             try {
@@ -66,11 +67,14 @@ public class Http {
             } catch(java.net.UnknownHostException e) {
                 // 域名解析错误
                 Logger.println(connMsg="域名解析失败, 请检查网络连接与hosts文件配置",l);
+                excause = e;
             } catch(javax.net.ssl.SSLHandshakeException e) {
                 // SSL 握手错误
                 Logger.println(connMsg="SSL 握手失败, 请检查网络连接是否稳定",l);
+                excause = e;
             } catch(java.net.ConnectException e) {
                 String msg = e.getMessage();
+                excause = e;
                 if(msg.contains("timed out")) {
                     // 连接超时
                     Logger.println(connMsg="连接超时, 请检查网络连接是否稳定",l);
@@ -80,6 +84,7 @@ public class Http {
                 }
             } catch(java.net.SocketTimeoutException|javax.net.ssl.SSLException e) {
                 String msg = e.getMessage();
+                excause = e;
                 if(msg.equals("Read timed out")) {
                     // 读取超时
                     Logger.println(connMsg="读取超时, 请检查网络连接是否稳定",l);
@@ -93,11 +98,12 @@ public class Http {
             } catch(Exception e) {
                 // 异常报告
                 connMsg = handleUnknownException(e);
+                excause = e;
                 break;
             }
             Logger.debugln("第 "+(t+1)+" 次重试");
         }
-        throw new HttpConnectException(connMsg);
+        throw new HttpConnectException(connMsg,excause);
     }
     
     private static String handleUnknownException(Exception e) {

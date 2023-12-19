@@ -169,7 +169,7 @@ public class Logger {
     }
     
     public static String[] lineSplitDesc(String str, String fullDesc) {
-        String[] lines = str.split("\\n");
+        String[] lines = str.replace("\r\n","\n").replace("\n\n","\n").split("\\n");
         for(int i = 0; i < lines.length; i++) {
             lines[i] = fullDesc + lines[i];
         }
