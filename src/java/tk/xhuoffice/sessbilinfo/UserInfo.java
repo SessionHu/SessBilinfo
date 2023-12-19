@@ -38,7 +38,7 @@ public class UserInfo {
             Logger.println("请求完毕");
         } catch(BiliException e) {
             usrinfo.append(e.getDetailMessage());
-            usrinfo.append("------------------------\n\n");
+            usrinfo.append("\n\n------------------------");
         }
         // 输出数据
         Frame.reset();

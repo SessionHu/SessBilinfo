@@ -144,8 +144,8 @@ public class Video {
             formatted.append(String.format("封面 %s\n", video.cover));
             // 处理视频流URL
             if(video.playURL!=null) {
-                formatted.append("URL ");
-                formatted.append(OutFormat.shorterString(44,video.playURL));
+                formatted.append("URL  ");
+                formatted.append(OutFormat.shorterString(50,video.playURL));
             }
             // 返回数据
             return formatted.append("\n\n").toString();
@@ -213,7 +213,7 @@ public class Video {
             mtname = tidSubToMain(JsonLib.getInt(detailJson,"data","View","tid"));
             original = JsonLib.getInt(detailJson,"data","View","copyright") == 1;
             title = JsonLib.getString(detailJson,"data","View","title");
-            cover = JsonLib.getString(detailJson,"data","View","pic");
+            cover = JsonLib.getString(detailJson,"data","View","pic").replace("http","https");
             pubdate = JsonLib.getLong(detailJson,"data","View","pubdate");
             desc = JsonLib.getString(detailJson,"data","View","desc");
             duration = JsonLib.getLong(detailJson,"data","View","duration");
@@ -296,7 +296,7 @@ public class Video {
     
     @Override
     public String toString() {
-        return this.title+"@av"+this.aid;
+        return this.title+"@"+this.aid;
     }
     
     public static final Map<Integer,String> ZONE = new HashMap<>();
@@ -359,7 +359,7 @@ public class Video {
         // download video
         String path = System.getProperty("user.home")+"/videos/";
         Logger.println("准备下载视频到 "+path);
-        Downloader dl = new Downloader(video.playURL,path);
+        Downloader dl = new Downloader(video.playURL,path,video.toString().replace("/","／")+".mp4");
         Logger.println("开始下载");
         dl.download();
     }
