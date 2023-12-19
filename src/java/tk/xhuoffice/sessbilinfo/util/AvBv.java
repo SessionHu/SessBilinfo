@@ -2,6 +2,7 @@ package tk.xhuoffice.sessbilinfo.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 原始代码来自: https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/bvid_desc.md#Java
@@ -28,14 +29,19 @@ public class AvBv {
     // 构造函数
     public AvBv() {
         Logger.debugln("AvBv转换实用工具");
+        for(int i = 0; i < 58; i++) {
+            MAP.put(TABLE.charAt(i), i);
+        }
     }
 
     public AvBv(int aid) {
+        this();
         this.aid = aid;
         this.bvid = aidToBvid(aid);
     }
 
     public AvBv(String bvid) {
+        this();
         this.bvid = bvid;
         this.aid = bvidToAid(bvid);
     }
@@ -46,12 +52,6 @@ public class AvBv {
     private final int XOR = 177451812;
     private final long ADD = 8728348608L;
     private final Map<Character, Integer> MAP = new HashMap<>();
-    
-    {
-        for(int i = 0; i < 58; i++) {
-            MAP.put(TABLE.charAt(i), i);
-        }
-    }
     
     // 转换方法
     public String aidToBvid(int aid) {
@@ -87,6 +87,21 @@ public class AvBv {
     @Override
     public String toString() {
         return String.format("av%d/%s",this.aid,this.bvid);
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if(obj==this) {
+            return true;
+        }
+        if(obj==null) {
+            return false;
+        }
+        if(obj instanceof AvBv) {
+            AvBv avbv = (AvBv)obj;
+            return (avbv.aid==this.aid)&&Objects.equals(avbv.bvid,this.bvid);
+        }
+        return false;
     }
     
 }
