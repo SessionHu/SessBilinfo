@@ -28,7 +28,7 @@ public class Search {
             // 输出提示
             Logger.println("正在请求数据...");
             // 获取数据
-            result.append("------------------------\n\n");
+            result.append("------------------------\n \n");
             result.append(all(keyword));
             result.append("------------------------");
             Logger.println("请求完毕");
@@ -45,7 +45,7 @@ public class Search {
             return;
         } catch(BiliException e) {
             result.append(e.getDetailMessage());
-            result.append("\n\n------------------------");
+            result.append("\n \n------------------------");
             Logger.errln(result.toString());
             return;
         } catch(Exception e) {
@@ -165,8 +165,7 @@ public class Search {
             } catch(ArrayIndexOutOfBoundsException e) {
                 // 完全匹配的用户啥也没搜到
                 results += "共搜索到约 " + biliUserCount + " 个用户\n";
-                results += "无详细结果, 请进行用户搜索\n";
-                results += "\n";
+                results += "无详细结果, 请进行用户搜索\n \n";
             }
         }
         return results;
@@ -205,7 +204,7 @@ public class Search {
             if(videoJson.length==0) {
                 vInfo += "无结果, 请检查关键词\n";
             }
-            vInfo += "\n";
+            vInfo += " \n";
             results += OutFormat.xmlToANSI(vInfo); 
         }
         return results;

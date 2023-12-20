@@ -30,7 +30,7 @@ public class UserInfo {
         String mid = OutFormat.getPositiveLongAsString("Mid");
         // 获取数据
         Logger.println("正在请求数据...");
-        StringBuilder usrinfo = new StringBuilder("------------------------\n\n");
+        StringBuilder usrinfo = new StringBuilder("------------------------\n \n");
         try {
             usrinfo.append(card(mid));
             usrinfo.append(space(mid));
@@ -38,7 +38,7 @@ public class UserInfo {
             Logger.println("请求完毕");
         } catch(BiliException e) {
             usrinfo.append(e.getDetailMessage());
-            usrinfo.append("\n\n------------------------");
+            usrinfo.append("\n \n------------------------");
         }
         // 输出数据
         Frame.reset();
@@ -128,7 +128,7 @@ public class UserInfo {
                 return "";
             } else {
                 // 输出处理结果
-                return "空间公告\n"+data+"\n\n";
+                return "空间公告\n"+data+"\n \n";
             }
         } else {
             // 输出错误信息
@@ -163,7 +163,7 @@ public class UserInfo {
                     }
                     // 整理处理信息
                     listag = listag.substring(0, listag.length() - 2);
-                    listag += "\n\n";
+                    listag += "\n \n";
                     // 输出处理信息
                     return listag;
                 }
@@ -209,8 +209,7 @@ public class UserInfo {
             topinfo += "标题 "+title+"\n";
             topinfo += "AV号 "+aid+"   "+date+"   时长 "+playtime+"\n";
             topinfo += "播放 "+strView+"   弹幕 "+strDanmaku+"\n";
-            topinfo += "简介 "+dscpt+"\n";
-            topinfo += "\n";
+            topinfo += "简介 "+dscpt+"\n \n";
             return topinfo;
         } else if(code==53016) {
             // 无置顶视频
@@ -257,7 +256,7 @@ public class UserInfo {
                     result += videoinfo;
                 }
                 // 返回信息
-                result += "\n";
+                result += " \n";
                 return result;
             }
         } else {

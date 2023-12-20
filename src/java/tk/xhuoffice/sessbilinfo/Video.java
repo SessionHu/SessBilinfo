@@ -37,7 +37,7 @@ public class Video {
         Logger.println("正在请求数据...");
         String videoInfo = "";
         try {
-            videoInfo += "--------------------------------\n\n";
+            videoInfo += "--------------------------------\n \n";
             videoInfo += getDetail(aid);
             videoInfo += "--------------------------------";
         } catch(BiliException e) {
@@ -139,7 +139,7 @@ public class Video {
             formatted.append(String.format("播放 %s   弹幕 %s   %s\n", view, danmaku, date));
             formatted.append(String.format("点赞 %s   投币 %s   收藏 %s   分享 %s\n", like, coin, fav, share));
             formatted.append(String.format("TAG: %s\n", tags));
-            formatted.append(String.format("总时长 %s   评论 %s\n\n", alltime, reply));
+            formatted.append(String.format("总时长 %s   评论 %s\n \n", alltime, reply));
             formatted.append(String.format("在线人数 %s\n", video.online));
             formatted.append(String.format("封面 %s\n", video.cover));
             // 处理视频流URL
@@ -148,11 +148,11 @@ public class Video {
                 formatted.append(OutFormat.shorterString(50,video.playURL));
             }
             // 返回数据
-            return formatted.append("\n\n").toString();
+            return formatted.append("\n \n").toString();
         } else if(code==62002) {
-            return "稿件不可见\n\n";
+            return "62002 稿件不可见\n \n";
         } else if(code==62004) {
-            return "稿件审核中\n\n";
+            return "62004 稿件审核中\n \n";
         } else {
             throw BiliAPIs.codeErrExceptionBuilder(rawJson);
         }
