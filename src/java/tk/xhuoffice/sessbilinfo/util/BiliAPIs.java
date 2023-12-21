@@ -48,7 +48,7 @@ public class BiliAPIs {
             Logger.errln(msg.toString());
             // if Logger.debug == true
             if(Logger.debug) {
-                OutFormat.outThrowable(e,0);
+                OutFormat.outThrowable(e.getCause(),0);
             }
             response = "{\"code\":-8888}";
         }
