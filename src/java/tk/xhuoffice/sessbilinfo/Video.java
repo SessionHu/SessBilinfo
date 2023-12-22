@@ -17,7 +17,7 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
  */
 
 
-public class Video {
+public class Video implements Bilinfo {
     
     private static volatile Video video = null;
     
@@ -182,9 +182,14 @@ public class Video {
     public volatile String playURL = null;
     public volatile String online = null;
     public volatile boolean ready;
+    private String json = null;
     
     public Video(long aid) {
         String detailJson = BiliAPIs.getViewDetail(String.valueOf(aid));
+        int code = JsonLib.getInt(detailJson,"code");
+        if(code!=0) {
+            throw new BiliException();
+        }
         try {
             videoVars(detailJson);
         } catch(Exception e) {
@@ -203,6 +208,7 @@ public class Video {
     public void videoVars(String detailJson) {
         Thread videoStream;
         Thread videoOnline;
+        this.json = detailJson;
         // .data.View
         {
             // .
@@ -210,7 +216,11 @@ public class Video {
             aid = JsonLib.getString(detailJson,"data","View","aid");
             cid = JsonLib.getString(detailJson,"data","View","cid");
             tname = JsonLib.getString(detailJson,"data","View","tname");
-            mtname = tidSubToMain(JsonLib.getInt(detailJson,"data","View","tid"));
+            mtname = null; {
+                // if use toJson()
+                String mtname0 = JsonLib.getString(detailJson,"data","View","mtname");
+                mtname = mtname0!=null ? mtname0 : tidSubToMain(JsonLib.getInt(detailJson,"data","View","tid"));
+            }
             original = JsonLib.getInt(detailJson,"data","View","copyright") == 1;
             title = JsonLib.getString(detailJson,"data","View","title");
             cover = JsonLib.getString(detailJson,"data","View","pic").replace("http","https");
@@ -297,6 +307,34 @@ public class Video {
     @Override
     public String toString() {
         return this.title+"@"+this.aid;
+    }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1454;
+        result = prime * result + this.toJson().hashCode();
+        result = prime * result + this.toString().hashCode();
+        return result;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if(obj==this) {
+            return true;
+        }
+        if(obj==null) {
+            return false;
+        }
+        if(obj instanceof Video) {
+            Video v = (Video)obj;
+            return v.hashCode() == this.hashCode();
+        }
+        return false;
+    }
+    
+    public String toJson() {
+        return this.json;
     }
     
     public static final Map<Integer,String> ZONE = new HashMap<>();
