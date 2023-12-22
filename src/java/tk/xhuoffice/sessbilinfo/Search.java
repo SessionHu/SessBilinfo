@@ -112,6 +112,8 @@ public class Search {
             }
         } else if(code==-110) {
             throw new BiliException("-110 未绑定手机", "错误信息:   -110 未绑定手机\n可能的原因: 输入的信息包含敏感词");
+        } else if(code==-111) {
+            throw new BiliException("-111 csrf 校验失败", "错误信息:   -111 csrf 校验失败\n可能的原因: 输入的信息包含敏感词");
         } else if(code==-412) {
             throw new BiliException("请求被拦截, 请检测 Cookie 长度");
         } else {
