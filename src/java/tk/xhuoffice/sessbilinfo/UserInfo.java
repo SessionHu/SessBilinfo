@@ -84,7 +84,7 @@ public class UserInfo {
                 cardinfo += offical_tag+offical_info+"\n";
             }
             cardinfo += "签名 "+sign+"\n";
-            cardinfo += "\n";
+            cardinfo += " \n";
             return cardinfo;
         } else {
             throw BiliAPIs.codeErrExceptionBuilder(rawJson);
