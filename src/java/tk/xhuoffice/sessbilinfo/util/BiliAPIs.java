@@ -299,12 +299,7 @@ public class BiliAPIs {
      */
     public static String codeErr(int code) {
         // 根据情况返回结果
-        return ERRMSG.getOrDefault(
-                // 输入值
-                code,
-                // 若输入值不符合前面的内容输出下面
-                "\n未知的错误代码 "+code
-                );
+        return ERRMSG.getOrDefault(code,"");
     }
     
 }
