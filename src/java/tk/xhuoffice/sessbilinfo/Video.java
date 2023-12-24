@@ -365,7 +365,7 @@ public class Video implements Bilinfo {
         // download video
         String path = System.getProperty("user.home")+"/videos/";
         Logger.println("准备下载视频到 "+path);
-        Downloader dl = new Downloader(video.playURL,path,video.toString().replace("/","／")+".mp4");
+        Downloader dl = new Downloader(video.playURL,path,video.toString()+".mp4");
         Logger.println("开始下载");
         dl.download();
     }
