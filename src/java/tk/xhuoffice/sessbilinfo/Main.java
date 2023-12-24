@@ -12,7 +12,7 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 public class Main {
     
     public static final String SOFT_NAME = "SessBilinfo";
-    public static final String SOFT_VERSION = "1.1.0-beta.1";
+    public static final String SOFT_VERSION = "1.1.0-beta.2";
     public static final String SOFT_TITLE  = SOFT_NAME+" "+SOFT_VERSION;
     
     public static void main(String... args) {
