@@ -1,5 +1,6 @@
 package tk.xhuoffice.sessbilinfo;
 
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.HashMap;
 import java.util.Map;
 import tk.xhuoffice.sessbilinfo.net.Downloader;
@@ -12,22 +13,20 @@ import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 /**
- * Get and download a video from Bilibili. <br> Also can create an Object of Video. <br>
+ * Get and download a video from Bilibili. Also can create an object of Video. <br>
  * 视频分区来源: <a href="https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/video/video_zone.md">bilibili-API-collect</a>
  */
 
 
 public class Video implements Bilinfo {
     
-    private static volatile Video video = null;
-    
     public static void simpleViewer() {
-        video = null;
-        getVideoInfo();
-        downloadVideo();
+        Video video;
+        video = getVideoInfo();
+        downloadVideo(video);
     }
     
-    public static void getVideoInfo() {
+    public static Video getVideoInfo() {
         Frame.reset();
         // 提示信息
         Logger.println("请输入视频AV或BV号");
@@ -35,24 +34,16 @@ public class Video implements Bilinfo {
         String aid = getAid();
         // 获取数据
         Logger.println("正在请求数据...");
-        String videoInfo = "";
-        try {
-            videoInfo += "--------------------------------\n \n";
-            videoInfo += getDetail(aid);
-            videoInfo += "--------------------------------";
-        } catch(BiliException e) {
-            Logger.errln("获取视频信息时发生异常");
-            if(e.getDetailMessage().equals(e.getMessage())) {
-                OutFormat.outThrowable(e,3);
-            } else {
-                e.outDetailMessage();
-            }
-            return; // 返回
-        }
+        Map.Entry<Video,String> result = getDetail(aid);
+        StringBuilder videoInfo = new StringBuilder();
+        videoInfo.append("--------------------------------\n \n");
+        videoInfo.append(result.getValue());
+        videoInfo.append("--------------------------------");
         Logger.println("请求完毕");
         // 输出信息
         Frame.reset();
         Logger.println(videoInfo);
+        return result.getKey();
     }
 
     public static String getAid() {
@@ -95,14 +86,11 @@ public class Video implements Bilinfo {
         }
     }
     
-    public static String getDetail(String aid) {
-        // 发送请求
-        String rawJson = BiliAPIs.getViewDetail(aid);
-        // 获取返回值
-        int code = JsonLib.getInt(rawJson,"code");
-        if(code==0){
-            // 解析返回数据
-            video = new Video(rawJson);
+    public static Map.Entry<Video,String> getDetail(String aid) {
+        Map.Entry<Video,String> result;
+        Video video;
+        try {
+            video = new Video(Long.parseLong(aid));
             // 处理解析数据
             String cprt = ""; { // 视频类型
                 if(video.original) {
@@ -148,14 +136,11 @@ public class Video implements Bilinfo {
                 formatted.append(OutFormat.shorterString(50,video.playURL));
             }
             // 返回数据
-            return formatted.append("\n \n").toString();
-        } else if(code==62002) {
-            return "62002 稿件不可见\n \n";
-        } else if(code==62004) {
-            return "62004 稿件审核中\n \n";
-        } else {
-            throw BiliAPIs.codeErrExceptionBuilder(rawJson);
+            result = new SimpleImmutableEntry<>(video,formatted.append("\n \n").toString());
+        } catch(BiliException e) {
+            result = new SimpleImmutableEntry<>(null,e.getDetailMessage()+"\n \n");
         }
+        return result;
     }
     
     public String bvid;
@@ -185,48 +170,30 @@ public class Video implements Bilinfo {
     private String json = null;
     
     public Video(long aid) {
-        String detailJson = BiliAPIs.getViewDetail(String.valueOf(aid));
-        int code = JsonLib.getInt(detailJson,"code");
-        if(code!=0) {
-            throw new BiliException();
-        }
-        try {
-            videoVars(detailJson);
-        } catch(Exception e) {
-            throw new BiliException(BiliAPIs.codeErrExceptionBuilder(detailJson).getMessage(),e);
-        }
+        this(BiliAPIs.getViewDetail(String.valueOf(aid)));
     }
     
     public Video(String detailJson) {
-        try {
-            videoVars(detailJson);
-        } catch(Exception e) {
-            throw new BiliException(detailJson,e);
+        if(!detailJson.startsWith("{")||JsonLib.getInt(detailJson,"code")!=0) {
+            throw BiliAPIs.codeErrExceptionBuilder(detailJson);
         }
-    }
-    
-    public void videoVars(String detailJson) {
         Thread videoStream;
         Thread videoOnline;
         this.json = detailJson;
         // .data.View
         {
             // .
-            bvid = JsonLib.getString(detailJson,"data","View","bvid");
-            aid = JsonLib.getString(detailJson,"data","View","aid");
-            cid = JsonLib.getString(detailJson,"data","View","cid");
-            tname = JsonLib.getString(detailJson,"data","View","tname");
-            mtname = null; {
-                // if use toJson()
-                String mtname0 = JsonLib.getString(detailJson,"data","View","mtname");
-                mtname = mtname0!=null ? mtname0 : tidSubToMain(JsonLib.getInt(detailJson,"data","View","tid"));
-            }
-            original = JsonLib.getInt(detailJson,"data","View","copyright") == 1;
-            title = JsonLib.getString(detailJson,"data","View","title");
-            cover = JsonLib.getString(detailJson,"data","View","pic").replace("http","https");
-            pubdate = JsonLib.getLong(detailJson,"data","View","pubdate");
-            desc = JsonLib.getString(detailJson,"data","View","desc");
-            duration = JsonLib.getLong(detailJson,"data","View","duration");
+            this.bvid = JsonLib.getString(detailJson,"data","View","bvid");
+            this.aid = JsonLib.getString(detailJson,"data","View","aid");
+            this.cid = JsonLib.getString(detailJson,"data","View","cid");
+            this.tname = JsonLib.getString(detailJson,"data","View","tname");
+            this.mtname = tidSubToMain(JsonLib.getInt(detailJson,"data","View","tid"));
+            this.original = JsonLib.getInt(detailJson,"data","View","copyright") == 1;
+            this.title = JsonLib.getString(detailJson,"data","View","title");
+            this.cover = JsonLib.getString(detailJson,"data","View","pic").replace("http","https");
+            this.pubdate = JsonLib.getLong(detailJson,"data","View","pubdate");
+            this.desc = JsonLib.getString(detailJson,"data","View","desc");
+            this.duration = JsonLib.getLong(detailJson,"data","View","duration");
             // get video stream url
             videoStream = new Thread(() -> {
                 try {
@@ -236,7 +203,7 @@ public class Video implements Bilinfo {
                     if(JsonLib.getInt(rawJson,"code")==0) {
                         // 处理返回数据
                         try {
-                            video.playURL = JsonLib.getString(JsonLib.getArray(rawJson,"data","durl")[0],"url");
+                            this.playURL = JsonLib.getString(JsonLib.getArray(rawJson,"data","durl")[0],"url");
                         } catch(NullPointerException e) {}
                     }
                 } catch(Exception e) {
@@ -266,21 +233,21 @@ public class Video implements Bilinfo {
             videoOnline.start();
             // ..stat
             {
-                view = JsonLib.getLong(detailJson,"data","View","stat","view");
-                danmaku = JsonLib.getLong(detailJson,"data","View","stat","danmaku");
-                reply = JsonLib.getLong(detailJson,"data","View","stat","reply");
-                fav = JsonLib.getLong(detailJson,"data","View","stat","favorite");
-                coin = JsonLib.getLong(detailJson,"data","View","stat","coin");
-                share = JsonLib.getLong(detailJson,"data","View","stat","share");
-                like = JsonLib.getLong(detailJson,"data","View","stat","like");
+                this.view = JsonLib.getLong(detailJson,"data","View","stat","view");
+                this.danmaku = JsonLib.getLong(detailJson,"data","View","stat","danmaku");
+                this.reply = JsonLib.getLong(detailJson,"data","View","stat","reply");
+                this.fav = JsonLib.getLong(detailJson,"data","View","stat","favorite");
+                this.coin = JsonLib.getLong(detailJson,"data","View","stat","coin");
+                this.share = JsonLib.getLong(detailJson,"data","View","stat","share");
+                this.like = JsonLib.getLong(detailJson,"data","View","stat","like");
             }
         }
         // .data.Card
         {
             // ..card
             {
-                mid = JsonLib.getLong(detailJson,"data","Card","card","mid");
-                uploader = JsonLib.getString(detailJson,"data","Card","card","name");
+                this.mid = JsonLib.getLong(detailJson,"data","Card","card","mid");
+                this.uploader = JsonLib.getString(detailJson,"data","Card","card","name");
             }
         }
         // .data.Tags
@@ -290,7 +257,7 @@ public class Video implements Bilinfo {
             for(int i = 0; i < tagJson.length; i++) {
                 tagName[i] = JsonLib.getString(tagJson[i],"tag_name");
             }
-            tag = tagName;
+            this.tag = tagName;
         }
         // 验证线程是否执行完毕
         new Thread(() -> {
@@ -333,10 +300,11 @@ public class Video implements Bilinfo {
         return false;
     }
     
+    @Override
     public String toJson() {
         return this.json;
     }
-    
+
     public static final Map<Integer,String> ZONE = new HashMap<>();
     static {
         int[][] data = {
@@ -385,7 +353,7 @@ public class Video implements Bilinfo {
                 );
     }
     
-    public static void downloadVideo() {
+    public static void downloadVideo(Video video) {
         if(video==null||video.playURL==null) {
             return;
         }
