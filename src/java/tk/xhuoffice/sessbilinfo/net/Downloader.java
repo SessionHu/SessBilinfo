@@ -54,8 +54,15 @@ public class Downloader {
         if(!fileDirPath.endsWith("/")) {
             fileDirPath += "/";
         }
-        this.fname = fileName;
-        this.path = fileDirPath + fileName;
+        this.fname = fileName.replace('/','／')
+                             .replace('\\','＼')
+                             .replace('"','\'')
+                             .replace(':','：')
+                             .replace('*','＊')
+                             .replace('<','＜')
+                             .replace('>','＞')
+                             .replace('|','｜');
+        this.path = fileDirPath + this.fname;
         this.file = new File(this.path);
         try {
             try {
@@ -70,6 +77,16 @@ public class Downloader {
         Http.loadCookieCache();
         // create connection
         this.conn = Http.setGetConnURL(url);
+    }
+
+    private long length = -1;
+    public long getLength() {
+        return this.length;
+    }
+
+    private long progress = 0;
+    public long getProgress() {
+        return this.progress;
     }
     
     /**
@@ -94,7 +111,7 @@ public class Downloader {
             return this.file;
         }
         // file length
-        long length = this.conn.getContentLengthLong();
+        this.length = this.conn.getContentLengthLong();
         Logger.println("File length: " + length);
         // download
         InputStream in = null;
@@ -108,13 +125,15 @@ public class Downloader {
             Logger.println("File type: "+this.contentType);
             // download
             int bufferSize = 0;
-            long progress = 0;
             byte[] buffer = new byte[1024];
+            this.progressReporter.start();
             while((bufferSize=in.read(buffer,0,1024))!=-1) {
                 this.out.write(buffer,0,bufferSize);
-                progressReport((progress+=bufferSize),length);
+                this.progress+=bufferSize;
             }
-            Logger.clearFootln();
+            try {
+                this.progressReporter.join();
+            } catch(InterruptedException e) {}
             Logger.println("文件 "+this.fname+" 下载完毕");
         } catch(IOException e) {
             Logger.errln("从 "+(this.conn.getURL().toString())+" 下载时发生异常");
@@ -134,20 +153,24 @@ public class Downloader {
                 Logger.warnln("关闭输入流时发生异常: "+e.getMessage());
                 OutFormat.outThrowable(e,0);
             }
+            this.conn = null;
         }
-        this.conn = null;
         return this.file;
     }
-    
-    private long lastProgressReport = 0L;
-    
-    private void progressReport(long progress, long length) {
-        if(((System.currentTimeMillis()/1000L)-this.lastProgressReport)>=1L) {
-            Logger.footln(String.format("Download progress: %d/%d (%d%s)", progress, length, progress*100L/length, "%"));
-            lastProgressReport = System.currentTimeMillis()/1000L;
+
+    private Thread progressReporter = new Thread(() -> {
+        while(!(this.progress>=this.length||this.conn==null)) {
+            Logger.footln(String.format("Download progress: %d/%d (%d%s)", this.progress, this.length, this.progress*100L/this.length, "%"));
+            try {
+                Thread.sleep(1000L);
+            } catch(InterruptedException e) {}
         }
-    }
+        Logger.clearFootln();
+    });
     
+    /**
+     * For test.
+     */
     public static void main(String[] args) {
         String url = "http://cachefly.cachefly.net/1mb.test";
         String dir = System.getProperty("user.home")+"/downloads/";
