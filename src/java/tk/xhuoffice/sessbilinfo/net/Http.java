@@ -137,20 +137,33 @@ public class Http {
             cookieCache[i] = cookieCache[i].split(";")[0];
         }
     }
+
     
+    /**
+     * Set {@code HttpURLConnection} with request method GET.
+     * @param inurl  URL in string.
+     * @return       {@code HttpURLConnection} with request method GET.
+     */
     public static HttpURLConnection setGetConnURL(String inurl) {
-        // print debug log
-        Logger.debugln("设置请求到 "+OutFormat.shorterString(16,inurl,24));
-        // 创建 URL 对象
-        URL url = null;
         try {
-            url = new URL(inurl);
+            return setGetConnURL(new URL(inurl));
         } catch(java.net.MalformedURLException e) {
-            throw new HttpConnectException("非法的 URL: "+inurl);
+            throw new HttpConnectException("非法的 URL: "+e.getMessage());
         }
+    }
+    
+    /**
+     * Set {@code HttpURLConnection} with request method GET.
+     * @param url  URL.
+     * @return     {@code HttpURLConnection} with request method GET.
+     */
+    public static HttpURLConnection setGetConnURL(URL url) {
+        // print debug log
+        String strurl = url.toString();
+        Logger.debugln("设置请求到 "+OutFormat.shorterString(16,strurl,24));
         // 打开连接
         HttpURLConnection conn = null;
-        try { 
+        try {
             conn = (HttpURLConnection)url.openConnection(ProxySetting.get());
         } catch(IOException e) {
             throw new HttpConnectException("打开连接失败",e);
@@ -171,7 +184,7 @@ public class Http {
         {
             // choose userAgent
             String userAgent = null;
-            if(inurl.contains("web")||inurl.contains("html5")) {
+            if(strurl.contains("web")||strurl.contains("html5")) {
                 if(userAgentCache!=null) {
                     userAgent = userAgentCache;
                 } else {
@@ -219,7 +232,7 @@ public class Http {
             Logger.debugln("Cookie: "+cookies);
         }
         // 设置 Referer
-        if(inurl.contains("bili")) {
+        if(strurl.contains("bili")) {
             conn.setRequestProperty("referer","https://www.bilibili.com");
         }
         // return
