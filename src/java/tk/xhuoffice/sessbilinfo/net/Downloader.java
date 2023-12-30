@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.file.Paths;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
@@ -18,21 +20,24 @@ public class Downloader {
     private String fname = null;
     private HttpURLConnection conn = null;
     private OutputStream out = null;
+
+    private String status = "init";
     
     private String contentType = null;
     
-    public Downloader(String url, String fileDir) {
+    public Downloader(String url, String fileDirPath) {
         // file & path
-        if(!fileDir.endsWith("/")) {
-            fileDir += "/";
+        if(!fileDirPath.endsWith("/")) {
+            fileDirPath += "/";
         }
-        int endIndex = url.lastIndexOf("?"); {
-            if(endIndex<1) {
-                endIndex = url.length();
-            }
+        URL url0 = null;
+        try {
+            url0 = new URL(url);
+        } catch(java.net.MalformedURLException e) {
+            throw new HttpConnectException("非法的 URL: "+e.getMessage());
         }
-        this.fname = url.substring(url.lastIndexOf("/")+1, endIndex);
-        this.path = fileDir + this.fname;
+        this.fname = Paths.get(url0.getPath()).getFileName().toString();;
+        this.path = fileDirPath + this.fname;
         this.file = new File(this.path);
         try {
             try {
@@ -46,7 +51,10 @@ public class Downloader {
         // load cookie
         Http.loadCookieCache();
         // create connection
-        this.conn = Http.setGetConnURL(url);
+        this.conn = Http.setGetConnURL(url0);
+        // return
+        this.status = "ready";
+        return;
     }
     
     public Downloader(String url, String fileDirPath, String fileName) {
@@ -77,6 +85,9 @@ public class Downloader {
         Http.loadCookieCache();
         // create connection
         this.conn = Http.setGetConnURL(url);
+        // return
+        this.status = "ready";
+        return;
     }
 
     private long length = -1;
@@ -96,18 +107,20 @@ public class Downloader {
      */
     public File download() {
         // check if can download
-        if(this.out==null) {
+        if(this.out==null||this.status.equals("init")) {
             throw new IllegalStateException( "File "+this.fname+" could not be created");
         }
-        if(this.conn==null) {
+        if(this.conn==null||this.status.equals("finished")) {
             throw new IllegalStateException( "File "+this.fname+" has already been downloaded");
         }
         // connect
+        this.status = "downloading";
         try {
             conn.connect();
         } catch(IOException e) {
             Logger.errln("连接至 "+(this.conn.getURL().toString())+" 时发生异常");
             OutFormat.outThrowable(e,3);
+            this.status = "failed";
             return this.file;
         }
         // file length
@@ -135,9 +148,11 @@ public class Downloader {
                 this.progressReporter.join();
             } catch(InterruptedException e) {}
             Logger.println("文件 "+this.fname+" 下载完毕");
+            this.status = "finished";
         } catch(IOException e) {
             Logger.errln("从 "+(this.conn.getURL().toString())+" 下载时发生异常");
             OutFormat.outThrowable(e,3);
+            this.status = "failed";
         } finally {
             try {
                 this.out.close();
@@ -166,7 +181,50 @@ public class Downloader {
             } catch(InterruptedException e) {}
         }
         Logger.clearFootln();
-    });
+    },  "DownloadProgressReporter-"+this.fname);
+    
+    @Override
+    public String toString() {
+        return "Downloader-"+this.fname;
+    }
+    
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        long result = 1454;
+        result = prime * result + this.path.hashCode();
+        result = prime * result + this.fname.hashCode();
+        result = prime * result + this.file.hashCode();
+        if(this.conn!=null) {
+            result = prime * result + this.conn.hashCode();
+        }
+        if(this.out!=null) {
+            result = prime * result + this.out.hashCode();
+        }
+        if(this.contentType!=null) {
+            result = prime * result + this.contentType.hashCode();
+        }
+        result = prime * result + this.toString().hashCode();
+        result = prime * result + this.length;
+        result = prime * result + this.progress;
+        result = prime * result + this.status.hashCode();
+        return (int)result;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if(obj==this) {
+            return true;
+        }
+        if(obj==null) {
+            return false;
+        }
+        if(obj instanceof Downloader) {
+            Downloader dlr = (Downloader)obj;
+            return dlr.hashCode()==this.hashCode();
+        }
+        return false;
+    }
     
     /**
      * For test.
