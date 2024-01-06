@@ -62,14 +62,26 @@ public class Logger {
         // get lines
         String[] lines = lineSplitDesc(str,fullDesc);
         // print
-        printLinesForEach(lines);
+        if(lv<3) {
+            printLinesForEach(lines);
+        } else {
+            printLinesForEach(lines,true);
+        }
     }
     
-    private static synchronized void printLinesForEach(String[] lines) {
+    private static void printLinesForEach(String[] lines) {
+        printLinesForEach(lines,false);
+    }
+    
+    private static synchronized void printLinesForEach(String[] lines, boolean usestderr) {
         // print
         for(String text : lines) {
             // print to screen
-            System.out.println(text);
+            if(usestderr) {
+                System.err.println(text);
+            } else {
+                System.out.println(text);
+            }
             // write to file
             writeln(text);
         }
@@ -151,7 +163,7 @@ public class Logger {
         // get lines
         String[] lines = lineSplitDesc(str,"["+LEVELS[lv]+"] ");
         // print
-        printLinesForEach(lines);
+        printLinesForEach(lines,true);
     }
     
     public static String[] lineSplitDesc(String str, String fullDesc) {
