@@ -1,6 +1,9 @@
 package tk.xhuoffice.sessbilinfo;
 
+import com.google.gson.JsonObject;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,9 +21,16 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
  */
 
 
-public class UserInfo {
+public class UserInfo implements Bilinfo {
+
+    private static UserInfo usrcache = null;
     
-    public static void getUserInfo() {
+    /**
+     * Get formatted Bilibili User basic information.
+     * Input from {@code Frame#screen}.
+     * @return  Formatted Bilibili User basic information.
+     */
+    public static String getUserInfo() {
         Frame.reset();
         // 提示输入信息
         Logger.println(
@@ -29,11 +39,17 @@ public class UserInfo {
         // 向用户获取 Mid
         String mid = OutFormat.getPositiveLongAsString("Mid");
         // 获取数据
+        UserInfo usr;
+        if(usrcache!=null && usrcache.getMid()==mid) {
+            usr = usrcache;
+        } else {
+            usr = new UserInfo(mid);
+        }
         Logger.println("正在请求数据...");
         StringBuilder usrinfo = new StringBuilder("------------------------\n \n");
         try {
-            usrinfo.append(card(mid));
-            usrinfo.append(space(mid));
+            usrinfo.append(usr.card());
+            usrinfo.append(usr.space());
             usrinfo.append("------------------------");
             Logger.println("请求完毕");
         } catch(BiliException e) {
@@ -41,114 +57,237 @@ public class UserInfo {
             usrinfo.append("\n \n------------------------");
         }
         // 输出数据
+        usrcache = usr;
         Frame.reset();
         Logger.println(usrinfo);
+        return usrinfo.toString();
     }
+
+    /**
+     * @return mid
+     */
+    public String getMid() {
+        return this.mid;
+    }
+    private String mid;
+
+    public UserInfo(String mid) {
+        this.mid = mid;
+    }
+
+    public UserInfo(long mid) {
+        this(String.valueOf(mid));
+    }
+
+    @Override
+    public String toJson() {
+        JsonObject json = new JsonObject();
+        // card
+        json.add("card",JsonLib.GSON.fromJson(this.cardjson,JsonObject.class));
+        // space
+        JsonObject spacejson = new JsonObject();
+        spacejson.add("notice",JsonLib.GSON.fromJson(this.spaceNoticeJson,JsonObject.class));
+        spacejson.add("tag",JsonLib.GSON.fromJson(this.spaceTagJson,JsonObject.class));
+        spacejson.add("top",JsonLib.GSON.fromJson(this.spaceTopJson,JsonObject.class));
+        spacejson.add("masterpiece",JsonLib.GSON.fromJson(this.spaceMasterpieceJson,JsonObject.class));
+        json.add("space",spacejson);
+        return JsonLib.GSON.toJson(json);
+    }
+
+
+    private String cardinfo = null;
+    private String cardjson = null;
+
+    /**
+     * @return 用户昵称
+     */
+    public String getNickname() {
+        return this.nickname;
+    }
+    private String nickname;
+
+    /**
+     * @return 签名
+     */
+    public String getSign() {
+        return this.sign;
+    }
+    private String sign;
+
+    /**
+     * @return 粉丝数
+     */
+    public int getFans() {
+        return this.fans;
+    }
+    private int fans;
+
+    /**
+     * @return 当前等级
+     */
+    public short getLevel() {
+        return this.level;
+    }
+    private short level;
+
+    /**
+     * @return 关注数
+     */
+    public int getFriend() {
+        return this.friend;
+    }
+    private int friend;
+
+    /**
+     * @return 性别
+     */
+    public String getSex() {
+        return this.sex;
+    }
+    private String sex;
+
+    /**
+     * @return 认证类型
+     */
+    public String getOfficalTag() {
+        return this.officalTag;
+    }
+    private String officalTag = "";
+
+    /**
+     * @return 认证信息
+     */
+    public String getOfficalInfo() {
+        return this.officalInfo;
+    }
+    private String officalInfo = "";
     
-    public static String card(String mid) {
+    public String card() {
         // 向 API 发送 GET 请求
-        Logger.debugln("获取用户名片信息");
-        String rawJson = BiliAPIs.getUserCard(mid);
+        Logger.debugln("获取用户"+this.mid+"名片信息");
+        this.cardjson = BiliAPIs.getUserCard(this.mid);
         // 获取返回值
-        int code = JsonLib.getInt(rawJson,"code");
-        if(code==0) {
+        if(JsonLib.getInt(this.cardjson,"code")==0) {
             // 解析返回内容
-            String nickname = JsonLib.getString(rawJson,"data","card","name"); // 用户昵称
-            String sign = JsonLib.getString(rawJson,"data","card","sign"); // 签名
-            int fans = JsonLib.getInt(rawJson,"data","card","fans"); // 粉丝数
-            int level = JsonLib.getInt(rawJson,"data","card","level_info","current_level"); // 当前等级
-            int friend = JsonLib.getInt(rawJson,"data","card","friend"); // 关注数
-            String sex = JsonLib.getString(rawJson,"data","card","sex"); // 性别
-            String offical_tag = "";
-            String offical_info = "";
-            if(JsonLib.getInt(rawJson,"data","card","Official","type")==0) { // 认证信息
+            this.nickname = JsonLib.getString(this.cardjson,"data","card","name");
+            this.sign = JsonLib.getString(this.cardjson,"data","card","sign");
+            this.fans = JsonLib.getInt(this.cardjson,"data","card","fans");
+            this.level = JsonLib.get(this.cardjson,short.class,"data","card","level_info","current_level");
+            this.friend = JsonLib.getInt(this.cardjson,"data","card","friend");
+            this.sex = JsonLib.getString(this.cardjson,"data","card","sex");
+            if(JsonLib.getInt(this.cardjson,"data","card","Official","type")==0) { // 认证信息
                 // 处理认证类型
-                offical_tag = offical(JsonLib.getInt(rawJson,"data","card","Official","role"),mid);
+                officalTag = offical(JsonLib.getInt(this.cardjson,"data","card","Official","role"),this.mid);
                 // 处理认证信息
-                offical_info = JsonLib.getString(rawJson,"data","card","Official","title"); // 认证内容
+                officalInfo = JsonLib.getString(this.cardjson,"data","card","Official","title"); // 认证内容
             }
             // 处理返回内容
-            if(sign.trim().isEmpty()) { // 签名
-                sign = "(这个人很神秘,什么都没有写)";
+            if(this.sign.trim().isEmpty()) { // 签名
+                this.sign = "(这个人很神秘,什么都没有写)";
             }
-            String strFans = OutFormat.num(fans); // 粉丝数
-            String strFriend = OutFormat.num(friend); // 关注数
-            if(sex.equals("保密")) { // 性别
-                sex = "";
+            String strFans = OutFormat.num(this.fans); // 粉丝数
+            String strFriend = OutFormat.num(this.friend); // 关注数
+            if(this.sex.equals("保密")) { // 性别
+                this.sex = "";
             }
             // 输出解析结果
-            String cardinfo = "";
-            cardinfo += "Lv"+level+"  "+nickname+"  "+sex+"\n";
-            cardinfo += "粉丝 "+strFans+"   关注 "+strFriend+"\n";
-            if(!offical_tag.isEmpty()) { // 有认证信息时打印
-                cardinfo += offical_tag+offical_info+"\n";
+            StringBuilder cardinfo = new StringBuilder();
+            cardinfo.append("Lv"+this.level+"  "+this.nickname+"  "+this.sex+"\n");
+            cardinfo.append("粉丝 "+strFans+"   关注 "+strFriend+"\n");
+            if(!officalTag.isEmpty()) { // 有认证信息时打印
+                cardinfo.append(this.officalTag+": "+this.officalInfo+"\n");
             }
-            cardinfo += "签名 "+sign+"\n";
-            cardinfo += " \n";
-            return cardinfo;
+            cardinfo.append("签名 "+this.sign+"\n");
+            cardinfo.append(" \n");
+            return (this.cardinfo=cardinfo.toString());
         } else {
-            throw BiliAPIs.codeErrExceptionBuilder(rawJson);
+            throw BiliAPIs.codeErrExceptionBuilder(this.cardjson);
         }
     }
+
+    private String spaceinfo = null;
     
-    public static String space(String mid) {
+    /**
+     * Get formatted Bilibili User Space basic information.
+     * @return Formatted Bilibili User Space basic information.
+     */
+    public String space() {
+        if(spaceinfo!=null) {
+            return spaceinfo;
+        }
         ExecutorService executor = Executors.newFixedThreadPool(4);
-        Future<String> spaceTag = executor.submit(() -> spaceTag(mid));
-        Future<String> spaceNotice = executor.submit(() -> spaceNotice(mid));
-        Future<String> spaceTop = executor.submit(() -> spaceTop(mid));
-        Future<String> spaceMasterpiece = executor.submit(() -> spaceMasterpiece(mid));
-        String result = "";
+        Future<String> spaceTag = executor.submit(() -> this.spaceTag());
+        Future<String> spaceNotice = executor.submit(() -> this.spaceNotice());
+        Future<String> spaceTop = executor.submit(() -> this.spaceTop());
+        Future<String> spaceMasterpiece = executor.submit(() -> this.spaceMasterpiece());
+        StringBuilder result = new StringBuilder();
         try {
-            result += spaceTag.get();
-            result += spaceNotice.get();
-            result += spaceTop.get();
-            result += spaceMasterpiece.get();
+            result.append(spaceTag.get());
+            result.append(spaceNotice.get());
+            result.append(spaceTop.get());
+            result.append(spaceMasterpiece.get());
         } catch(InterruptedException | java.util.concurrent.ExecutionException e) {
             OutFormat.outThrowable(e,3);
         }
         executor.shutdown();
-        return result;
+        return this.spaceinfo=result.toString();
     }
+
+    /**
+     * @return 空间公告
+     */
+    public String getSpaceNotice() {
+        return this.spaceNotice;
+    }
+    private String spaceNotice = "";
+    private String spaceNoticeJson = null;
     
-    public static String spaceNotice(String mid) {
-        // 发送请求
-        Logger.debugln("获取用户空间公告");
-        String json = BiliAPIs.getUserSpaceNotice(mid);
-        if(json==null) {
-            return "";
+    /**
+     * Get formatted Bilibili User Space Notice.
+     * @return Formatted Bilibili User Space Notice.
+     */
+    public String spaceNotice() {
+        if(!this.spaceNotice.isEmpty()) {
+            return "空间公告\n"+this.spaceNotice+"\n \n";
         }
-        // 获取返回值
-        int code = JsonLib.getInt(json,"code");
-        if(code==0) {
-            // 解析返回信息
-            String data = JsonLib.getString(json,"data");
+        // 发送请求
+        Logger.debugln("获取用户"+this.mid+"空间公告");
+        this.spaceNoticeJson = BiliAPIs.getUserSpaceNotice(this.mid);
+        // 解析返回信息
+        if(JsonLib.getInt(this.spaceNoticeJson,"code")==0) {
+            String data = JsonLib.getString(this.spaceNoticeJson,"data");
             // 处理返回结果
-            if(data==null||data.trim().isEmpty()) {
-                // 返回结果为空时不输出
-                return "";
-            } else {
-                // 输出处理结果
-                return "空间公告\n"+data+"\n \n";
+            if(data!=null) {
+                return "空间公告\n"+(this.spaceNotice=data)+"\n \n";
             }
         } else {
             // 输出错误信息
-            BiliAPIs.codeErrExceptionBuilder(json).outDetailMessage(2);
+            BiliAPIs.codeErrExceptionBuilder(this.spaceNoticeJson).outDetailMessage(2);
         }
         return "";
     }
+
+    /**
+     * @return 空间TAG
+     */
+    public String getSpaceTag() {
+        return this.spaceTag;
+    }
+    private String spaceTag = "";
+    private String spaceTagJson = null;
     
-    public static String spaceTag(String mid) {
+    /**
+     * Get formatted Bilibili User Space Tags.
+     * @return Formatted Bilibili User Space Tags.
+     */
+    public String spaceTag() {
         // 发送请求
-        Logger.debugln("获取用户空间TAG");
-        String rawJson = BiliAPIs.getUserSpaceTag(mid);
-        if(rawJson==null) {
-            return "";
-        }
-        int code = JsonLib.getInt(rawJson,"code");
-        if(code==0) {
+        Logger.debugln("获取用户"+this.mid+"空间TAG");
+        spaceTagJson = BiliAPIs.getUserSpaceTag(mid);
+        if(JsonLib.getInt(spaceTagJson,"code")==0) {
             try {
                 // 提取返回信息
-                String data = JsonLib.getArray(rawJson,"data")[0];
+                String data = JsonLib.getArray(spaceTagJson,"data")[0];
                 String[] tags = JsonLib.getArray(data,"tags");
                 if(tags.length>0) {
                     // 处理返回信息
@@ -165,7 +304,7 @@ public class UserInfo {
                     listag = listag.substring(0, listag.length() - 2);
                     listag += "\n \n";
                     // 输出处理信息
-                    return listag;
+                    return (this.spaceTag=listag);
                 }
             } catch(NullPointerException e) {
                 // 空指针异常
@@ -174,95 +313,114 @@ public class UserInfo {
             }
         } else {
             // 输出错误
-            BiliAPIs.codeErrExceptionBuilder(rawJson).outDetailMessage(2);
-        }
-        return "";
-    }
-    
-    public static String spaceTop(String mid) {
-        // 向 API 发送 GET 请求
-        Logger.debugln("获取用户置顶视频");
-        String rawJson = BiliAPIs.getUserSpaceTop(mid);
-        if(rawJson==null) {
-            return "";
-        }
-        // 获取返回值
-        int code = JsonLib.getInt(rawJson,"code");
-        if(code==0) {
-            // 解析返回信息
-            long aid = JsonLib.getLong(rawJson,"data","aid"); // avid
-            String title = JsonLib.getString(rawJson,"data","title"); // 标题
-            int allsec = JsonLib.getInt(rawJson,"data","duration"); // 总时长(s)
-            int view = JsonLib.getInt(rawJson,"data","stat","view"); // 播放
-            int danmaku = JsonLib.getInt(rawJson,"data","stat","danmaku"); // 弹幕
-            long pubdate= JsonLib.getLong(rawJson,"data","pubdate"); // 发布时间
-            String desc = JsonLib.getString(rawJson,"data","desc"); // 简介
-            // 处理返回信息
-            String playtime = OutFormat.time(allsec); // 总时长((hh:m)m:ss)
-            String strView = OutFormat.num(view); // 播放
-            String strDanmaku = OutFormat.num(danmaku); // 弹幕
-            String date = OutFormat.date(pubdate); // 发布时间
-            String dscpt = OutFormat.formatString(desc,"     ");
-            // 输出处理结果
-            String topinfo = "";
-            topinfo += "置顶视频\n";
-            topinfo += "标题 "+title+"\n";
-            topinfo += "AV号 "+aid+"   "+date+"   时长 "+playtime+"\n";
-            topinfo += "播放 "+strView+"   弹幕 "+strDanmaku+"\n";
-            topinfo += "简介 "+dscpt+"\n \n";
-            return topinfo;
-        } else if(code==53016) {
-            // 无置顶视频
-        } else {
-            BiliAPIs.codeErrExceptionBuilder(rawJson).outDetailMessage(2);
+            BiliAPIs.codeErrExceptionBuilder(spaceTagJson).outDetailMessage(2);
         }
         return "";
     }
 
-    public static String spaceMasterpiece(String mid) {
-        // 向 API 发送 GET 请求
-        Logger.debugln("获取用户代表作");
-        String rawJson = BiliAPIs.getUserSpaceMasterpiece(mid);
-        if(rawJson==null) {
-            return "";
-        }
-        // 获取返回值
-        int code = JsonLib.getInt(rawJson,"code");
-        if(code==0) {
-            // 提取返回信息
-            String[] jsons = JsonLib.getArray(rawJson,"data");
-            // 处理返回信息
-            if(jsons.length>0) {
-                // 定义变量
-                String result = "代表作\n";
-                String videoinfo = "";
-                String json = "";
-                // 依次处理信息
-                for(int i = 0; i < jsons.length; i++) {
-                    videoinfo = "";
-                    json = jsons[i];
-                    // 解析信息
-                    String title = JsonLib.getString(json,"title"); // 标题
-                    int allsec = JsonLib.getInt(json,"duration"); // 总时长(s)
-                    int view = JsonLib.getInt(json,"stat","view"); // 播放
-                    int danmaku = JsonLib.getInt(json,"stat","danmaku"); // 弹幕
-                    // 处理信息
-                    String playtime = OutFormat.time(allsec); // 总时长((hh:)mm:ss)
-                    String strView = OutFormat.num(view); // 播放
-                    String strDanmaku = OutFormat.num(danmaku); // 弹幕
-                    // 输出信息
-                    videoinfo += (i+1) + ". " + title + "\n";
-                    videoinfo += "   " + playtime + "   播放 " + strView + "   弹幕 " + strDanmaku + "\n";
-                    result += videoinfo;
-                }
-                // 返回信息
-                result += " \n";
-                return result;
+    /**
+     * @return 空间置顶视频
+     */
+    public Video getSpaceTop() {
+        return this.spaceTop;
+    }
+    private Video spaceTop = null;
+    private String spaceTopJson = null;
+    
+    /**
+     * Get formatted Bilibili User Space Top Video basic imfomation.
+     * @return Formatted Bilibili User Space Top Video basic imfomation.
+     */
+    public String spaceTop() {
+        if(this.spaceTop==null) {
+            // 向 API 发送 GET 请求
+            Logger.debugln("获取用户"+this.mid+"置顶视频");
+            this.spaceTopJson = BiliAPIs.getUserSpaceTop(this.mid);
+            // 获取返回值
+            int code = JsonLib.getInt(this.spaceTopJson,"code");
+            if(code==0) {
+                // 构建Video信息
+                JsonObject data = JsonLib.get(this.spaceTopJson,JsonObject.class,"data");
+                String json = "{\"data\":{\"View\":"+JsonLib.GSON.toJson(data)+"}}";
+                this.spaceTop = new Video(json,false);
+            } else if(code==53016) {
+                // 无置顶视频
+                return "";
+            } else {
+                BiliAPIs.codeErrExceptionBuilder(this.spaceTopJson).outDetailMessage(2);
+                return "";
             }
-        } else {
-            BiliAPIs.codeErrExceptionBuilder(rawJson).outDetailMessage(2);
         }
-        return "";
+        // 处理返回信息
+        String playtime = OutFormat.time(this.spaceTop.duration); // 总时长((hh:m)m:ss)
+        String strView = OutFormat.num(this.spaceTop.view); // 播放
+        String strDanmaku = OutFormat.num(this.spaceTop.danmaku); // 弹幕
+        String date = OutFormat.date(this.spaceTop.pubdate); // 发布时间
+        String desc = OutFormat.formatString(this.spaceTop.desc,"     ");
+        // 输出处理结果
+        StringBuilder topinfo = new StringBuilder();
+        topinfo.append("置顶视频\n");
+        topinfo.append("标题 "+this.spaceTop.title+"\n");
+        topinfo.append("AV号 "+this.spaceTop.aid+"   "+date+"   时长 "+playtime+"\n");
+        topinfo.append("播放 "+strView+"   弹幕 "+strDanmaku+"\n");
+        topinfo.append("简介 "+desc+"\n \n");
+        return topinfo.toString();
+    }
+    
+    /**
+     * @return 空间置顶视频
+     */
+    public Video[] getSpaceMasterpiece() {
+        return this.spaceMasterpiece.toArray(new Video[0]);
+    }
+    private List<Video> spaceMasterpiece = new ArrayList<>();
+    private String spaceMasterpieceJson = null;
+    
+    /**
+     * Get formatted Bilibili User Space Top Video basic imfomation.
+     * @return Formatted Bilibili User Space Top Video basic imfomation.
+     */
+    public String spaceMasterpiece() {
+        if(this.spaceMasterpiece.isEmpty()) {
+            // 向 API 发送 GET 请求
+            Logger.debugln("获取用户代表作");
+            this.spaceMasterpieceJson = BiliAPIs.getUserSpaceMasterpiece(mid);
+            // 获取返回值
+            int code = JsonLib.getInt(this.spaceMasterpieceJson,"code");
+            if(code==0) {
+                // 提取返回信息
+                String[] jsons = JsonLib.getArray(this.spaceMasterpieceJson,"data");
+                // 处理返回信息
+                if(jsons.length>0) {
+                    this.spaceMasterpiece.clear();
+                    // 依次处理信息
+                    for(int i = 0; i < jsons.length; i++) {
+                        // 构建Video信息
+                        String json = "{\"data\":{\"View\":"+jsons[i]+"}}";
+                        this.spaceMasterpiece.add(new Video(json,false));
+                    }
+                } else {
+                    return "";
+                }
+            } else {
+                BiliAPIs.codeErrExceptionBuilder(this.spaceMasterpieceJson).outDetailMessage(2);
+                return "";
+            }
+        }
+        StringBuilder result = new StringBuilder("代表作\n");
+        for(int i = 0; i < this.spaceMasterpiece.size(); i++) {
+            Video video = this.spaceMasterpiece.get(i);
+            // 处理信息
+            String playtime = OutFormat.time(video.duration); // 总时长((hh:)mm:ss)
+            String strView = OutFormat.num(video.view); // 播放
+            String strDanmaku = OutFormat.num(video.danmaku); // 弹幕
+            // 输出信息
+            result.append((i+1) + ". " + video.title + "\n");
+            result.append("   " + playtime + "   播放 " + strView + "   弹幕 " + strDanmaku + "\n");
+        }
+        // 返回信息
+        result.append(" \n");
+        return result.toString();
     }
     
     /**
@@ -293,8 +451,6 @@ public class UserInfo {
             try {
                 Thread.sleep(8888);
             } catch(InterruptedException e) {}
-        } else {
-            officalTag += ": ";
         }
         return officalTag;
     }

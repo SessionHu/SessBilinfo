@@ -70,10 +70,11 @@ public class Search {
                 if(Long.parseLong(mid) > 0){
                     // 提示信息
                     Logger.println("检测到您的输入为 Mid, 操作变为获取用户信息");
-                    // 获取并返回信息   
+                    // 获取并返回信息
+                    UserInfo usr = new UserInfo(mid);
                     String usrInfo = "";
-                    usrInfo += UserInfo.card(mid);
-                    usrInfo += UserInfo.space(mid);
+                    usrInfo += usr.card();
+                    usrInfo += usr.space();
                     return usrInfo;
                 }
             }
