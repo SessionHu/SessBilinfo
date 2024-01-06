@@ -31,9 +31,7 @@ public class AvBv {
     /**
      * Basic constructor.
      */
-    public AvBv() {
-        Logger.debugln("AvBv转换实用工具");
-    }
+    public AvBv() {}
     
     /**
      * Construct with {@code aid}.

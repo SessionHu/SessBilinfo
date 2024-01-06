@@ -9,17 +9,19 @@ public class Prompt {
     
     public static void set() {
         lineNum = Frame.size.lns() - 1;
-        System.out.printf("\033[%df> ",lineNum);
+        System.out.printf("\033[%df\033[2K> ",lineNum);
         status = true;
     }
     
     public static void set(String str) {
         lineNum = Frame.size.lns() - 1;
-        System.out.printf("\033[%df%s > ",lineNum, str);
+        System.out.printf("\033[%df\033[2K%s > ", lineNum, str);
         status = true;
     }
     
     public static void unset() {
+        lineNum = Frame.size.lns() - 1;
+        System.out.printf("\033[%df\033[2K", lineNum);
         status = false;
     }
 

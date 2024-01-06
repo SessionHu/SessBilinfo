@@ -176,7 +176,7 @@ public class Logger {
     
     public static void footln(String text) {
         // only support ONE line
-        text = text.replace("\n","");
+        text = text.replace("\r","").replace("\n","");
         clearFootln();
         System.out.print("\033["+Frame.size.lns()+"f"+text);
         // write to file

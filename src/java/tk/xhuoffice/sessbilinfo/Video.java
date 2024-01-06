@@ -48,8 +48,9 @@ public class Video implements Bilinfo {
 
     public static String getAid() {
         String aid = "";
+        System.out.print("\033[s");
         while(true) {
-            String vid = OutFormat.getString("AV或BV号");
+            String vid = OutFormat.getString("AV或BV号",false);
             if(vid.toLowerCase().startsWith("av")) {
                 // AV号(avid)
                 aid = verifyAid(vid.substring(2,vid.length()));
@@ -58,11 +59,9 @@ public class Video implements Bilinfo {
                 aid = verifyAid(vid);
             } else if(vid.toLowerCase().startsWith("bv")&&vid.length()==12) {
                 // BV号(标准12位)
-                Logger.debugln("转换BV号为AV号");
                 aid = verifyAid(String.valueOf(new AvBv(vid).getAid()));
             } else if(vid.length()==10) {
                 // BV号(无bv头)
-                Logger.debugln("转换BV号为AV号");
                 aid = verifyAid(String.valueOf(new AvBv("bv"+vid).getAid()));
             } else {
                 Logger.footln("无效的输入");
@@ -70,7 +69,7 @@ public class Video implements Bilinfo {
             }
             if(!aid.isEmpty()) {
                 Logger.clearFootln();
-                Logger.debugln("返回 aid");
+                System.out.print("\033[u");
                 return aid;
             } else {
                 Logger.footln("无效的输入");

@@ -74,17 +74,29 @@ public class OutFormat {
     public static String formatString(String origin, String add) {
         return origin.replaceAll("\\n","\n"+add);
     }
-    
-    public static String getString(String typ, String... tip) {
-        System.out.print("\033[s");
+
+    /**
+     * Reads a line of input string from {@code System#in}.
+     * @param typ  Input text type
+     * @param tip  Text before prompt
+     * @param scp  Save cursor postion
+     * @return     String read from {@code System#in}.
+     */
+    public static String getString(String typ, String tip, boolean scp) {
+        if(scp) {
+            System.out.print("\033[s");
+        }
+        if(typ==null || typ.isEmpty()) {
+            typ = "输入";
+        }
         // 获取输入
         while(true) {
             // 定义变量
             String str = null;
             String log = "";
             // 输出提示
-            if(tip.length!=0) {
-                log = tip[0];
+            if(tip!=null && tip.isEmpty()) {
+                log = tip;
                 Prompt.set(log);
             } else {
                 Prompt.set();
@@ -107,20 +119,53 @@ public class OutFormat {
                 Logger.footln(typ+" 不能为空");
             } else {
                 Logger.clearFootln();
-                System.out.print("\033[u");
+                if(scp) {
+                    System.out.print("\033[u");
+                }
                 return str;
             }
         }
     }
 
-    public static String getPositiveLongAsString(String typ, String... strNum) {
+    public static String getString(String typ, String tip) {
+        return getString(typ,tip,true);
+    }
+
+    public static String getString(String typ) {
+        return getString(typ,null,true);
+    }
+
+    public static String getString(String typ, boolean scp) {
+        return getString(typ,null,scp);
+    }
+
+    public static String getString() {
+        return getString(null,null,true);
+    }
+    
+    /**
+     * Reads a line of input long positive number as String from {@code System#in}.
+     * @param typ     Input text type
+     * @return        String read from {@code System#in}.
+     */
+    public static String getPositiveLongAsString(String typ) {
+        return getPositiveLongAsString(typ,null);
+    }
+    
+    /**
+     * Reads a line of input long positive number as String from {@code System#in}.
+     * @param typ     Input text type
+     * @param strNum  Input string instead of {@code System#in}.
+     * @return        String read from {@code System#in}.
+     */
+    public static String getPositiveLongAsString(String typ, String strNum) {
         System.out.print("\033[s");
         // 定义并初始化变量
         String input = "";
         while(true) {
-            if(strNum.length!=0) {
+            if(strNum!=null&&!strNum.isEmpty()) {
                 // 读取参数
-                input = strNum[0];
+                input = strNum;
             } else {
                 // 获取输入
                 input = getString(typ);
@@ -143,7 +188,7 @@ public class OutFormat {
                 // 输出警告
                 Logger.footln("过大或非数字不能作为 "+typ);
             }
-            if(strNum.length!=0) {
+            if(strNum!=null && !strNum.isEmpty()) {
                 throw new NumberFormatException("无效的 "+typ+" "+input);
             }
         }
