@@ -3,6 +3,7 @@ package tk.xhuoffice.sessbilinfo;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
+import tk.xhuoffice.sessbilinfo.util.AvBv;
 import tk.xhuoffice.sessbilinfo.util.BiliAPIs;
 import tk.xhuoffice.sessbilinfo.util.BiliException;
 import tk.xhuoffice.sessbilinfo.util.JsonLib;
@@ -58,7 +59,8 @@ public class Search {
         // 初始化变量
         String results = "";
         // 用户输入是否为mid
-        if(keyword.matches(".*uid.*|.*mid.*") || keyword.length()==16) {
+        String lwk = keyword.toLowerCase();
+        if(lwk.startsWith("mid") || lwk.startsWith("uid") || keyword.length()==16) {
             // 获取字符串中的mid
             Logger.debugln("尝试获取字符串中 Mid");
             Matcher matcher = Pattern.compile("\\d+").matcher(keyword);
@@ -71,12 +73,35 @@ public class Search {
                     // 提示信息
                     Logger.println("检测到您的输入为 Mid, 操作变为获取用户信息");
                     // 获取并返回信息
-                    UserInfo usr = new UserInfo(mid);
+                    UserInfo usr = new UserInfo(Long.parseLong(mid));
                     String usrInfo = "";
                     usrInfo += usr.card();
                     usrInfo += usr.space();
                     return usrInfo;
                 }
+            }
+        }
+        // check input if aid or bvid
+        if(lwk.startsWith("av") || lwk.startsWith("bv")) {
+            // get aid in string
+            Logger.debugln("尝试获取字符串中 Aid");
+            Matcher matcher = Pattern.compile("\\d+").matcher(keyword);
+            if(matcher.find()) {
+                // 提取出aid
+                String aid = matcher.group(); 
+                Logger.debugln("尝试提取 Aid");
+                // 验证mid是否有效
+                if(Long.parseLong(aid) > 0){
+                    // 提示信息
+                    Logger.println("检测到您的输入为 Aid, 操作变为获取视频信息");
+                    // 获取并返回信息
+                    return Video.getDetail(aid).getValue();
+                }
+            }
+            // get bvid in string
+            if(keyword.length()==12) {
+                Logger.println("检测到您的输入为 Bvid, 操作变为获取视频信息");
+                return Video.getDetail(String.valueOf(new AvBv(keyword).getAid())).getValue();
             }
         }
         // 发送请求
