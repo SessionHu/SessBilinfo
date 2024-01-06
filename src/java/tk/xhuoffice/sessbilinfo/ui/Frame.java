@@ -1,23 +1,27 @@
 package tk.xhuoffice.sessbilinfo.ui;
 
+import java.io.IOException;
 import java.util.Arrays;
 import org.fusesource.jansi.AnsiConsole;
 import tk.xhuoffice.sessbilinfo.Main;
-import tk.xhuoffice.sessbilinfo.util.Logger;
-import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 
 public class Frame {
 
-    public static Screen screen = null;
+    public static Size size;
+    static {
+        try {
+            size = Size.get();
+        } catch(IOException e) {
+            size = new Size(80,24);
+        }
+    }
     
     public static void main(String... args) {
         // load JANSI
         loadJansi();
-        // create a new Screen
-        screen = new Screen();
-        // 重绘屏幕
-        redraw();
+        // reset screen
+        reset();
     }
     
     public static void loadJansi() {
@@ -32,23 +36,24 @@ public class Frame {
     
     public static void printTitle() {
         String titleSpace = null; {
-            char[] spaces = new char[screen.cols-Main.SOFT_TITLE.length()];
+            char[] spaces = new char[size.cols()-Main.SOFT_TITLE.length()];
             Arrays.fill(spaces,' ');
             titleSpace = new String(spaces);
         }
         // text for print
         String text = "\033[7m" + Main.SOFT_TITLE + titleSpace + "\033[0m";
         // set line
-        screen.setLine(1,text);
-    }
-    
-    public static void redraw() {
-        screen.redraw();
-        printTitle();
+        System.out.print("\033[s");
+        System.out.print("\033[1f"+text);
+        System.out.print("\033[u");
     }
     
     public static void reset() {
-        screen.clear();
+        // clear
+        System.out.print("\033[2J");
+        // cursor position
+        System.out.print("\033[2f");
+        // title
         printTitle();
     }
     

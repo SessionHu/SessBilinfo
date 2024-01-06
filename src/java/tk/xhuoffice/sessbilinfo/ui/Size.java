@@ -3,8 +3,6 @@ package tk.xhuoffice.sessbilinfo.ui;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import tk.xhuoffice.sessbilinfo.util.Logger;
-import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 
 public class Size {
@@ -24,14 +22,14 @@ public class Size {
         return this.lns;
     }
     
-    private Size() throws IOException {
+    protected Size() throws IOException {
         // stty size
         Size stty = sttySize();
         this.cols = stty.cols;
         this.lns = stty.lns;
     }
     
-    private Size(int c, int l) {
+    protected Size(int c, int l) {
         this.cols = c;
         this.lns = l;
     }

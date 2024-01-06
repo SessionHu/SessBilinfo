@@ -76,6 +76,7 @@ public class OutFormat {
     }
     
     public static String getString(String typ, String... tip) {
+        System.out.print("\033[s");
         // 获取输入
         while(true) {
             // 定义变量
@@ -106,12 +107,14 @@ public class OutFormat {
                 Logger.footln(typ+" 不能为空");
             } else {
                 Logger.clearFootln();
+                System.out.print("\033[u");
                 return str;
             }
         }
     }
 
     public static String getPositiveLongAsString(String typ, String... strNum) {
+        System.out.print("\033[s");
         // 定义并初始化变量
         String input = "";
         while(true) {
@@ -130,6 +133,7 @@ public class OutFormat {
                     // 提示并返回结果
                     Logger.println(typ+": "+num);
                     Logger.clearFootln();
+                    System.out.print("\033[u");
                     return input;
                 } else {
                     // 输出警告
@@ -257,13 +261,13 @@ public class OutFormat {
     }
     
     /**
-     * Break messages into many pages {@link Frame#screen} lines.
+     * Break messages into many pages {@link Frame#size} lines.
      * @param str  messages
      * @return     pages
      */
     public static String[] pageBreak(String str) {
         // prepare variables
-        int lns = Frame.screen.lns()-2;
+        int lns = Frame.size.lns()-2;
         String[] lines = str.split("\\n");
         List<String> pages = new ArrayList<>();
         // lines to pages
@@ -282,77 +286,27 @@ public class OutFormat {
     }
     
     /**
-     * Split a line String into sub-lines according to {@link Frame#screen} columns.
-     * @param text  A line without '\r' or(and) '\n'
-     * @return      A {@link java.util.List} with String for printing
+     * Checks whether a character is a full-width character.
+     * @param c  Character to check
+     * @return   Check result
      */
-    public static List<String> subLines(String text) {
-        int cols = Frame.screen.cols();
-        ArrayList<String> slines = new ArrayList<>(); // sub-lines
-        for(int i = 0; i < text.length();) { // text with SUB-char to sub-lines
-            StringBuilder cline = new StringBuilder(); // char-line
-            boolean inAnsi = false;
-            StringBuilder ansis = new StringBuilder();
-            for(int j = 0; (j < cols) && (i < text.length()); j++) { // build char-line
-                char c = text.charAt(i++);
-                // ansi escape codes OR other invisible char
-                if(c=='\033') { // ESC
-                    inAnsi = true;
-                    ansis.append(c);
-                    j--;
-                    continue;
-                }
-                if(c<9||(c>13&&c<32)) {} // ignore
-                if(c==10||c==13) { // LF or CR
-                    cline.append("\n");
-                    j = -1;
-                    continue;
-                }
-                if(inAnsi) { // in ansi escape codes
-                    if(ansis.length()==1 && ansis.charAt(0)=='\033') { // CSI start
-                        if(c=='[') { // CSI start
-                            ansis.append(c);
-                        } else if(c=='N'||c=='O'||c=='P'||c=='\\'||c==']'||c=='X'||c=='^'||c=='_'||c=='c') { // not CSI
-                            inAnsi = false;
-                        }
-                        j--;
-                        continue;
-                    }
-                    if(ansis.length()>1 && ansis.charAt(1)=='[') { // in CSI
-                        ansis.append(c);
-                        if(c>=0x40 && c<=0x7E) { // CSI end
-                            inAnsi = false;
-                        }
-                        cline.append(ansis);
-                        ansis = new StringBuilder();
-                        j--;
-                        continue;
-                    }
-                }
-                // else
-                cline.append(c);
-                if(Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_COMPATIBILITY ||
-                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_COMPATIBILITY_FORMS ||
-                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS ||
-                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT ||
-                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_RADICALS_SUPPLEMENT ||
-                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_STROKES ||
-                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION ||
-                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS ||
-                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A ||
-                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B ||
-                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_C ||
-                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_D ||
-                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_E ||
-                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.HIRAGANA ||
-                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.KATAKANA ||
-                   Character.UnicodeBlock.of(c)==Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS) {
-                    j++;
-                }
-            }
-            slines.add(cline.toString()); // add char-line into sub-lines
-        }
-        return slines;
+    public static boolean checkFullWidth(char c) {
+        return Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_COMPATIBILITY ||
+               Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_COMPATIBILITY_FORMS ||
+               Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS ||
+               Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS_SUPPLEMENT ||
+               Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_RADICALS_SUPPLEMENT ||
+               Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_STROKES ||
+               Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION ||
+               Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS ||
+               Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A ||
+               Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B ||
+               Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_C ||
+               Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_D ||
+               Character.UnicodeBlock.of(c)==Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_E ||
+               Character.UnicodeBlock.of(c)==Character.UnicodeBlock.HIRAGANA ||
+               Character.UnicodeBlock.of(c)==Character.UnicodeBlock.KATAKANA ||
+               Character.UnicodeBlock.of(c)==Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS;
     }
     
 }

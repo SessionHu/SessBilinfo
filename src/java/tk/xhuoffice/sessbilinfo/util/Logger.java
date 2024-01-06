@@ -38,9 +38,9 @@ public class Logger {
         }
         // write
         try {
-           out.write(str.getBytes(StringCoder.UTF_8));
-           out.write('\n');
-         } catch(IOException e) {}
+            out.write(str.getBytes(StringCoder.UTF_8));
+            out.write('\n');
+        } catch(IOException e) {}
     }
     
     public static void addLines(String str, int lv, String desc) {
@@ -67,28 +67,14 @@ public class Logger {
     
     private static synchronized void printLinesForEach(String[] lines) {
         // print
-        if(Frame.screen!=null) {
-            for(String text : lines) {
-                // print to screen
-                for(String sline : OutFormat.subLines(text)) {
-                    Frame.screen.addLine(sline);
-                }
-                // write to file
-                writeln(text);
-            }
-            // title
-            String[] scr = Frame.screen.getScreen();
-            if(scr[scr.length-1]!=null) {
-                Frame.printTitle();
-            }
-        } else {
-            // print when Frame.screen is null
-            for(String text : lines) {
-                System.out.println(text);
-                // write to file
-                writeln(text);
-            }
+        for(String text : lines) {
+            // print to screen
+            System.out.println(text);
+            // write to file
+            writeln(text);
         }
+        // title
+        Frame.printTitle();
     }
     
     private static void printLines(String str, int lv) {
@@ -179,20 +165,14 @@ public class Logger {
     public static void footln(String text) {
         // only support ONE line
         text = text.replace("\n","");
-        if(Frame.screen!=null) {
-            clearFootln();
-            Frame.screen.setLine(Frame.screen.lns(),text);
-        } else {
-            System.out.println(text);
-        }
+        clearFootln();
+        System.out.print("\033["+Frame.size.lns()+"f"+text);
         // write to file
         writeln(text);
     }
     
     public static void clearFootln() {
-        if(Frame.screen!=null) {
-            Frame.screen.clearLine(Frame.screen.lns());
-        }
+        System.out.printf("\033[%d;0f\033[2K",Frame.size.lns());
     }
     
     /**
