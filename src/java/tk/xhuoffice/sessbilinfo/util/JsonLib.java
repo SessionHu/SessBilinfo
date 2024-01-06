@@ -13,7 +13,8 @@ public class JsonLib {
     // NO <init>
     private JsonLib() {}
     
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().setDateFormat("yyyy-MM-dd").create();
+    public static final Gson GSON = new GsonBuilder().create();
+    public static final Gson GSON_PRETTY = new GsonBuilder().setPrettyPrinting().create();
     
     /**
      * 格式化 JSON.
@@ -21,7 +22,7 @@ public class JsonLib {
      * @return          Formatted JSON.
      */
     public static String formatJson(String inputJson) {
-        return GSON.toJson(GSON.fromJson(inputJson,JsonObject.class));
+        return GSON_PRETTY.toJson(GSON_PRETTY.fromJson(inputJson,JsonObject.class));
     }
     
     private static JsonElement getJsonElement(String inputJson, String[] path) {
