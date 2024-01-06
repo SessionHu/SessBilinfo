@@ -37,7 +37,7 @@ public class UserInfo implements Bilinfo {
                 "请输入被查询用户的 Mid 信息\n"+
                 "示例: 645769214");
         // 向用户获取 Mid
-        String mid = OutFormat.getPositiveLongAsString("Mid");
+        long mid = Long.parseLong(OutFormat.getPositiveLongAsString("Mid"));
         // 获取数据
         UserInfo usr;
         if(usrcache!=null && usrcache.getMid()==mid) {
@@ -52,12 +52,12 @@ public class UserInfo implements Bilinfo {
             usrinfo.append(usr.space());
             usrinfo.append("------------------------");
             Logger.println("请求完毕");
+            usrcache = usr;
         } catch(BiliException e) {
             usrinfo.append(e.getDetailMessage());
             usrinfo.append("\n \n------------------------");
         }
         // 输出数据
-        usrcache = usr;
         Frame.reset();
         Logger.println(usrinfo);
         return usrinfo.toString();
@@ -66,17 +66,13 @@ public class UserInfo implements Bilinfo {
     /**
      * @return mid
      */
-    public String getMid() {
+    public long getMid() {
         return this.mid;
     }
-    private String mid;
-
-    public UserInfo(String mid) {
-        this.mid = mid;
-    }
+    private long mid;
 
     public UserInfo(long mid) {
-        this(String.valueOf(mid));
+        this.mid = mid;
     }
 
     @Override
@@ -94,6 +90,17 @@ public class UserInfo implements Bilinfo {
         return JsonLib.GSON.toJson(json);
     }
 
+    public UserInfo(String rawjson) {
+        JsonObject json = JsonLib.GSON.fromJson(rawjson,JsonObject.class);
+        // card
+        this.cardjson = json.get("card").getAsString();
+        // space
+        JsonObject space = json.getAsJsonObject("space");
+        this.spaceNoticeJson = space.get("notice").getAsString();
+        this.spaceTagJson = space.get("tag").getAsString();
+        this.spaceTopJson = space.get("top").getAsString();
+        this.spaceMasterpieceJson = space.get("masterpiece").getAsString();
+    }
 
     private String cardinfo = null;
     private String cardjson = null;
@@ -163,9 +170,11 @@ public class UserInfo implements Bilinfo {
     private String officalInfo = "";
     
     public String card() {
-        // 向 API 发送 GET 请求
-        Logger.debugln("获取用户"+this.mid+"名片信息");
-        this.cardjson = BiliAPIs.getUserCard(this.mid);
+        if(this.cardjson==null) {
+            // 向 API 发送 GET 请求
+            Logger.debugln("获取用户"+this.mid+"名片信息");
+            this.cardjson = BiliAPIs.getUserCard(String.valueOf(this.mid));
+        }
         // 获取返回值
         if(JsonLib.getInt(this.cardjson,"code")==0) {
             // 解析返回内容
@@ -177,7 +186,7 @@ public class UserInfo implements Bilinfo {
             this.sex = JsonLib.getString(this.cardjson,"data","card","sex");
             if(JsonLib.getInt(this.cardjson,"data","card","Official","type")==0) { // 认证信息
                 // 处理认证类型
-                officalTag = offical(JsonLib.getInt(this.cardjson,"data","card","Official","role"),this.mid);
+                officalTag = offical(JsonLib.getInt(this.cardjson,"data","card","Official","role"),String.valueOf(this.mid));
                 // 处理认证信息
                 officalInfo = JsonLib.getString(this.cardjson,"data","card","Official","title"); // 认证内容
             }
@@ -250,9 +259,11 @@ public class UserInfo implements Bilinfo {
         if(!this.spaceNotice.isEmpty()) {
             return "空间公告\n"+this.spaceNotice+"\n \n";
         }
-        // 发送请求
-        Logger.debugln("获取用户"+this.mid+"空间公告");
-        this.spaceNoticeJson = BiliAPIs.getUserSpaceNotice(this.mid);
+        if(this.spaceNoticeJson==null) {
+            // 发送请求
+            Logger.debugln("获取用户"+this.mid+"空间公告");
+            this.spaceNoticeJson = BiliAPIs.getUserSpaceNotice(String.valueOf(this.mid));
+        }
         // 解析返回信息
         if(JsonLib.getInt(this.spaceNoticeJson,"code")==0) {
             String data = JsonLib.getString(this.spaceNoticeJson,"data");
@@ -281,9 +292,11 @@ public class UserInfo implements Bilinfo {
      * @return Formatted Bilibili User Space Tags.
      */
     public String spaceTag() {
-        // 发送请求
-        Logger.debugln("获取用户"+this.mid+"空间TAG");
-        spaceTagJson = BiliAPIs.getUserSpaceTag(mid);
+        if(spaceTagJson==null) {
+            // 发送请求
+            Logger.debugln("获取用户"+this.mid+"空间TAG");
+            spaceTagJson = BiliAPIs.getUserSpaceTag(String.valueOf(this.mid));
+        }
         if(JsonLib.getInt(spaceTagJson,"code")==0) {
             try {
                 // 提取返回信息
@@ -333,9 +346,11 @@ public class UserInfo implements Bilinfo {
      */
     public String spaceTop() {
         if(this.spaceTop==null) {
-            // 向 API 发送 GET 请求
-            Logger.debugln("获取用户"+this.mid+"置顶视频");
-            this.spaceTopJson = BiliAPIs.getUserSpaceTop(this.mid);
+            if(spaceTopJson==null) {
+                // 向 API 发送 GET 请求
+                Logger.debugln("获取用户"+this.mid+"置顶视频");
+                this.spaceTopJson = BiliAPIs.getUserSpaceTop(String.valueOf(this.mid));
+            }
             // 获取返回值
             int code = JsonLib.getInt(this.spaceTopJson,"code");
             if(code==0) {
@@ -382,9 +397,11 @@ public class UserInfo implements Bilinfo {
      */
     public String spaceMasterpiece() {
         if(this.spaceMasterpiece.isEmpty()) {
-            // 向 API 发送 GET 请求
-            Logger.debugln("获取用户代表作");
-            this.spaceMasterpieceJson = BiliAPIs.getUserSpaceMasterpiece(mid);
+            if(spaceMasterpieceJson==null) {
+                // 向 API 发送 GET 请求
+                Logger.debugln("获取用户代表作");
+                this.spaceMasterpieceJson = BiliAPIs.getUserSpaceMasterpiece(String.valueOf(this.mid));
+            }
             // 获取返回值
             int code = JsonLib.getInt(this.spaceMasterpieceJson,"code");
             if(code==0) {
@@ -454,5 +471,5 @@ public class UserInfo implements Bilinfo {
         }
         return officalTag;
     }
-    
+
 }
