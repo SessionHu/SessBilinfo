@@ -173,7 +173,15 @@ public class Video implements Bilinfo {
         this(BiliAPIs.getViewDetail(String.valueOf(aid)));
     }
     
+    public Video(long aid, boolean mutithread) {
+        this(BiliAPIs.getViewDetail(String.valueOf(aid)),mutithread);
+    }
+
     public Video(String detailJson) {
+        this(detailJson,true);
+    }
+    
+    public Video(String detailJson, boolean mutithread) {
         if(!detailJson.startsWith("{")||JsonLib.getInt(detailJson,"code")!=0) {
             throw BiliAPIs.codeErrExceptionBuilder(detailJson);
         }
@@ -210,7 +218,9 @@ public class Video implements Bilinfo {
                     OutFormat.outThrowable(e,0);
                 }
             }, "VideoStream-"+this.aid);
-            videoStream.start();
+            if(mutithread) {
+                videoStream.start();
+            }
             // get online number
             videoOnline = new Thread(() -> {
                 try {
@@ -230,7 +240,9 @@ public class Video implements Bilinfo {
                     OutFormat.outThrowable(e,0);
                 }
             }, "VideoOnline-"+this.aid);
-            videoOnline.start();
+            if(mutithread) {
+                videoOnline.start();
+            }
             // ..stat
             {
                 this.view = JsonLib.getLong(detailJson,"data","View","stat","view");
@@ -243,32 +255,36 @@ public class Video implements Bilinfo {
             }
         }
         // .data.Card
-        {
+        try {
             // ..card
             {
                 this.mid = JsonLib.getLong(detailJson,"data","Card","card","mid");
                 this.uploader = JsonLib.getString(detailJson,"data","Card","card","name");
             }
-        }
+        } catch(NullPointerException e) {}
         // .data.Tags
-        {
+        try {
             String[] tagJson = JsonLib.getArray(detailJson,"data","Tags");
             String[] tagName = new String[tagJson.length];
             for(int i = 0; i < tagJson.length; i++) {
                 tagName[i] = JsonLib.getString(tagJson[i],"tag_name");
             }
             this.tag = tagName;
-        }
+        } catch(NullPointerException e) {}
         // 验证线程是否执行完毕
-        new Thread(() -> {
-            try {
-                videoStream.join();
-                videoOnline.join();
-            } catch(InterruptedException e) {
-            } finally {
-                this.ready = true;
-            }
-        }, "VideoReadyReport").start();
+        if(mutithread) {
+            new Thread(() -> {
+                try {
+                    videoStream.join();
+                    videoOnline.join();
+                } catch(InterruptedException e) {
+                } finally {
+                    this.ready = true;
+                }
+            }, "VideoReadyReport").start();
+        } else {
+            this.ready = true;
+        }
     }
     
     @Override
