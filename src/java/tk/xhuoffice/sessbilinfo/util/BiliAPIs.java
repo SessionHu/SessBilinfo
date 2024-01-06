@@ -1,5 +1,6 @@
 package tk.xhuoffice.sessbilinfo.util;
 
+import com.google.gson.JsonObject;
 import java.util.HashMap;
 import java.util.Map;
 import tk.xhuoffice.sessbilinfo.net.Http;
@@ -39,18 +40,16 @@ public class BiliAPIs {
         try {
             response = Http.get(url.toString());
         } catch(HttpConnectException e) {
-            StringBuilder msg = new StringBuilder("请求异常: ");
-            if(e.getCause()!=null) {
-                msg.append(e.getCause().toString());
-            } else {
-                msg.append(e.toString());
-            }
-            Logger.errln(msg.toString());
+            Logger.errln("请求异常: "+e.getCause().toString());
             // if Logger.debug == true
             if(Logger.debug) {
                 OutFormat.outThrowable(e.getCause(),0);
             }
-            response = "{\"code\":-8888}";
+            // generate response json
+            JsonObject json = new JsonObject();
+            json.addProperty("code",-8888);
+            json.addProperty("message",e.getMessage());
+            response = JsonLib.GSON.toJson(json);
         }
         // return
         return response;
