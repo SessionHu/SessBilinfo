@@ -76,11 +76,11 @@ public class OutFormat {
     }
 
     /**
-     * Reads a line of input string from {@code System#in}.
+     * Reads a line of input string from {@code Frame#terminal}.
      * @param typ  Input text type
      * @param tip  Text before prompt
      * @param scp  Save cursor postion
-     * @return     String read from {@code System#in}.
+     * @return     String read from {@code Frame#terminal}.
      */
     public static String getString(String typ, String tip, boolean scp) {
         if(scp) {
@@ -93,26 +93,18 @@ public class OutFormat {
         while(true) {
             // 定义变量
             String str = null;
-            String log = "";
-            // 输出提示
-            if(tip!=null && tip.isEmpty()) {
-                log = tip;
-                Prompt.set(log);
-            } else {
-                Prompt.set();
-            }
-            log += "> ";
+            StringBuilder log;
             // 读取控制台输入
-            try {
-                str = SCAN.nextLine();
-                // write to log
-                log += str;
-                Logger.writeln(log);
-            } catch(java.util.NoSuchElementException e) {
-                Logger.fataln("非法的输入");
-                System.exit(1);
+            str = Prompt.getNextLine(tip);
+            // write to log
+            if(tip!=null && !tip.isEmpty()) {
+                log = new StringBuilder(tip);
+                log.append("> ");
+            } else {
+                log = new StringBuilder("> ");
             }
-            Prompt.unset();
+            log.append(str);
+            Logger.writeln(log.toString());
             // 为空时的处理
             str = str.trim();
             if(str.isEmpty()) {
@@ -144,22 +136,21 @@ public class OutFormat {
     }
     
     /**
-     * Reads a line of input long positive number as String from {@code System#in}.
+     * Reads a line of input long positive number as String from {@code Frame#terminal}.
      * @param typ     Input text type
-     * @return        String read from {@code System#in}.
+     * @return        String read from {@code Frame#terminal}.
      */
     public static String getPositiveLongAsString(String typ) {
         return getPositiveLongAsString(typ,null);
     }
     
     /**
-     * Reads a line of input long positive number as String from {@code System#in}.
+     * Reads a line of input long positive number as String from {@code Frame#terminal}.
      * @param typ     Input text type
-     * @param strNum  Input string instead of {@code System#in}.
-     * @return        String read from {@code System#in}.
+     * @param strNum  Input string instead of {@code Frame#terminal}.
+     * @return        String read from {@code Frame#terminal}.
      */
     public static String getPositiveLongAsString(String typ, String strNum) {
-        System.out.print("\033[s");
         // 定义并初始化变量
         String input = "";
         while(true) {
@@ -312,7 +303,7 @@ public class OutFormat {
      */
     public static String[] pageBreak(String str) {
         // prepare variables
-        int lns = Frame.size.lns()-2;
+        int lns = Frame.size.getRows()-2;
         String[] lines = str.split("\\n");
         List<String> pages = new ArrayList<>();
         // lines to pages

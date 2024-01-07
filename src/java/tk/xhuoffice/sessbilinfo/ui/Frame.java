@@ -3,40 +3,52 @@ package tk.xhuoffice.sessbilinfo.ui;
 import java.io.IOException;
 import java.util.Arrays;
 import org.fusesource.jansi.AnsiConsole;
+import org.jline.terminal.Size;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
+import tk.xhuoffice.sessbilinfo.Lancher;
 import tk.xhuoffice.sessbilinfo.Main;
 
 
 public class Frame {
 
     public static Size size;
-    static {
-        try {
-            size = Size.get();
-        } catch(IOException e) {
-            size = new Size(80,24);
-        }
-    }
+    public static Terminal terminal;
     
-    public static void main(String... args) {
+    public static void main(String... args) throws IOException {
         // load JANSI
-        loadJansi();
-        // reset screen
-        reset();
-    }
-    
-    public static void loadJansi() {
         if(System.getenv("TERM")==null||!System.getenv("TERM").contains("xterm")) {
             AnsiConsole.systemInstall();
         }
+        // load JLINE
+        terminal = TerminalBuilder.builder().system(true).build();
+        size = terminal.getSize();
+        sizeGetter.start();
+        // reset screen
+        reset();
     }
-    
-    public static void unloadJansi() {
-        AnsiConsole.systemUninstall();
-    }
-    
+
+    public static volatile boolean exitable = false;
+
+    private static Thread sizeGetter = new Thread(() -> {
+        Size newsize;
+        while(!Lancher.exit) {
+            // size
+            newsize = terminal.getSize();
+            if(!newsize.equals(size)) {
+                size = newsize;
+            }
+            // sleep
+            try {
+                Thread.sleep(1000);
+            } catch(InterruptedException e) {}
+        }
+        exitable = true;
+    },"SizeGetter");
+
     public static void printTitle() {
         String titleSpace = null; {
-            char[] spaces = new char[size.cols()-Main.SOFT_TITLE.length()];
+            char[] spaces = new char[size.getColumns()-Main.SOFT_TITLE.length()];
             Arrays.fill(spaces,' ');
             titleSpace = new String(spaces);
         }
@@ -56,5 +68,5 @@ public class Frame {
         // title
         printTitle();
     }
-    
+
 }

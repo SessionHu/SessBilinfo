@@ -1,6 +1,7 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.io.File;
+import org.fusesource.jansi.AnsiConsole;
 import tk.xhuoffice.sessbilinfo.net.CookieFile;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.ui.Prompt;
@@ -22,7 +23,7 @@ public class Main {
                 // 执行操作
                 task(id);
                 if(!Logger.enter2continue()) {
-                    System.exit(0);
+                    Lancher.exit(Lancher.ExitType.OK);
                 }
                 // reset screen
                 Frame.reset();
@@ -30,11 +31,11 @@ public class Main {
         } catch(Exception e) {
             Logger.fataln("发生未知异常");
             OutFormat.outThrowable(e,4);
-            System.exit(127);
+            Lancher.exit(16);
         } catch(Error e) {
             Logger.fataln("发生未知错误");
             OutFormat.outThrowable(e,4);
-            System.exit(127);
+            Lancher.exit(17);
         }
     }
     
@@ -50,12 +51,12 @@ public class Main {
                 "5. 获取IP地理位置\n"+
                 "6. 修改 Cookie\n"+
                 "0. 退出");
-        Prompt.set();
         // 获取输入信息
+        System.out.print("\033[s");
         try {
-            id = Integer.parseInt(OutFormat.SCAN.nextLine());
-            Prompt.unset();
-        } catch(NumberFormatException|java.util.NoSuchElementException e) {}
+            id = Integer.parseInt(Prompt.getNextLine());
+        } catch(NumberFormatException e) {}
+        System.out.print("\033[u");
         return id;
     }
     
@@ -80,12 +81,12 @@ public class Main {
             CookieFile.edit();
         } else if(id==0) {
             // 退出
-            System.exit(0);
+            Lancher.exit(Lancher.ExitType.OK);
         } else {
             // print warning
             Logger.warnln("无效的操作编号");
             // 退出
-            System.exit(0);
+            Lancher.exit(Lancher.ExitType.OK);
         }
     }
 
@@ -99,7 +100,7 @@ public class Main {
         }
     }
 
-    public static void cmdArgs(String[] args) {
+    public static void cmdArgs(String... args) {
         // 判断命令行参数
         if(args.length==0) {
             return;
@@ -110,7 +111,7 @@ public class Main {
                 case "-h":
                 case "--help":
                     printHelpInfo();
-                    System.exit(0);
+                    Lancher.exit(Lancher.ExitType.OK);
                     break;
                 case "-v":
                 case "--version":
@@ -121,7 +122,7 @@ public class Main {
                             "Copyright (C) 2023 SessionHu\n"+
                             "Cookie Path:  "+CookieFile.getCookieFilePath()+"\n"+
                             "Current Time: "+System.currentTimeMillis()/1000L);
-                    System.exit(0);
+                    Lancher.exit(Lancher.ExitType.OK);
                     break;
                 case "-d":
                 case "--debug":
@@ -136,7 +137,8 @@ public class Main {
                 case "-a":
                 case "--force-ansi":
                     // Force use of JANSI library
-                    Frame.loadJansi();
+                    AnsiConsole.systemInstall();
+                    break;
                 default:
                     // nothing here...
             }

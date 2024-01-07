@@ -31,7 +31,7 @@ public class Logger {
         }
     }
     
-    protected static void writeln(String str) {
+    protected static synchronized void writeln(String str) {
         // is null or empty?
         if(str==null || (str=str.trim()).isEmpty() || out==null) {
             return;
@@ -69,7 +69,7 @@ public class Logger {
         }
     }
     
-    private static void printLinesForEach(String[] lines) {
+    private static synchronized void printLinesForEach(String[] lines) {
         printLinesForEach(lines,false);
     }
     
@@ -167,7 +167,7 @@ public class Logger {
     }
     
     public static String[] lineSplitDesc(String str, String fullDesc) {
-        String[] lines = str.replace("\r\n","\n").replace("\n\n","\n").split("\\n");
+        String[] lines = str.replace("\r\n","\n").split("\\n");
         for(int i = 0; i < lines.length; i++) {
             lines[i] = fullDesc + lines[i];
         }
@@ -178,13 +178,13 @@ public class Logger {
         // only support ONE line
         text = text.replace("\r","").replace("\n","");
         clearFootln();
-        System.out.print("\033["+Frame.size.lns()+"f"+text);
+        System.out.print("\033["+Frame.size.getColumns()+"f"+text);
         // write to file
         writeln(text);
     }
     
     public static void clearFootln() {
-        System.out.printf("\033[%d;0f\033[2K",Frame.size.lns());
+        System.out.printf("\033[%d;0f\033[2K",Frame.size.getRows());
     }
     
     /**

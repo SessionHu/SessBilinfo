@@ -1,5 +1,11 @@
 # 发行注记
 
+## 2024
+
+### January
+
+- Jan 7  引入 `org.jline` 库
+
 ## 2023
 
 ### October
