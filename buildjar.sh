@@ -7,9 +7,9 @@ echo -e "Building..."
 
 lsb_release
 if [ $? -eq 0 ]; then
-    export cp="./lib/gson-2.10.1.jar:./lib/jansi-2.4.1.jar"
+    export cp="./lib/gson-2.10.1.jar:./lib/jansi-2.4.1.jar:./lib/jline-3.24.1.jar:./lib/jna-5.14.0.jar"
 else
-    export cp="./lib/gson-2.10.1.jar;./lib/jansi-2.4.1.jar"
+    export cp="./lib/gson-2.10.1.jar;./lib/jansi-2.4.1.jar;./lib/jline-3.24.1.jar;./lib/jna-5.14.0.jar"
 fi
 
 javac -encoding utf-8 \
@@ -25,10 +25,7 @@ javac -encoding utf-8 \
 if [ $? -eq 0 ]; then
     echo -e "Packing..."
     cp ./NOTES.md ./README.md ./LICENSE ./RELEASE.md build/
-    unzip -o lib/gson-2.10.1.jar -d build/
-    unzip -o lib/jansi-2.4.1.jar -d build/
     cd build/
-    rm -r META-INF
     jar -cvfm 'SessBilinfo.jar' ../manifest -C ./ .
     cd ..
     echo -e "Done!"

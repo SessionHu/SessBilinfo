@@ -2,9 +2,9 @@ echo -e "Building..."
 
 lsb_release
 if [ $? -eq 0 ]; then
-    export cp="./lib/gson-2.10.1.jar:./lib/jansi-2.4.1.jar"
+    export cp="./lib/gson-2.10.1.jar:./lib/jansi-2.4.1.jar:./lib/jline-3.24.1.jar:./lib/jna-5.14.0.jar"
 else
-    export cp="./lib/gson-2.10.1.jar;./lib/jansi-2.4.1.jar"
+    export cp="./lib/gson-2.10.1.jar;./lib/jansi-2.4.1.jar;./lib/jline-3.24.1.jar;./lib/jna-5.14.0.jar"
 fi
 
 javac -encoding utf-8 \
