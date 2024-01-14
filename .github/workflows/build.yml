@@ -21,7 +21,7 @@ jobs:
           distribution: 'liberica'
           architecture: 'x64'
       - name: Build
-        run: bash ./buildjar.sh
+        run: bash ./psb4j.sh
       - name: Upload
         uses: actions/upload-artifact@v3
         with:
