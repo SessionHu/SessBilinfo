@@ -36,7 +36,7 @@ public class Downloader {
         } catch(java.net.MalformedURLException e) {
             throw new HttpConnectException("非法的 URL: "+e.getMessage());
         }
-        this.fname = Paths.get(url0.getPath()).getFileName().toString();;
+        this.fname = Paths.get(url0.getPath()).getFileName().toString();
         this.path = fileDirPath + this.fname;
         this.file = new File(this.path);
         try {
@@ -108,10 +108,10 @@ public class Downloader {
     public File download() {
         // check if can download
         if(this.out==null||this.status.equals("init")) {
-            throw new IllegalStateException( "File "+this.fname+" could not be created");
+            throw new IllegalStateException("File "+this.fname+" could not be created");
         }
         if(this.conn==null||this.status.equals("finished")) {
-            throw new IllegalStateException( "File "+this.fname+" has already been downloaded");
+            throw new IllegalStateException("File "+this.fname+" has already been downloaded");
         }
         // connect
         this.status = "downloading";

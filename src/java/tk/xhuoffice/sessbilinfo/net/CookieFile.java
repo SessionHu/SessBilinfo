@@ -72,7 +72,7 @@ public class CookieFile {
                 if(tips) {
                     Logger.debugln("正在创建目录 "+parentDir.getName());
                 }
-                parentDir.mkdirs();
+                parentDir.mkdir();
                 if(parentDir.getName().startsWith(".")&&System.getProperty("os.name").toLowerCase().contains("windows")) {
                     // 仅在 Windows 下隐藏目录  (类Unix无隐藏属性)
                     hideWinDir(parentDir.getCanonicalPath());
