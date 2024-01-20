@@ -1,6 +1,5 @@
 package tk.xhuoffice.sessbilinfo;
 
-import sun.misc.Signal;
 import tk.xhuoffice.sessbilinfo.net.Setting;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.util.Logger;
@@ -8,14 +7,6 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 
 public class Lancher {
-    
-    static {
-        Signal.handle(new Signal("INT"), signal -> {
-            System.out.println();
-            Logger.debugln("SIGINT signal received, exit!");
-            exit(ExitType.OK);
-        });
-    }
 
     public static void main(String[] args) {
         // 运行前初始化

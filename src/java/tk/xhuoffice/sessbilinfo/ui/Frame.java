@@ -8,6 +8,7 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import tk.xhuoffice.sessbilinfo.Lancher;
 import tk.xhuoffice.sessbilinfo.Main;
+import tk.xhuoffice.sessbilinfo.util.Logger;
 
 
 public class Frame {
@@ -21,7 +22,13 @@ public class Frame {
             AnsiConsole.systemInstall();
         }
         // load JLINE
-        terminal = TerminalBuilder.builder().system(true).build();
+        terminal = TerminalBuilder.builder().system(true).signalHandler(signal -> {
+            if(signal.equals(Terminal.Signal.INT)) {
+                System.out.println();
+                Logger.debugln("SIGINT signal received, exit!");
+                Lancher.exit(Lancher.ExitType.OK);
+            }
+        }).build();
         size = terminal.getSize();
         sizeGetter.start();
         // reset screen
