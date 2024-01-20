@@ -5,6 +5,7 @@ import java.io.IOException;
 import tk.xhuoffice.sessbilinfo.net.CookieFile;
 import tk.xhuoffice.sessbilinfo.net.StringCoder;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
+import tk.xhuoffice.sessbilinfo.ui.Prompt;
 
 
 
@@ -194,7 +195,7 @@ public class Logger {
     public static boolean enter2continue() {
         try {
             footln("Press Enter key to continue ...");
-            OutFormat.SCAN.nextLine();
+            Prompt.getPasswordLine((char)0);
             clearFootln();
             return true;
         } catch(java.util.NoSuchElementException e) {

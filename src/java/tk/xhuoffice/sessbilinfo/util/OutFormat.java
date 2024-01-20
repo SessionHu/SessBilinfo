@@ -10,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Scanner;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.ui.Prompt;
 
@@ -24,7 +23,6 @@ public class OutFormat {
     private OutFormat() {}
 
     private static final ZoneId ZONE_HK = ZoneId.of("Asia/Hong_Kong");
-    public static final Scanner SCAN = new Scanner(System.in);
     
     public static String time(long seconds) {
         Duration duration = Duration.ofSeconds(seconds);
@@ -186,11 +184,14 @@ public class OutFormat {
     }
     
     public static void outThrowable(Throwable e, int l) {
+        Logger.throwabln(getThrowableStackTrace(e),l);
+    }
+    
+    public static String getThrowableStackTrace(Throwable e) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
-        String stackTrace = sw.toString();
-        Logger.throwabln(stackTrace,l);
+        return sw.toString();
     }
 
     public static String xmlToANSI(String text) {

@@ -26,7 +26,23 @@ public class Lancher {
             exit(ExitType.LOAD_FATAL);
         }
         // 启动!
-        Main.main();
+        while(true) {
+            try {
+                Main.main();
+            } catch(Exception e) {
+                Logger.fataln("发生未知异常");
+                OutFormat.outThrowable(e,4);
+                Lancher.exit(Lancher.ExitType.RUNTIME_EXCEPTION);
+            } catch(StackOverflowError e) {
+                Logger.fataln("堆栈...溢出了...");
+                Logger.throwabln(OutFormat.shorterString(1024,OutFormat.getThrowableStackTrace(e)),4);
+                System.gc();
+            } catch(Error e) {
+                Logger.fataln("发生未知错误");
+                OutFormat.outThrowable(e,4);
+                Lancher.exit(Lancher.ExitType.RUNTIME_ERROR);
+            }
+        }
     }
 
     /**
@@ -49,7 +65,7 @@ public class Lancher {
         exit(type.code);
     }
 
-    public static enum ExitType {
+    public enum ExitType {
         OK(0),
         LOAD_FATAL(1),
         IO_FATAL(2),

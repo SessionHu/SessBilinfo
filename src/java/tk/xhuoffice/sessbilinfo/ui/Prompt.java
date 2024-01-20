@@ -17,11 +17,19 @@ public class Prompt {
         } else {
             prompt = "> ";
         }
+        return getPasswordLine(prompt,null);
+    }
+
+    public static String getNextLine() {
+        return getNextLine(null);
+    }
+
+    public static String getPasswordLine(String prompt, Character mask) {
         String nextline = null;
         while(nextline==null) {
             try {
                 System.out.printf("\033[%df\033[2K",Frame.size.getRows()-1);
-                nextline = lineReader.readLine(prompt);
+                nextline = lineReader.readLine(prompt,mask);
             } catch(org.jline.reader.UserInterruptException e) {
                 System.out.print("\033[A");
             } catch(org.jline.reader.EndOfFileException e) {
@@ -35,8 +43,8 @@ public class Prompt {
         return nextline;
     }
 
-    public static String getNextLine() {
-        return getNextLine(null);
+    public static String getPasswordLine(Character mask) {
+        return getPasswordLine(null,mask);
     }
 
 }

@@ -16,27 +16,21 @@ public class Main {
     public static final String SOFT_TITLE  = SOFT_NAME+" "+SOFT_VERSION;
     
     public static void main(String... args) {
-        try {
-            while(true) {
-                // 显示菜单
-                int id = menu();
-                // 执行操作
-                task(id);
-                if(!Logger.enter2continue()) {
-                    Lancher.exit(Lancher.ExitType.OK);
-                }
-                // reset screen
-                Frame.reset();
+        while(true) {
+            // 显示菜单
+            int id = menu();
+            // 执行操作
+            task(id);
+            if(!Logger.enter2continue()) {
+                Lancher.exit(Lancher.ExitType.OK);
             }
-        } catch(Exception e) {
-            Logger.fataln("发生未知异常");
-            OutFormat.outThrowable(e,4);
-            Lancher.exit(16);
-        } catch(Error e) {
-            Logger.fataln("发生未知错误");
-            OutFormat.outThrowable(e,4);
-            Lancher.exit(17);
+            // reset screen
+            Frame.reset();
         }
+    }
+
+    private static int a() {
+        return a();
     }
     
     public static int menu() {
