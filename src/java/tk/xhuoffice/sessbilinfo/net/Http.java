@@ -1,6 +1,5 @@
 package tk.xhuoffice.sessbilinfo.net;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -253,18 +252,18 @@ public class Http {
             encoding = "UTF-8";
         }
         // 读取返回数据
-        BufferedReader in;
+        InputStreamReader in;
         if(responseCode==200) {
             // 正常读取返回数据
-            in = new BufferedReader(new InputStreamReader(conn.getInputStream(),encoding));
+            in = new InputStreamReader(conn.getInputStream(),encoding);
         } else {
             // HTTP 状态码不正常时
-            in = new BufferedReader(new InputStreamReader(conn.getErrorStream(),encoding));
+            in =new InputStreamReader(conn.getErrorStream(),encoding);
         }
-        String inputLine;
+        int c;
         StringBuilder response = new StringBuilder();
-        while((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
+        while((c = in.read()) != -1) {
+            response.append((char)c);
         }
         in.close();
         // 打印调试日志
