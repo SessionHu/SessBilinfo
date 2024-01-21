@@ -1,6 +1,10 @@
 # build
 build/*
 docs/*
+lib
 
 # vscode
 .vscode/
+
+# test
+*test*
