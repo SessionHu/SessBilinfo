@@ -46,7 +46,7 @@ public class UserInfo implements Bilinfo {
             usr = new UserInfo(mid);
         }
         Logger.println("正在请求数据...");
-        StringBuilder usrinfo = new StringBuilder("------------------------\n \n");
+        StringBuilder usrinfo = new StringBuilder("------------------------\n\n");
         try {
             usrinfo.append(usr.card());
             usrinfo.append(usr.space());
@@ -55,7 +55,7 @@ public class UserInfo implements Bilinfo {
             usrcache = usr;
         } catch(BiliException e) {
             usrinfo.append(e.getDetailMessage());
-            usrinfo.append("\n \n------------------------");
+            usrinfo.append("\n\n------------------------");
         }
         // 输出数据
         Frame.reset();
@@ -207,7 +207,7 @@ public class UserInfo implements Bilinfo {
                 cardinfo.append(this.officalTag+": "+this.officalInfo+"\n");
             }
             cardinfo.append("签名 "+this.sign+"\n");
-            cardinfo.append(" \n");
+            cardinfo.append("\n");
             return (this.cardinfo=cardinfo.toString());
         } else {
             throw BiliAPIs.codeErrExceptionBuilder(this.cardjson);
@@ -257,7 +257,7 @@ public class UserInfo implements Bilinfo {
      */
     public String spaceNotice() {
         if(!this.spaceNotice.isEmpty()) {
-            return "空间公告\n"+this.spaceNotice+"\n \n";
+            return "空间公告\n"+this.spaceNotice;
         }
         if(this.spaceNoticeJson==null) {
             // 发送请求
@@ -268,8 +268,8 @@ public class UserInfo implements Bilinfo {
         if(JsonLib.getInt(this.spaceNoticeJson,"code")==0) {
             String data = JsonLib.getString(this.spaceNoticeJson,"data");
             // 处理返回结果
-            if(data!=null) {
-                return "空间公告\n"+(this.spaceNotice=data)+"\n \n";
+            if(data!=null && !data.trim().isEmpty()) {
+                return "空间公告\n"+(this.spaceNotice=data);
             }
         } else {
             // 输出错误信息
@@ -315,7 +315,7 @@ public class UserInfo implements Bilinfo {
                     }
                     // 整理处理信息
                     listag = listag.substring(0, listag.length() - 2);
-                    listag += "\n \n";
+                    listag += "\n\n";
                     // 输出处理信息
                     return (this.spaceTag=listag);
                 }
@@ -378,7 +378,7 @@ public class UserInfo implements Bilinfo {
         topinfo.append("标题 "+this.spaceTop.title+"\n");
         topinfo.append("AV号 "+this.spaceTop.aid+"   "+date+"   时长 "+playtime+"\n");
         topinfo.append("播放 "+strView+"   弹幕 "+strDanmaku+"\n");
-        topinfo.append("简介 "+desc+"\n \n");
+        topinfo.append("简介 "+desc+"\n\n");
         return topinfo.toString();
     }
     
@@ -436,7 +436,7 @@ public class UserInfo implements Bilinfo {
             result.append("   " + playtime + "   播放 " + strView + "   弹幕 " + strDanmaku + "\n");
         }
         // 返回信息
-        result.append(" \n");
+        result.append("\n");
         return result.toString();
     }
     
