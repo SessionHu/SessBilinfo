@@ -8,31 +8,43 @@ import tk.xhuoffice.sessbilinfo.ui.Prompt;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
+/**
+ * User entrance.
+ */
 
 public class Main {
     
+    /**
+     * Application name */
     public static final String SOFT_NAME = "SessBilinfo";
+    /**
+     * Application version */
     public static final String SOFT_VERSION = "1.1.0-beta.2";
-    public static final String SOFT_TITLE  = SOFT_NAME+" "+SOFT_VERSION;
+    /**
+     * Application title */
+    public static final String SOFT_TITLE = SOFT_NAME+" "+SOFT_VERSION;
     
+    /**
+     * User entrance.
+     * @param args unused
+     */
     public static void main(String... args) {
         while(true) {
             // 显示菜单
             int id = menu();
             // 执行操作
             task(id);
-            if(!Logger.enter2continue()) {
-                Lancher.exit(Lancher.ExitType.OK);
-            }
+            // Press Enter key to continue ...
+            Logger.enter2continue();
             // reset screen
             Frame.reset();
         }
     }
-
-    private static int a() {
-        return a();
-    }
     
+    /**
+     * Display menu.
+     * @return task id
+     */
     public static int menu() {
         int id = -1;
         // 提示输入信息
@@ -54,6 +66,10 @@ public class Main {
         return id;
     }
     
+    /**
+     * Run task.
+     * @param task id
+     */
     public static void task(int id) {
         if(id==1) {
             // 获取用户信息
@@ -73,6 +89,14 @@ public class Main {
         } else if(id==6) {
             // 修改 Cookie
             CookieFile.edit();
+        // } else if(id==114514) {
+        //     // for test
+        //     System.out.print("\033[12;34f");
+        //     Cursor cursor = Prompt.getCursorPosition();
+        //     System.out.println();
+        //     Logger.println(String.format("Cursor Position: X:%d, Y:%d", cursor.getX(), cursor.getY()));
+        //     Logger.println(Frame.terminal);
+        //     Logger.println(Frame.size);
         } else if(id==0) {
             // 退出
             Lancher.exit(Lancher.ExitType.OK);
@@ -84,6 +108,9 @@ public class Main {
         }
     }
 
+    /**
+     * Parse environment variables.
+     */
     public static void env() {
         // 是否启用 DEBUG 输出
         {
@@ -94,6 +121,10 @@ public class Main {
         }
     }
 
+    /**
+     * Parse command arguments.
+     * @param command arguments
+     */
     public static void cmdArgs(String... args) {
         // 判断命令行参数
         if(args.length==0) {
@@ -139,6 +170,9 @@ public class Main {
         }
     }
     
+    /**
+     * Print help information of SessBilinfo.
+     */
     public static void printHelpInfo() {
         // 获取 JAR 包 文件名
         String jarFileName;

@@ -10,31 +10,52 @@ import tk.xhuoffice.sessbilinfo.Lancher;
 import tk.xhuoffice.sessbilinfo.Main;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 
+/**
+ * UI frame for application.
+ */
 
 public class Frame {
 
+    // NO <init>
+    private Frame() {}
+
+    /**
+     * Visible terminal size.
+     */
     public static Size size;
+    
+    /**
+     * Terminal to run the application.
+     * @see org.jline.terminal.TerminalBuilder#system(boolean)
+     */
     public static Terminal terminal;
     
+    /**
+     * Initialize UI.
+     * @param args  unused
+     * @throws IOException  from {@link TerminalBuilder#build()}
+     */
     public static void main(String... args) throws IOException {
         // load JANSI
         if(System.getenv("TERM")==null||!System.getenv("TERM").contains("xterm")) {
             AnsiConsole.systemInstall();
         }
         // load JLINE
-        terminal = TerminalBuilder.builder().system(true).signalHandler(signal -> {
-            if(signal.equals(Terminal.Signal.INT)) {
-                System.out.println();
-                Logger.debugln("SIGINT signal received, exit!");
-                Lancher.exit(Lancher.ExitType.OK);
-            }
-        }).build();
+        terminal = TerminalBuilder.builder().system(true).build();
+        terminal.handle(Terminal.Signal.INT, signal -> {
+            System.out.println();
+            Logger.debugln("SIGINT signal received, exit!");
+            Lancher.exit(Lancher.ExitType.OK);
+        });
         size = terminal.getSize();
         sizeGetter.start();
         // reset screen
         reset();
     }
 
+    /**
+     * Whether UI allows exit safely now.
+     */
     public static volatile boolean exitable = false;
 
     private static Thread sizeGetter = new Thread(() -> {
@@ -47,12 +68,15 @@ public class Frame {
             }
             // sleep
             try {
-                Thread.sleep(1000);
+                Thread.sleep(50);
             } catch(InterruptedException e) {}
         }
         exitable = true;
     },"SizeGetter");
 
+    /**
+     * Print title.
+     */
     public static void printTitle() {
         String titleSpace = null; {
             char[] spaces = new char[size.getColumns()-Main.SOFT_TITLE.length()];
@@ -60,13 +84,21 @@ public class Frame {
             titleSpace = new String(spaces);
         }
         // text for print
-        String text = "\033[7m" + Main.SOFT_TITLE + titleSpace + "\033[0m";
+        StringBuilder text = new StringBuilder();
+        text.append("\033[7m");
+        text.append(Main.SOFT_TITLE);
+        text.append(titleSpace);
+        text.append("\033[0m");
         // set line
         System.out.print("\033[s");
-        System.out.print("\033[1f"+text);
+        System.out.print("\033[1f");
+        System.out.print(text);
         System.out.print("\033[u");
     }
     
+    /**
+     * Reset temporary UI settings.
+     */
     public static void reset() {
         // clear
         System.out.print("\033[2J");
