@@ -58,11 +58,9 @@ public class Main {
                 "6. 修改 Cookie\n"+
                 "0. 退出");
         // 获取输入信息
-        System.out.print("\033[s");
         try {
             id = Integer.parseInt(Prompt.getNextLine());
         } catch(NumberFormatException e) {}
-        System.out.print("\033[u");
         return id;
     }
     
@@ -91,12 +89,6 @@ public class Main {
             CookieFile.edit();
         // } else if(id==114514) {
         //     // for test
-        //     System.out.print("\033[12;34f");
-        //     Cursor cursor = Prompt.getCursorPosition();
-        //     System.out.println();
-        //     Logger.println(String.format("Cursor Position: X:%d, Y:%d", cursor.getX(), cursor.getY()));
-        //     Logger.println(Frame.terminal);
-        //     Logger.println(Frame.size);
         } else if(id==0) {
             // 退出
             Lancher.exit(Lancher.ExitType.OK);

@@ -1,7 +1,5 @@
 package tk.xhuoffice.sessbilinfo.ui;
 
-import java.awt.Robot;
-import java.awt.event.KeyEvent;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Cursor;
@@ -53,20 +51,40 @@ public class Prompt {
      */
     public static String getPasswordLine(String prompt, Character mask) {
         String nextline = null;
-        while(nextline==null) {
-            try {
-                System.out.printf("\033[%df\033[2K",Frame.size.getRows()-1);
-                nextline = lineReader.readLine(prompt,mask);
-            } catch(org.jline.reader.UserInterruptException e) {
-                System.out.print("\033[A");
-            } catch(org.jline.reader.EndOfFileException e) {
-                System.out.print("\033[u");
-                Logger.fataln("非法的输入");
-                OutFormat.outThrowable(e,4);
-                Lancher.exit(Lancher.ExitType.IO_FATAL);
+        boolean clearline = (mask==null || (mask!=null && !mask.equals(Character.MIN_VALUE)));
+        synchronized(Frame.terminal) {
+            while(nextline==null) {
+                try {
+                    // set cursor position
+                    setCursorPosition(Frame.size.getRows()-1);
+                    // clear line
+                    if(clearline && Frame.terminal!=null) {
+                        System.out.print("\033[2K");
+                    }
+                    // read line
+                    nextline = lineReader.readLine(prompt,mask);
+                } catch(org.jline.reader.UserInterruptException e) {
+                    // do nothing...
+                } catch(org.jline.reader.EndOfFileException e) {
+                    // cursor up & clear line
+                    if(clearline && Frame.terminal!=null) {
+                        System.out.print("\033[A\033[2K");
+                    }
+                    // restore cursor position
+                    Prompt.restoreCursorPosition();
+                    // exit
+                    Logger.fataln("非法的输入");
+                    OutFormat.outThrowable(e,4);
+                    Lancher.exit(Lancher.ExitType.IO_FATAL);
+                }
             }
+            // clear line
+            if(clearline && Frame.terminal!=null) {
+                System.out.print("\033[A\033[2K");
+            }
+            // restore cursor position
+            Prompt.restoreCursorPosition();
         }
-        System.out.printf("\033[%df\033[2K",Frame.size.getRows()-1);
         return nextline;
     }
 
@@ -80,48 +98,60 @@ public class Prompt {
         return getPasswordLine(null,mask);
     }
 
-    private static Robot robot;
-    static {
-        try {
-            robot = new Robot();
-        } catch(java.awt.AWTException e) {
-            Logger.fataln("无法获取光标位置");
-            OutFormat.outThrowable(e,4);
+    /**
+     * Set cursor position.
+     * @param x X
+     * @param y Y
+     * @return cursor position
+     */
+    public static Cursor setCursorPosition(int y, int x) {
+        // cannot set
+        if(Frame.terminal==null) {
+            return new Cursor(0,0);
+        }
+        // param
+        if(x<-1) {
+            throw new IllegalArgumentException("x");
+        } else if(y<0) {
+            throw new IllegalArgumentException("y");
+        }
+        // set
+        if(x==-1) {
+            System.out.printf("\033[%df",y);
+            return new Cursor(1,y);
+        } else {
+            System.out.printf("\033[%d;%df",y,x);
+            return new Cursor(x,y);
         }
     }
 
-    private static volatile Cursor cursor = null;
+    /**
+     * Set cursor Y position.
+     * @param y Y
+     * @return cursor position
+     */
+    public static Cursor setCursorPosition(int y) {
+        return setCursorPosition(y,-1);
+    }
 
     /**
-     * Query the terminal to report the cursor position.
-     * @return {@code null} if failed.
-     * @see org.jline.terminal#getCursorPosition(IntConsumer)
+     * Set cursor postion with {@link org.jline.terminal.Cursor}.
+     * @param cursor cursor
+     * @return cursor position
      */
-    public synchronized static Cursor getCursorPosition() {
-        if(robot==null) {
-            return null;
+    public static Cursor setCursorPosition(Cursor cursor) {
+        return setCursorPosition(cursor.getY(),cursor.getX());
+    }
+
+    public static void saveCursorPosition() {
+        if(Frame.terminal!=null) {
+            System.out.print("\033[s");
         }
-        cursor = null;
-        // press Enter
-        new Thread(() -> {
-            while(cursor==null){
-                // press enter
-                robot.keyPress(KeyEvent.VK_ENTER);
-            }
-            // release enter
-            robot.keyRelease(KeyEvent.VK_ENTER);
-        }, "AutoPressEnterKey").start();
-        // get pos
-        cursor = Frame.terminal.getCursorPosition(discarded->{});
-        if(cursor!=null) {
-            // offset
-            cursor = new Cursor(cursor.getX()+1,cursor.getY()+1);
-            // recover
-            Logger.enter2continue();
-            System.out.printf("\033[%d;%df\033[K", cursor.getY(), cursor.getX());
-            return cursor;
-        } else {
-            return null;
+    }
+
+    public static void restoreCursorPosition() {
+        if(Frame.terminal!=null) {
+            System.out.print("\033[u");
         }
     }
 

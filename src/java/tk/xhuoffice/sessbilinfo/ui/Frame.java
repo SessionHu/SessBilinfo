@@ -56,10 +56,18 @@ public class Frame {
     /**
      * Whether UI allows exit safely now.
      */
-    public static volatile boolean exitable = false;
+    public static volatile boolean exitable = true;
 
     private static Thread sizeGetter = new Thread(() -> {
+        // if terminal get failed
+        if(terminal==null || size==null || size.getColumns()<8) {
+            terminal = null;
+            size = null;
+            return;
+        }
+        // get size
         Size newsize;
+        exitable = false;
         while(!Lancher.exit) {
             // size
             newsize = terminal.getSize();
@@ -68,7 +76,7 @@ public class Frame {
             }
             // sleep
             try {
-                Thread.sleep(50);
+                Thread.sleep(48);
             } catch(InterruptedException e) {}
         }
         exitable = true;
@@ -78,8 +86,12 @@ public class Frame {
      * Print title.
      */
     public static void printTitle() {
+        int length = size.getColumns()-Main.SOFT_TITLE.length();
+        if(length<0) {
+            return;
+        }
         String titleSpace = null; {
-            char[] spaces = new char[size.getColumns()-Main.SOFT_TITLE.length()];
+            char[] spaces = new char[length];
             Arrays.fill(spaces,' ');
             titleSpace = new String(spaces);
         }
@@ -90,20 +102,23 @@ public class Frame {
         text.append(titleSpace);
         text.append("\033[0m");
         // set line
-        System.out.print("\033[s");
-        System.out.print("\033[1f");
+        Prompt.setCursorPosition(1);
         System.out.print(text);
-        System.out.print("\033[u");
+        Prompt.restoreCursorPosition();
     }
     
     /**
      * Reset temporary UI settings.
      */
     public static void reset() {
+        if(terminal==null) {
+            return;
+        }
         // clear
         System.out.print("\033[2J");
-        // cursor position
-        System.out.print("\033[2f");
+        // reset cursor
+        Prompt.setCursorPosition(2);
+        Prompt.saveCursorPosition();
         // title
         printTitle();
     }

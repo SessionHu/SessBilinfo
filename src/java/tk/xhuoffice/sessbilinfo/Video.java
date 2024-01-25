@@ -48,9 +48,8 @@ public class Video implements Bilinfo {
 
     public static String getAid() {
         String aid = "";
-        System.out.print("\033[s");
         while(true) {
-            String vid = OutFormat.getString("AV或BV号",false);
+            String vid = OutFormat.getString("AV或BV号");
             if(vid.toLowerCase().startsWith("av")) {
                 // AV号(avid)
                 aid = verifyAid(vid.substring(2,vid.length()));
@@ -69,7 +68,6 @@ public class Video implements Bilinfo {
             }
             if(!aid.isEmpty()) {
                 Logger.clearFootln();
-                System.out.print("\033[u");
                 return aid;
             } else {
                 Logger.footln("无效的输入");

@@ -87,21 +87,25 @@ public class Logger {
         }
     }
     
-    private static synchronized void printLinesForEach(String[] lines) {
+    private static void printLinesForEach(String[] lines) {
         printLinesForEach(lines,false);
     }
     
-    private static synchronized void printLinesForEach(String[] lines, boolean usestderr) {
+    private static void printLinesForEach(String[] lines, boolean usestderr) {
         // print
-        for(String text : lines) {
-            // print to screen
-            if(usestderr) {
-                System.err.println(text);
-            } else {
-                System.out.println(text);
+        synchronized(Frame.terminal) {
+            for(String text : lines) {
+                // print to screen
+                if(usestderr) {
+                    System.err.println(text);
+                } else {
+                    System.out.println(text);
+                }
+                // save cursor
+                Prompt.saveCursorPosition();
+                // write to file
+                writeln(text);
             }
-            // write to file
-            writeln(text);
         }
         // title
         if(Frame.terminal!=null && Frame.size!=null) {
@@ -261,7 +265,11 @@ public class Logger {
         // print
         if(Frame.terminal!=null && Frame.size!=null) {
             // normal
-            System.out.print("\033["+Frame.size.getColumns()+"f"+text);
+            synchronized(Frame.terminal) {
+                Prompt.setCursorPosition(Frame.size.getColumns());
+                System.out.print(text);
+                Prompt.restoreCursorPosition();
+            }
         } else {
             // no terminal
             System.out.println(text);
@@ -276,7 +284,10 @@ public class Logger {
      */
     public static void clearFootln() {
         if(Frame.terminal!=null && Frame.size!=null) {
-            System.out.printf("\033[%df\033[2K",Frame.size.getRows());
+            synchronized(Frame.terminal) {
+                System.out.printf("\033[%df\033[2K",Frame.size.getRows());
+                Prompt.restoreCursorPosition();
+            }
         }
     }
     

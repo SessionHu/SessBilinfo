@@ -80,57 +80,43 @@ public class OutFormat {
      * @param scp  Save cursor postion
      * @return     String read from {@code Frame#terminal}.
      */
-    public static String getString(String typ, String tip, boolean scp) {
-        if(scp) {
-            System.out.print("\033[s");
-        }
+    public static String getString(String typ, String tip) {
+        // var
         if(typ==null || typ.isEmpty()) {
             typ = "输入";
         }
-        // 获取输入
-        while(true) {
-            // 定义变量
-            String str = null;
-            StringBuilder log;
-            // 读取控制台输入
-            str = Prompt.getNextLine(tip);
-            // write to log
-            if(tip!=null && !tip.isEmpty()) {
-                log = new StringBuilder(tip);
-                log.append("> ");
-            } else {
-                log = new StringBuilder("> ");
+        String line;
+        String logprompt; {
+            StringBuilder sb = new StringBuilder();
+            // log prompt
+            if(tip!=null) {
+                sb.append(tip);
             }
-            log.append(str);
-            Logger.writeln(log.toString());
-            // 为空时的处理
-            str = str.trim();
-            if(str.isEmpty()) {
-                Logger.footln(typ+" 不能为空");
+            sb.append("> ");
+            logprompt = sb.toString();
+        }
+        // loop
+        while(true) {
+            // get next line
+            line = Prompt.getNextLine(tip);
+            // log
+            Logger.writeln(logprompt+line);
+            // if is empty
+            if(line.trim().isEmpty()) {
+                Logger.footln(typ+"不能为空");
             } else {
                 Logger.clearFootln();
-                if(scp) {
-                    System.out.print("\033[u");
-                }
-                return str;
+                return line;
             }
         }
     }
 
-    public static String getString(String typ, String tip) {
-        return getString(typ,tip,true);
-    }
-
     public static String getString(String typ) {
-        return getString(typ,null,true);
-    }
-
-    public static String getString(String typ, boolean scp) {
-        return getString(typ,null,scp);
+        return getString(typ,null);
     }
 
     public static String getString() {
-        return getString(null,null,true);
+        return getString(null,null);
     }
     
     /**
@@ -167,7 +153,7 @@ public class OutFormat {
                     // 提示并返回结果
                     Logger.println(typ+": "+num);
                     Logger.clearFootln();
-                    System.out.print("\033[u");
+                    Prompt.restoreCursorPosition();
                     return input;
                 } else {
                     // 输出警告
