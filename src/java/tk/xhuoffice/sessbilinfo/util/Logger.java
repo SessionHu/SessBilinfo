@@ -3,6 +3,8 @@ package tk.xhuoffice.sessbilinfo.util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import tk.xhuoffice.sessbilinfo.net.CookieFile;
 import tk.xhuoffice.sessbilinfo.net.StringCoder;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
@@ -26,6 +28,11 @@ public class Logger {
     public static final String[] LEVELS = {"DEBUG","INFO","WARN","ERROR","FATAL"};
     
     private static FileOutputStream out = null;
+
+    /**
+     * Log history. Size is 128.
+     */
+    public static List<String> history = new ArrayList<>(128);
     
     /**
      * Initialize writing log to file.
@@ -102,11 +109,20 @@ public class Logger {
         }
     }
     
-    private static void printLinesForEach(String[] lines) {
+    /**
+     * Print each string in the array directly.
+     * @param lines array
+     */
+    public static void printLinesForEach(String[] lines) {
         printLinesForEach(lines,false);
     }
     
-    private static void printLinesForEach(String[] lines, boolean usestderr) {
+    /**
+     * Print and write each string in the array directly with optional stderr.
+     * @param lines      array
+     * @param usestderr  Print using {@link System#err}
+     */
+    public static void printLinesForEach(String[] lines, boolean usestderr) {
         // print
         synchronized(Frame.terminal) {
             for(String text : lines) {
@@ -120,11 +136,16 @@ public class Logger {
                 Prompt.saveCursorPosition();
                 // write to file
                 writeln(text);
+                // add to history
+                if(history.size()==128) {
+                    history.remove(0);
+                }
+                history.add(text);
             }
-        }
-        // title
-        if(Frame.size!=null) {
-            Frame.printTitle();
+            // title
+            if(Frame.size!=null) {
+                Frame.printTitle();
+            }
         }
     }
     

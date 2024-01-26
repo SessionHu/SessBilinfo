@@ -78,6 +78,7 @@ public class Frame {
             newsize = terminal.getSize();
             if(!newsize.equals(size)) {
                 size = newsize;
+                redraw();
             }
             // sleep
             try {
@@ -122,13 +123,25 @@ public class Frame {
         if(terminal==null || size==null || cli) {
             return;
         }
-        // clear
-        System.out.print("\033[2J");
-        // reset cursor
-        Prompt.setCursorPosition(2);
-        Prompt.saveCursorPosition();
-        // title
-        printTitle();
+        synchronized(terminal) {
+            // clear
+            System.out.print("\033[2J");
+            Logger.history.clear();
+            // reset cursor
+            Prompt.setCursorPosition(2);
+            Prompt.saveCursorPosition();
+            // title
+            printTitle();
+        }
+    }
+
+    /**
+     * Redraw UI. Automatically executed when {@link size} changes.
+     */
+    public static void redraw() {
+        String[] history = Logger.history.toArray(new String[0]);
+        reset();
+        Logger.printLinesForEach(history);
     }
 
 }

@@ -1,7 +1,10 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import org.fusesource.jansi.AnsiConsole;
+import tk.xhuoffice.sessbilinfo.Lancher;
 import tk.xhuoffice.sessbilinfo.net.CookieFile;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.ui.Prompt;
@@ -28,7 +31,7 @@ public class Main {
      * User entrance.
      * @param args unused
      */
-    public static void main(String... args) {
+    public static void main(String... args) throws IOException {
         while(true) {
             // 显示菜单
             int id = menu();
@@ -68,7 +71,7 @@ public class Main {
      * Run task.
      * @param task id
      */
-    public static void task(int id) {
+    public static void task(int id) throws IOException {
         if(id==1) {
             // 获取用户信息
             UserInfo.getUserInfo();
@@ -87,8 +90,13 @@ public class Main {
         } else if(id==6) {
             // 修改 Cookie
             CookieFile.edit();
-        // } else if(id==114514) {
-        //     // for test
+        } else if(id==114514) {
+            // for test
+            FileWriter w = new FileWriter("unicode.txt");
+            for(char c = '\u0000'; c < '\uFFFF'; c++) {
+                w.write(c);
+            }
+            w.close();
         } else if(id==0) {
             // 退出
             Lancher.exit(Lancher.ExitType.OK);
