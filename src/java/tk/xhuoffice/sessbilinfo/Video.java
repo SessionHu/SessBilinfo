@@ -36,7 +36,7 @@ public class Video implements Bilinfo {
         Logger.println("正在请求数据...");
         Map.Entry<Video,String> result = getDetail(aid);
         StringBuilder videoInfo = new StringBuilder();
-        videoInfo.append("--------------------------------\n \n");
+        videoInfo.append("--------------------------------\n\n");
         videoInfo.append(result.getValue());
         videoInfo.append("--------------------------------");
         Logger.println("请求完毕");
@@ -48,6 +48,7 @@ public class Video implements Bilinfo {
 
     public static String getAid() {
         String aid = "";
+        AvBv avbv = new AvBv();
         while(true) {
             String vid = OutFormat.getString("AV或BV号");
             if(vid.toLowerCase().startsWith("av")) {
@@ -58,12 +59,11 @@ public class Video implements Bilinfo {
                 aid = verifyAid(vid);
             } else if(vid.toLowerCase().startsWith("bv")&&vid.length()==12) {
                 // BV号(标准12位)
-                aid = verifyAid(String.valueOf(new AvBv(vid).getAid()));
+                aid = verifyAid(String.valueOf(avbv.bvidToAid(vid)));
             } else if(vid.length()==10) {
                 // BV号(无bv头)
-                aid = verifyAid(String.valueOf(new AvBv("bv"+vid).getAid()));
+                aid = verifyAid(String.valueOf(avbv.bvidToAid("bv"+vid)));
             } else {
-                Logger.footln("无效的输入");
                 aid = "";
             }
             if(!aid.isEmpty()) {

@@ -31,7 +31,9 @@ public class AvBv {
     /**
      * Basic constructor.
      */
-    public AvBv() {}
+    public AvBv() {
+        Logger.debugln("AvBv实用工具");
+    }
     
     /**
      * Construct with {@code aid}.
@@ -86,7 +88,9 @@ public class AvBv {
     public int bvidToAid(String bvid) {
         long r = 0;
         for(int i = 0; i < 6; i++) {
-            r += MAP.get(bvid.charAt(S[i])) * Math.pow(58, i);
+            try {
+                r += MAP.get(bvid.charAt(S[i])) * Math.pow(58, i);
+            } catch(NullPointerException e) {}
         }
         int result = (int)((r - ADD) ^ XOR);
         // 输出结果
