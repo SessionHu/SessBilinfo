@@ -20,6 +20,11 @@ public class Frame {
     private Frame() {}
 
     /**
+     * CLI mode.
+     */
+    public static boolean cli = false;
+
+    /**
      * Visible terminal size.
      */
     public static Size size;
@@ -60,9 +65,9 @@ public class Frame {
 
     private static Thread sizeGetter = new Thread(() -> {
         // if terminal get failed
-        if(terminal==null || size==null || size.getColumns()<8) {
-            terminal = null;
+        if(terminal==null || size==null || size.getColumns()<8 || cli) {
             size = null;
+            cli = true;
             return;
         }
         // get size
@@ -86,6 +91,9 @@ public class Frame {
      * Print title.
      */
     public static void printTitle() {
+        if(size==null) {
+            return;
+        }
         int length = size.getColumns()-Main.SOFT_TITLE.length();
         if(length<0) {
             return;
@@ -111,7 +119,7 @@ public class Frame {
      * Reset temporary UI settings.
      */
     public static void reset() {
-        if(terminal==null) {
+        if(terminal==null || size==null || cli) {
             return;
         }
         // clear

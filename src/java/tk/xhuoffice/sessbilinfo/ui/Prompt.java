@@ -56,9 +56,11 @@ public class Prompt {
             while(nextline==null) {
                 try {
                     // set cursor position
-                    setCursorPosition(Frame.size.getRows()-1);
+                    if(Frame.size!=null) {
+                        setCursorPosition(Frame.size.getRows()-1);
+                    }
                     // clear line
-                    if(clearline && Frame.terminal!=null) {
+                    if(clearline && Frame.size!=null) {
                         System.out.print("\033[2K");
                     }
                     // read line
@@ -67,7 +69,7 @@ public class Prompt {
                     // do nothing...
                 } catch(org.jline.reader.EndOfFileException e) {
                     // cursor up & clear line
-                    if(clearline && Frame.terminal!=null) {
+                    if(clearline && Frame.size!=null) {
                         System.out.print("\033[A\033[2K");
                     }
                     // restore cursor position
@@ -78,9 +80,10 @@ public class Prompt {
                     Lancher.exit(Lancher.ExitType.IO_FATAL);
                 }
             }
-            // clear line
-            if(clearline && Frame.terminal!=null) {
-                System.out.print("\033[A\033[2K");
+            // cursor up & clear line
+            System.out.print("\033[A");
+            if(clearline && Frame.size!=null) {
+                System.out.print("\033[2K");
             }
             // restore cursor position
             Prompt.restoreCursorPosition();
@@ -106,7 +109,7 @@ public class Prompt {
      */
     public static Cursor setCursorPosition(int y, int x) {
         // cannot set
-        if(Frame.terminal==null) {
+        if(Frame.size==null) {
             return new Cursor(0,0);
         }
         // param
@@ -144,13 +147,13 @@ public class Prompt {
     }
 
     public static void saveCursorPosition() {
-        if(Frame.terminal!=null) {
+        if(Frame.size!=null) {
             System.out.print("\033[s");
         }
     }
 
     public static void restoreCursorPosition() {
-        if(Frame.terminal!=null) {
+        if(Frame.size!=null) {
             System.out.print("\033[u");
         }
     }

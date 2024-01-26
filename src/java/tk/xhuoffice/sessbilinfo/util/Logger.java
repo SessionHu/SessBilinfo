@@ -1,5 +1,6 @@
 package tk.xhuoffice.sessbilinfo.util;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import tk.xhuoffice.sessbilinfo.net.CookieFile;
@@ -36,6 +37,18 @@ public class Logger {
                 CookieFile.checkParentDir(fpath,false);
                 out = new FileOutputStream(fpath);
             } catch(IOException e) {}
+        }
+    }
+
+    /**
+     * Clear log files.
+     */
+    public static void clearLogs() {
+        File[] ls = new File(System.getProperty("user.home")+"/.openbili/logs").listFiles();
+        if(ls!=null && ls.length!=0) {
+            for(File file : ls) {
+                file.delete();
+            }
         }
     }
     
@@ -110,7 +123,7 @@ public class Logger {
             }
         }
         // title
-        if(Frame.terminal!=null && Frame.size!=null) {
+        if(Frame.size!=null) {
             Frame.printTitle();
         }
     }
@@ -247,7 +260,10 @@ public class Logger {
      * @param fullDesc  description
      */
     public static String[] lineSplitDesc(String str, String fullDesc) {
-        String[] lines = str.replace("\r\n","\n").replace("\r","\n").split("\\n");
+        String[] lines = str.replace("\r\n","\n") // dos to unix
+                            .replace("\r","\n")   // mac to unix
+                            .replace("\t","    ") // \t to 4 space
+                            .split("\\n");
         for(int i = 0; i < lines.length; i++) {
             lines[i] = fullDesc + lines[i];
         }
@@ -265,7 +281,7 @@ public class Logger {
         // clear foot line
         clearFootln();
         // print
-        if(Frame.terminal!=null && Frame.size!=null) {
+        if(Frame.size!=null) {
             // normal
             synchronized(Frame.terminal) {
                 Prompt.setCursorPosition(Frame.size.getColumns());
@@ -285,7 +301,7 @@ public class Logger {
      * @see Frame#size
      */
     public static void clearFootln() {
-        if(Frame.terminal!=null && Frame.size!=null) {
+        if(Frame.size!=null) {
             synchronized(Frame.terminal) {
                 Prompt.setCursorPosition(Frame.size.getRows());
                 System.out.print("\033[2K");

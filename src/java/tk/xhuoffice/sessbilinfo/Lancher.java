@@ -15,10 +15,10 @@ public class Lancher {
             Main.env();
             // 命令行参数处理
             Main.cmdArgs(args);
-            // load Setting
-            Setting.load();
             // log to file
             Logger.initWriter();
+            // load Setting
+            Setting.load();
             // load Terminal UI Frame
             Frame.main();
         } catch(Exception e) {

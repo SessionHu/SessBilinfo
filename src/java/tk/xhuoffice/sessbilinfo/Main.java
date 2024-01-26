@@ -156,6 +156,16 @@ public class Main {
                     // Force use of JANSI library
                     AnsiConsole.systemInstall();
                     break;
+                case "-c":
+                case "--clear-log":
+                    // clear log
+                    Logger.clearLogs();
+                    break;
+                case "-l":
+                case "--cli":
+                    // CLI mode
+                    Frame.cli = true;
+                    break;
                 default:
                     // nothing here...
             }
@@ -184,7 +194,9 @@ public class Main {
                 "    java -jar \""+jarFileName+"\"\n"+
                 "Command arguments:\n"+
                 "    -a, --force-ansi Force use of JANSI library\n"+
+                "    -c, --clear-log  Clear log files\n"+
                 "    -d, --debug      Enable DEBUG output\n"+
+                "    -l, --cli        Enable CLI mode\n"+
                 "    -n, --nocookie   Run the program after deleting the Cookie file\n"+
                 "Environment variables:\n"+
                 "    OPEN_BILI_DEBUG  The same as '-d' or '--debug' when the value is \"true\"\n"+
@@ -195,7 +207,9 @@ public class Main {
                 "	java -jar \""+jarFileName+"\"\n"+
                 "命令参数:\n"+
                 "    -a, --force-ansi 强制使用 JANSI 库\n"+
+                "    -c, --clear-log  清空日志文件\n"+
                 "    -d, --debug      启用 DEBUG 输出\n"+
+                "    -l, --cli        启用 CLI 模式\n"+
                 "    -n, --nocookie   删除 Cookie 文件后运行程序\n"+
                 "环境变量:\n"+
                 "    OPEN_BILI_DEBUG  当值为 \"true\" 时, 与 '-d' 或 '-debug' 相同\n"+
