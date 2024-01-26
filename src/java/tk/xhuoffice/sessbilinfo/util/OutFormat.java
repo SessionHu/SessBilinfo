@@ -103,7 +103,7 @@ public class OutFormat {
             Logger.writeln(logprompt+line);
             // if is empty
             if(line.trim().isEmpty()) {
-                Logger.footln(typ+"不能为空");
+                Logger.footln(typ+" 不能为空");
             } else {
                 Logger.clearFootln();
                 return line;
@@ -153,7 +153,6 @@ public class OutFormat {
                     // 提示并返回结果
                     Logger.println(typ+": "+num);
                     Logger.clearFootln();
-                    Prompt.restoreCursorPosition();
                     return input;
                 } else {
                     // 输出警告

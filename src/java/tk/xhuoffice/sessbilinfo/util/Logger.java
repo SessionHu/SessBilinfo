@@ -43,15 +43,17 @@ public class Logger {
      * Write string to log file. Line breaks will automatically added.
      * @param str  string to be written
      */
-    protected static synchronized void writeln(String str) {
+    protected static void writeln(String str) {
         // is null or empty?
         if(str==null || (str=str.trim()).isEmpty() || out==null) {
             return;
         }
         // write
         try {
-            out.write(str.getBytes(StringCoder.UTF_8));
-            out.write('\n');
+            synchronized(out) {
+                out.write(str.getBytes(StringCoder.UTF_8));
+                out.write('\n');
+            }
         } catch(IOException e) {}
     }
     
@@ -285,7 +287,8 @@ public class Logger {
     public static void clearFootln() {
         if(Frame.terminal!=null && Frame.size!=null) {
             synchronized(Frame.terminal) {
-                System.out.printf("\033[%df\033[2K",Frame.size.getRows());
+                Prompt.setCursorPosition(Frame.size.getRows());
+                System.out.print("\033[2K");
                 Prompt.restoreCursorPosition();
             }
         }
