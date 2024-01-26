@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Paths;
 import tk.xhuoffice.sessbilinfo.util.Logger;
@@ -32,8 +33,8 @@ public class Downloader {
         }
         URL url0 = null;
         try {
-            url0 = new URL(url);
-        } catch(java.net.MalformedURLException e) {
+            url0 = new URI(url).toURL();
+        } catch(java.net.URISyntaxException | java.net.MalformedURLException e) {
             throw new HttpConnectException("非法的 URL: "+e.getMessage());
         }
         this.fname = Paths.get(url0.getPath()).getFileName().toString();

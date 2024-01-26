@@ -3,6 +3,7 @@ package tk.xhuoffice.sessbilinfo.net;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
@@ -145,8 +146,8 @@ public class Http {
      */
     public static HttpURLConnection setGetConnURL(String inurl) {
         try {
-            return setGetConnURL(new URL(inurl));
-        } catch(java.net.MalformedURLException e) {
+            return setGetConnURL(new URI(inurl).toURL());
+        } catch(java.net.URISyntaxException | java.net.MalformedURLException e) {
             throw new HttpConnectException("非法的 URL: "+e.getMessage());
         }
     }
@@ -286,7 +287,7 @@ public class Http {
             // 返回 Cookie
             useCookie = true;
             return cookie;
-        } catch(IOException e) {
+        } catch(NullPointerException | IOException e) {
             Logger.warnln("联机获取 Cookie 发生异常, 使用内置 Cookie");
             return DEFAULT_COOKIE.split(";");
         }
