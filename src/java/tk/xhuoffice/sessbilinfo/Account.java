@@ -91,7 +91,7 @@ public class Account {
             final String isp = JsonLib.getString(json,"data","isp"); // 运营商
             final float latitude = JsonLib.getFloat(json,"data","latitude"); // 纬度
             final float longitude = JsonLib.getFloat(json,"data","longitude"); // 经度
-            final short countryCode = JsonLib.get(json,short.class,"data","country_code"); // 国家/地区代码
+            final int countryCode = JsonLib.getInt(json,"data","country_code"); // 国家/地区代码
             // 处理信息
             final String ns; // 纬度
             if(latitude>=0) {
