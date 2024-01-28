@@ -123,7 +123,7 @@ public class Frame {
         if(terminal==null || size==null || cli) {
             return;
         }
-        synchronized(terminal) {
+        synchronized(size) { // 避免多线程冲突
             // clear
             System.out.print("\033[2J");
             Logger.history.clear();
@@ -134,14 +134,16 @@ public class Frame {
             printTitle();
         }
     }
-
+    
     /**
      * Redraw UI. Automatically executed when {@link size} changes.
      */
     public static void redraw() {
-        String[] history = Logger.history.toArray(new String[0]);
-        reset();
-        Logger.printLinesForEach(history);
+        synchronized(terminal) {
+            String[] history = Logger.history.toArray(new String[0]);
+            reset();
+            Logger.printLinesForEach(history);
+        }
     }
 
 }
