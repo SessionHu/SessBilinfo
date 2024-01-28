@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -124,19 +123,20 @@ public class Downloader {
             this.status = "failed";
             return this.file;
         }
+        // header
+        for(String line : Http.getFormattedHeaderFields(conn)) {
+            Logger.debugln(line);
+        }
         // file length
         this.length = this.conn.getContentLengthLong();
-        Logger.println("File length: " + length);
+        Logger.println("Content-Length: " + length);
+        // content type
+        this.contentType = conn.getContentType();
+        Logger.println("Content-Type: "+this.contentType);
         // download
-        InputStream in = null;
+        BufferedInputStream in = null;
         try {
             in = new BufferedInputStream(conn.getInputStream());
-            // content type
-            this.contentType = HttpURLConnection.guessContentTypeFromStream(in);
-            if(this.contentType==null) {
-                this.contentType = conn.getContentType();
-            }
-            Logger.println("File type: "+this.contentType);
             // download
             int bufferSize = 0;
             byte[] buffer = new byte[1024];
@@ -148,6 +148,9 @@ public class Downloader {
             try {
                 this.progressReporter.join();
             } catch(InterruptedException e) {}
+            // set date
+            this.file.setLastModified(this.conn.getLastModified());
+            // ok
             Logger.println("文件 "+this.fname+" 下载完毕");
             this.status = "finished";
         } catch(IOException e) {

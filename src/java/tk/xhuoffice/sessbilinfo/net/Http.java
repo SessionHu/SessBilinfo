@@ -5,6 +5,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
@@ -244,17 +247,21 @@ public class Http {
         Logger.debugln("读取返回数据从 "+OutFormat.shorterString(16,conn.getURL().toString(),24));
         // connect
         conn.connect();
-        // 读取 HTTP 状态码
-        int responseCode = conn.getResponseCode();
-        Logger.debugln("HTTP "+responseCode+" "+conn.getResponseMessage());
-        // content encoding
-        String encoding = conn.getContentEncoding();
-        if(encoding==null) {
-            encoding = "UTF-8";
+        // header
+        for(String line : getFormattedHeaderFields(conn)) {
+            Logger.debugln(line);
+        }
+        // encoding
+        String encoding = "UTF-8"; {
+            for(String part : conn.getContentType().split(";\\s*")) {
+                if(part.matches("^[^=]+=[^=]+$") && part.toLowerCase().startsWith("charset")) {
+                    encoding = part.substring(part.indexOf("=")+1);
+                }
+            }
         }
         // 读取返回数据
         InputStreamReader in;
-        if(responseCode==200) {
+        if(conn.getResponseCode()==200) {
             // 正常读取返回数据
             in = new InputStreamReader(conn.getInputStream(),encoding);
         } else {
@@ -289,8 +296,24 @@ public class Http {
             return cookie;
         } catch(NullPointerException | IOException e) {
             Logger.warnln("联机获取 Cookie 发生异常, 使用内置 Cookie");
-            return DEFAULT_COOKIE.split(";");
+            OutFormat.outThrowable(e,0);
+            return DEFAULT_COOKIE.split(";\\s*");
         }
+    }
+
+    public static String[] getFormattedHeaderFields(HttpURLConnection conn) {
+        Map<String,List<String>> heads = conn.getHeaderFields();
+        List<String> result = new ArrayList<>();
+        for(Map.Entry<String,List<String>> entry : heads.entrySet()) {
+            for(String val : entry.getValue()) {
+                if(entry.getKey()!=null) {
+                    result.add(entry.getKey()+": "+val);
+                } else {
+                    result.add(val);
+                }
+            }
+        }
+        return result.toArray(new String[0]);
     }
     
 }
