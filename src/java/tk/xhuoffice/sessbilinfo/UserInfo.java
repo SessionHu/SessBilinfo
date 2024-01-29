@@ -109,6 +109,9 @@ public class UserInfo implements Bilinfo {
      * @return 用户昵称
      */
     public String getNickname() {
+        if(this.cardjson==null) {
+            card();
+        }
         return this.nickname;
     }
     private String nickname;
@@ -117,6 +120,9 @@ public class UserInfo implements Bilinfo {
      * @return 签名
      */
     public String getSign() {
+        if(this.cardjson==null) {
+            card();
+        }
         return this.sign;
     }
     private String sign;
@@ -125,6 +131,9 @@ public class UserInfo implements Bilinfo {
      * @return 粉丝数
      */
     public int getFans() {
+        if(this.cardjson==null) {
+            card();
+        }
         return this.fans;
     }
     private int fans;
@@ -133,6 +142,9 @@ public class UserInfo implements Bilinfo {
      * @return 当前等级
      */
     public short getLevel() {
+        if(this.cardjson==null) {
+            card();
+        }
         return this.level;
     }
     private short level;
@@ -141,6 +153,9 @@ public class UserInfo implements Bilinfo {
      * @return 关注数
      */
     public int getFriend() {
+        if(this.cardjson==null) {
+            card();
+        }
         return this.friend;
     }
     private int friend;
@@ -149,6 +164,9 @@ public class UserInfo implements Bilinfo {
      * @return 性别
      */
     public String getSex() {
+        if(this.cardjson==null) {
+            card();
+        }
         return this.sex;
     }
     private String sex;
@@ -157,6 +175,9 @@ public class UserInfo implements Bilinfo {
      * @return 认证类型
      */
     public String getOfficalTag() {
+        if(this.cardjson==null) {
+            card();
+        }
         return this.officalTag;
     }
     private String officalTag = "";
@@ -165,6 +186,9 @@ public class UserInfo implements Bilinfo {
      * @return 认证信息
      */
     public String getOfficalInfo() {
+        if(this.cardjson==null) {
+            card();
+        }
         return this.officalInfo;
     }
     private String officalInfo = "";
@@ -174,6 +198,8 @@ public class UserInfo implements Bilinfo {
             // 向 API 发送 GET 请求
             Logger.debugln("获取用户"+this.mid+"名片信息");
             this.cardjson = BiliAPIs.getUserCard(String.valueOf(this.mid));
+        } else {
+            return this.cardinfo;
         }
         // 获取返回值
         if(JsonLib.getInt(this.cardjson,"code")==0) {
@@ -246,6 +272,9 @@ public class UserInfo implements Bilinfo {
      * @return 空间公告
      */
     public String getSpaceNotice() {
+        if(this.spaceNoticeJson==null) {
+            spaceNotice();
+        }
         return this.spaceNotice;
     }
     private String spaceNotice = "";
@@ -282,6 +311,9 @@ public class UserInfo implements Bilinfo {
      * @return 空间TAG
      */
     public String getSpaceTag() {
+        if(this.spaceTagJson==null) {
+            spaceTag();
+        }
         return this.spaceTag;
     }
     private String spaceTag = "";
@@ -335,6 +367,9 @@ public class UserInfo implements Bilinfo {
      * @return 空间置顶视频
      */
     public Video getSpaceTop() {
+        if(this.spaceTopJson==null) {
+            spaceTop();
+        }
         return this.spaceTop;
     }
     private Video spaceTop = null;
@@ -386,6 +421,9 @@ public class UserInfo implements Bilinfo {
      * @return 空间置顶视频
      */
     public Video[] getSpaceMasterpiece() {
+        if(this.spaceMasterpieceJson==null) {
+            spaceMasterpiece();
+        }
         return this.spaceMasterpiece.toArray(new Video[0]);
     }
     private List<Video> spaceMasterpiece = new ArrayList<>();
