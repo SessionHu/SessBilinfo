@@ -112,14 +112,33 @@ public class JsonLib {
     }
     
     /**
-     * 获取 Json Array 中的内容作为 {@code String[]}.
+     * 获取 JSON 中的 {@link JsonArray}.
      * @param json JSON
      * @param path Array path
-     * @return     JSON in {@code String[]}
+     * @return     {@code null} if {@link NullPointerException}
+     */
+    public static JsonArray getJsonArray(String json, String... path) {
+        // get array
+        try {
+            return get(json,JsonArray.class,path);
+        } catch(NullPointerException e) {
+            return null;
+        }
+    }
+
+    /**
+     * 获取 JSON 中的 {@link JsonArray} 的每个 {@link JsonElement} 作为单独的 JSON.
+     * @param json JSON
+     * @param path Array path
+     * @return     {@code null} if no array
      */
     public static String[] getArray(String json, String... path) {
-        JsonArray jsonArr = getJsonElement(json,path).getAsJsonArray();
-        return StreamSupport.stream(jsonArr.spliterator(),false).map(GSON::toJson).toArray(String[]::new);
+        JsonArray jsonArr = getJsonArray(json,path);
+        if(jsonArr!=null) {
+            return StreamSupport.stream(jsonArr.spliterator(),false).map(GSON::toJson).toArray(String[]::new);
+        } else {
+            return null;
+        }
     }
     
 }
