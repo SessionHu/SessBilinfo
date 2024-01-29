@@ -58,6 +58,7 @@ public class Lancher {
         while(!Frame.exitable) {
             //System.out.print(Frame.exitable);
         }
+        Logger.clearFootln();
         System.exit(code);
     }
 
