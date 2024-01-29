@@ -298,7 +298,7 @@ public class UserInfo implements Bilinfo {
             String data = JsonLib.getString(this.spaceNoticeJson,"data");
             // 处理返回结果
             if(data!=null && !data.trim().isEmpty()) {
-                return "空间公告\n"+(this.spaceNotice=data);
+                return "空间公告\n"+(this.spaceNotice=(data+"\n\n"));
             }
         } else {
             // 输出错误信息
