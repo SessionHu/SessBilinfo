@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import tk.xhuoffice.sessbilinfo.net.Downloader;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
 import tk.xhuoffice.sessbilinfo.util.AvBv;
@@ -170,20 +173,10 @@ public class Video implements Bilinfo {
         this(BiliAPIs.getViewDetail(String.valueOf(aid)));
     }
     
-    public Video(long aid, boolean mutithread) {
-        this(BiliAPIs.getViewDetail(String.valueOf(aid)),mutithread);
-    }
-
     public Video(String detailJson) {
-        this(detailJson,true);
-    }
-    
-    public Video(String detailJson, boolean mutithread) {
         if(!detailJson.startsWith("{") || JsonLib.getInt(detailJson,"code")!=0) {
             throw BiliAPIs.codeErrExceptionBuilder(detailJson);
         }
-        Thread videoStream;
-        Thread videoOnline;
         this.json = detailJson;
         // .data.View
         {
@@ -199,49 +192,6 @@ public class Video implements Bilinfo {
             this.pubdate = JsonLib.getLong(detailJson,"data","View","pubdate");
             this.desc = JsonLib.getString(detailJson,"data","View","desc");
             this.duration = JsonLib.getLong(detailJson,"data","View","duration");
-            // get video stream url
-            videoStream = new Thread(() -> {
-                try {
-                    // 发送请求
-                    String rawJson = BiliAPIs.getViewPlayURL(this.aid,this.cid);
-                    // 处理返回值
-                    if(JsonLib.getInt(rawJson,"code")==0) {
-                        // 处理返回数据
-                        try {
-                            this.playURL = JsonLib.getString(JsonLib.getArray(rawJson,"data","durl")[0],"url");
-                        } catch(NullPointerException e) {
-                            OutFormat.outThrowable(e,2);
-                        }
-                    }
-                } catch(Exception e) {
-                    OutFormat.outThrowable(e,0);
-                }
-            }, "VideoStream-"+this.aid);
-            if(mutithread) {
-                videoStream.start();
-            }
-            // get online number
-            videoOnline = new Thread(() -> {
-                try {
-                    // 发送请求
-                    String rawJson = BiliAPIs.getViewOnline(this.aid,this.cid);
-                    // 处理返回值
-                    if(JsonLib.getInt(rawJson,"code")==0) {
-                        // 处理返回数据
-                        StringBuilder sb = new StringBuilder();
-                        sb.append(JsonLib.getString(rawJson,"data","total"));
-                        sb.append("(");
-                        sb.append(JsonLib.getString(rawJson,"data","count"));
-                        sb.append(")");
-                        this.online = sb.toString();
-                    }
-                } catch(Exception e) {
-                    OutFormat.outThrowable(e,0);
-                }
-            }, "VideoOnline-"+this.aid);
-            if(mutithread) {
-                videoOnline.start();
-            }
             // ..stat
             {
                 this.view = JsonLib.getLong(detailJson,"data","View","stat","view");
@@ -252,19 +202,23 @@ public class Video implements Bilinfo {
                 this.share = JsonLib.getLong(detailJson,"data","View","stat","share");
                 this.like = JsonLib.getLong(detailJson,"data","View","stat","like");
             }
-        }
-        // .data.Card
-        try {
-            // ..card
-            {
-                this.mid = JsonLib.getLong(detailJson,"data","Card","card","mid");
-                this.uploader = JsonLib.getString(detailJson,"data","Card","card","name");
+            // play url & online number
+            ExecutorService executor = Executors.newFixedThreadPool(2);
+            Future<String> playurl = executor.submit(() -> this.getPlayURL());
+            Future<String> online = executor.submit(() -> this.getOnline());
+            try {
+                this.playURL = playurl.get();
+                this.online = online.get();
+            } catch(InterruptedException | java.util.concurrent.ExecutionException e) {
+                OutFormat.outThrowable(e,3);
             }
-        } catch(NullPointerException e) {
-            OutFormat.outThrowable(e,2);
+            executor.shutdown();
         }
-        // .data.Tags
         try {
+            // .data.Card.card
+            this.mid = JsonLib.getLong(detailJson,"data","Card","card","mid");
+            this.uploader = JsonLib.getString(detailJson,"data","Card","card","name");
+            // .data.Tags
             List<String> tagName = new ArrayList<>();
             String[] arr = JsonLib.getArray(detailJson,"data","Tags");
             if(arr!=null){
@@ -276,15 +230,41 @@ public class Video implements Bilinfo {
         } catch(NullPointerException e) {
             OutFormat.outThrowable(e,2);
         }
-        // 验证线程是否执行完毕
-        if(mutithread) {
-            try {
-                videoStream.join();
-                videoOnline.join();
-            } catch(InterruptedException e) {
-                OutFormat.outThrowable(e,2);
-            }
+    }
+
+    /**
+     * Get video stream url.
+     * @return video stream url
+     */
+    public String getPlayURL() {
+        // 发送请求
+        String rawJson = BiliAPIs.getViewPlayURL(this.aid,this.cid);
+        // 处理返回值
+        if(JsonLib.getInt(rawJson,"code")==0) {
+            // 处理返回数据
+            return JsonLib.getString(JsonLib.getArray(rawJson,"data","durl")[0],"url");
         }
+        return null;
+    }
+
+    /**
+     * Get video online number.
+     * @return video online number
+     */
+    public String getOnline() {
+        // 发送请求
+        String rawJson = BiliAPIs.getViewOnline(this.aid,this.cid);
+        // 处理返回值
+        if(JsonLib.getInt(rawJson,"code")==0) {
+            // 处理返回数据
+            StringBuilder sb = new StringBuilder();
+            sb.append(JsonLib.getString(rawJson,"data","total"));
+            sb.append("(");
+            sb.append(JsonLib.getString(rawJson,"data","count"));
+            sb.append(")");
+            return sb.toString();
+        }
+        return null;
     }
     
     @Override
