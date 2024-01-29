@@ -63,7 +63,12 @@ public class Main {
         // 获取输入信息
         try {
             id = Integer.parseInt(Prompt.getNextLine());
-        } catch(NumberFormatException e) {}
+        } catch(NumberFormatException e) {
+            // print warning
+            Logger.warnln("无效的操作编号");
+            OutFormat.outThrowable(e,2);
+            // 退出
+            Lancher.exit(Lancher.ExitType.OK);}
         return id;
     }
     

@@ -357,7 +357,7 @@ public class UserInfo implements Bilinfo {
                 // 构建Video信息
                 JsonObject data = JsonLib.get(this.spaceTopJson,JsonObject.class,"data");
                 String json = "{\"data\":{\"View\":"+JsonLib.GSON.toJson(data)+"}}";
-                this.spaceTop = new Video(json,false);
+                this.spaceTop = new Video(json);
             } else if(code==53016) {
                 // 无置顶视频
                 return "";
@@ -414,7 +414,7 @@ public class UserInfo implements Bilinfo {
                     for(int i = 0; i < jsons.length; i++) {
                         // 构建Video信息
                         String json = "{\"data\":{\"View\":"+jsons[i]+"}}";
-                        this.spaceMasterpiece.add(new Video(json,false));
+                        this.spaceMasterpiece.add(new Video(json));
                     }
                 } else {
                     return "";
@@ -467,7 +467,9 @@ public class UserInfo implements Bilinfo {
             Logger.errln("可以复制本信息: Bilibili 用户 Mid "+mid+" 的 认证类型(role) 为 "+typ+", 在[此页](https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/user/official_role.md)中似乎并没有找到, 希望尽早解决该问题");
             try {
                 Thread.sleep(8888);
-            } catch(InterruptedException e) {}
+            } catch(InterruptedException e) {
+                OutFormat.outThrowable(e,2);
+            }
         }
         return officalTag;
     }

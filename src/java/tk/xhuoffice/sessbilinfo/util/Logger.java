@@ -43,7 +43,9 @@ public class Logger {
                 String fpath = System.getProperty("user.home")+"/.openbili/logs/sess-"+OutFormat.currentLiteDateTime()+".log";
                 CookieFile.checkParentDir(fpath,false);
                 out = new FileOutputStream(fpath);
-            } catch(IOException e) {}
+            } catch(IOException e) {
+                OutFormat.outThrowable(e,3);
+            }
         }
     }
 
@@ -74,7 +76,10 @@ public class Logger {
                 out.write(str.getBytes(StringCoder.UTF_8));
                 out.write('\n');
             }
-        } catch(IOException e) {}
+        } catch(IOException e) {
+            System.err.println("[ERROR] 无法写入日志");
+            System.err.println(OutFormat.formatString(OutFormat.getThrowableStackTrace(e),"[ERROR] "));
+        }
     }
     
     /**

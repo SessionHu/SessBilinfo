@@ -90,7 +90,9 @@ public class AvBv {
         for(int i = 0; i < 6; i++) {
             try {
                 r += MAP.get(bvid.charAt(S[i])) * Math.pow(58, i);
-            } catch(NullPointerException e) {}
+            } catch(NullPointerException e) {
+                OutFormat.outThrowable(e,3);
+            }
         }
         int result = (int)((r - ADD) ^ XOR);
         // 输出结果

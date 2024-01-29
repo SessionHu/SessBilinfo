@@ -42,7 +42,10 @@ public class Downloader {
         try {
             try {
                 CookieFile.checkParentDir(this.path);
-            } catch(IOException e) {}
+            } catch(IOException e) {
+                Logger.warnln("检查下载目录失败");
+                OutFormat.outThrowable(e,2);
+            }
             this.out = new FileOutputStream(this.file);
         } catch(java.io.FileNotFoundException e) {
             Logger.errln("无法打开文件: "+e.getMessage());
@@ -75,7 +78,10 @@ public class Downloader {
         try {
             try {
                 CookieFile.checkParentDir(this.path);
-            } catch(IOException e) {}
+            } catch(IOException e) {
+                Logger.warnln("检查下载目录失败");
+                OutFormat.outThrowable(e,2);
+            }
             this.out = new FileOutputStream(this.file);
         } catch(java.io.FileNotFoundException e) {
             Logger.errln("无法打开文件: "+e.getMessage());
@@ -123,16 +129,19 @@ public class Downloader {
             this.status = "failed";
             return this.file;
         }
-        // header
-        for(String line : Http.getFormattedHeaderFields(conn)) {
-            Logger.debugln(line);
-        }
-        // file length
-        this.length = this.conn.getContentLengthLong();
-        Logger.println("Content-Length: " + length);
         // content type
         this.contentType = conn.getContentType();
-        Logger.println("Content-Type: "+this.contentType);
+        // file length
+        this.length = this.conn.getContentLengthLong();
+        // header
+        if(Logger.debug) {
+            for(String line : Http.getFormattedHeaderFields(conn)) {
+                Logger.debugln(line);
+            }
+        } else {
+            Logger.println("Content-Type: "+this.contentType);
+            Logger.println("Content-Length: " + length);
+        }
         // download
         BufferedInputStream in = null;
         try {
@@ -147,7 +156,9 @@ public class Downloader {
             }
             try {
                 this.progressReporter.join();
-            } catch(InterruptedException e) {}
+            } catch(InterruptedException e) {
+                OutFormat.outThrowable(e,2);
+            }
             // set date
             this.file.setLastModified(this.conn.getLastModified());
             // ok
@@ -182,7 +193,9 @@ public class Downloader {
             Logger.footln(String.format("Download progress: %d/%d (%d%s)", this.progress, this.length, this.progress*100L/this.length, "%"));
             try {
                 Thread.sleep(1000L);
-            } catch(InterruptedException e) {}
+            } catch(InterruptedException e) {
+                OutFormat.outThrowable(e,2);
+            }
         }
         Logger.clearFootln();
     },  "DownloadProgressReporter-"+this.fname);

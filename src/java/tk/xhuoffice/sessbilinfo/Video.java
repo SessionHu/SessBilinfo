@@ -1,7 +1,9 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import tk.xhuoffice.sessbilinfo.net.Downloader;
 import tk.xhuoffice.sessbilinfo.ui.Frame;
@@ -118,7 +120,6 @@ public class Video implements Bilinfo {
             }
             // 格式化处理数据
             StringBuilder formatted = new StringBuilder();
-            while(!video.ready) {}
             formatted.append(String.format("%s\n", video.title));
             formatted.append(String.format("%s-%s  %s   UP主 %s\n", video.mtname, video.tname, cprt, video.uploader));
             formatted.append(String.format("播放 %s   弹幕 %s   %s\n", view, danmaku, date));
@@ -133,9 +134,9 @@ public class Video implements Bilinfo {
                 formatted.append(OutFormat.shorterString(50,video.playURL));
             }
             // 返回数据
-            result = new SimpleImmutableEntry<>(video,formatted.append("\n \n").toString());
+            result = new SimpleImmutableEntry<>(video,formatted.append("\n\n").toString());
         } catch(BiliException e) {
-            result = new SimpleImmutableEntry<>(null,e.getDetailMessage()+"\n \n");
+            result = new SimpleImmutableEntry<>(null,e.getDetailMessage()+"\n\n");
         }
         return result;
     }
@@ -163,7 +164,6 @@ public class Video implements Bilinfo {
     public String[] tag;
     public volatile String playURL = null;
     public volatile String online = null;
-    public volatile boolean ready;
     private String json = null;
     
     public Video(long aid) {
@@ -179,7 +179,7 @@ public class Video implements Bilinfo {
     }
     
     public Video(String detailJson, boolean mutithread) {
-        if(!detailJson.startsWith("{")||JsonLib.getInt(detailJson,"code")!=0) {
+        if(!detailJson.startsWith("{") || JsonLib.getInt(detailJson,"code")!=0) {
             throw BiliAPIs.codeErrExceptionBuilder(detailJson);
         }
         Thread videoStream;
@@ -209,7 +209,9 @@ public class Video implements Bilinfo {
                         // 处理返回数据
                         try {
                             this.playURL = JsonLib.getString(JsonLib.getArray(rawJson,"data","durl")[0],"url");
-                        } catch(NullPointerException e) {}
+                        } catch(NullPointerException e) {
+                            OutFormat.outThrowable(e,2);
+                        }
                     }
                 } catch(Exception e) {
                     OutFormat.outThrowable(e,0);
@@ -258,29 +260,30 @@ public class Video implements Bilinfo {
                 this.mid = JsonLib.getLong(detailJson,"data","Card","card","mid");
                 this.uploader = JsonLib.getString(detailJson,"data","Card","card","name");
             }
-        } catch(NullPointerException e) {}
+        } catch(NullPointerException e) {
+            OutFormat.outThrowable(e,2);
+        }
         // .data.Tags
         try {
-            String[] tagJson = JsonLib.getArray(detailJson,"data","Tags");
-            String[] tagName = new String[tagJson.length];
-            for(int i = 0; i < tagJson.length; i++) {
-                tagName[i] = JsonLib.getString(tagJson[i],"tag_name");
+            List<String> tagName = new ArrayList<>();
+            String[] arr = JsonLib.getArray(detailJson,"data","Tags");
+            if(arr!=null){
+                for(String tagjson : arr) {
+                    tagName.add(JsonLib.getString(tagjson,"tag_name"));
+                }
+                this.tag = tagName.toArray(new String[0]);
             }
-            this.tag = tagName;
-        } catch(NullPointerException e) {}
+        } catch(NullPointerException e) {
+            OutFormat.outThrowable(e,2);
+        }
         // 验证线程是否执行完毕
         if(mutithread) {
-            new Thread(() -> {
-                try {
-                    videoStream.join();
-                    videoOnline.join();
-                } catch(InterruptedException e) {
-                } finally {
-                    this.ready = true;
-                }
-            }, "VideoReadyReport").start();
-        } else {
-            this.ready = true;
+            try {
+                videoStream.join();
+                videoOnline.join();
+            } catch(InterruptedException e) {
+                OutFormat.outThrowable(e,2);
+            }
         }
     }
     

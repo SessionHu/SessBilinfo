@@ -9,6 +9,7 @@ import org.jline.terminal.TerminalBuilder;
 import tk.xhuoffice.sessbilinfo.Lancher;
 import tk.xhuoffice.sessbilinfo.Main;
 import tk.xhuoffice.sessbilinfo.util.Logger;
+import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 /**
  * UI frame for application.
@@ -83,7 +84,9 @@ public class Frame {
             // sleep
             try {
                 Thread.sleep(48);
-            } catch(InterruptedException e) {}
+            } catch(InterruptedException e) {
+                OutFormat.outThrowable(e,0);
+            }
         }
         exitable = true;
     },"SizeGetter");
