@@ -252,12 +252,15 @@ public class Http {
             Logger.debugln(line);
         }
         // encoding
-        String encoding = "UTF-8"; {
+        String encoding = "UTF-8";
+        try {
             for(String part : conn.getContentType().split(";\\s*")) {
                 if(part.matches("^[^=]+=[^=]+$") && part.toLowerCase().startsWith("charset")) {
                     encoding = part.substring(part.indexOf("=")+1);
                 }
             }
+        } catch(NullPointerException e) {
+            // server did not return encoding
         }
         // 读取返回数据
         InputStreamReader in;

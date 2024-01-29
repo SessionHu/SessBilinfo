@@ -120,6 +120,18 @@ public class Downloader {
         }
         // content-length
         this.length = conn.getContentLengthLong();
+        // progress reporter
+        this.progressReporter = new Thread(() -> {
+            while(!(this.progress>=this.length||this.conn==null)) {
+                Logger.footln(String.format("Download progress: %d/%d (%d%s)", this.progress, this.length, this.progress*100L/this.length, "%"));
+                try {
+                    Thread.sleep(1000L);
+                } catch(InterruptedException e) {
+                    OutFormat.outThrowable(e,2);
+                }
+            }
+            Logger.clearFootln();
+        },  "DownloadProgressReporter-"+this.file.getName());
         // download
         InputStream in = null;
         try {
@@ -167,17 +179,7 @@ public class Downloader {
         }
         return this.file;
     }
-    private Thread progressReporter = new Thread(() -> {
-        while(!(this.progress>=this.length||this.conn==null)) {
-            Logger.footln(String.format("Download progress: %d/%d (%d%s)", this.progress, this.length, this.progress*100L/this.length, "%"));
-            try {
-                Thread.sleep(1000L);
-            } catch(InterruptedException e) {
-                OutFormat.outThrowable(e,2);
-            }
-        }
-        Logger.clearFootln();
-    },  "DownloadProgressReporter-"+this.file.getName());
+    private Thread progressReporter;
 
     /**
      * Returns a string representation of this downloader.
