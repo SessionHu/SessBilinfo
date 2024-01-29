@@ -1,10 +1,9 @@
 package tk.xhuoffice.sessbilinfo.net;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
@@ -12,169 +11,140 @@ import java.nio.file.Paths;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
+/**
+ * A simple HTTP(s) Downloader.
+ */
 
 public class Downloader {
-    
-    private File file = null;
-    private String path = null;
-    private String fname = null;
-    private HttpURLConnection conn = null;
-    private OutputStream out = null;
 
-    private String status = "init";
+    private File file;
+    private FileOutputStream out;
+    private HttpURLConnection conn;
     
-    private String contentType = null;
-    
-    public Downloader(String url, String fileDirPath) {
-        // file & path
+    /**
+     * Download file with specified url, file name and path.
+     * @param url          string of {@link java.net.URL}
+     * @param fileDirPath  directory for downloaded file
+     * @param fileName     filename of downloaded file
+     * @throws java.io.FileNotFoundException  if the file does not exist but cannot be created, 
+     *                                        or cannot be opened for any other reason
+     */
+    public Downloader(String url, String fileDirPath, String fileName) throws java.io.FileNotFoundException {
+        // args
+        if(url==null) {
+            throw new NullPointerException("url");
+        }
+        if(fileDirPath==null || fileDirPath.trim().isEmpty()) {
+            fileDirPath = System.getProperty("user.home")+"/downloads/";
+        }
         if(!fileDirPath.endsWith("/")) {
             fileDirPath += "/";
         }
-        URL url0 = null;
+        // url
+        URL url0;
         try {
             url0 = new URI(url).toURL();
         } catch(java.net.URISyntaxException | java.net.MalformedURLException e) {
-            throw new HttpConnectException("非法的 URL: "+e.getMessage());
+            throw new HttpConnectException("URL 不合法: "+e.getMessage(),e);
         }
-        this.fname = Paths.get(url0.getPath()).getFileName().toString();
-        this.path = fileDirPath + this.fname;
-        this.file = new File(this.path);
+        // file
+        if(fileName==null || fileName.trim().isEmpty()) {
+            fileName = Paths.get(url0.getPath()).getFileName().toString();
+        } else {
+            fileName = fileName.replace('/','／')
+                               .replace('\\','＼')
+                               .replace("\"","\'\'")
+                               .replace(':','：')
+                               .replace('*','＊')
+                               .replace('<','＜')
+                               .replace('>','＞')
+                               .replace('|','｜');
+        }
+        this.file = new File(fileDirPath+fileName);
         try {
-            try {
-                CookieFile.checkParentDir(this.path);
-            } catch(IOException e) {
-                Logger.warnln("检查下载目录失败");
-                OutFormat.outThrowable(e,2);
-            }
-            this.out = new FileOutputStream(this.file);
-        } catch(java.io.FileNotFoundException e) {
-            Logger.errln("无法打开文件: "+e.getMessage());
-            return;
+            CookieFile.checkParentDir(file.getAbsolutePath());
+        } catch(IOException e) {
+            Logger.warnln("检查下载目录失败: "+e.toString());
         }
+        file.delete();
+        // outputstream
+        this.out = new FileOutputStream(this.file);
         // load cookie
         Http.loadCookieCache();
-        // create connection
+        // set connection
         this.conn = Http.setGetConnURL(url0);
-        // return
-        this.status = "ready";
-        return;
-    }
-    
-    public Downloader(String url, String fileDirPath, String fileName) {
-        // file & path
-        if(!fileDirPath.endsWith("/")) {
-            fileDirPath += "/";
-        }
-        this.fname = fileName.replace('/','／')
-                             .replace('\\','＼')
-                             .replace('"','\'')
-                             .replace(':','：')
-                             .replace('*','＊')
-                             .replace('<','＜')
-                             .replace('>','＞')
-                             .replace('|','｜');
-        this.path = fileDirPath + this.fname;
-        this.file = new File(this.path);
-        try {
-            try {
-                CookieFile.checkParentDir(this.path);
-            } catch(IOException e) {
-                Logger.warnln("检查下载目录失败");
-                OutFormat.outThrowable(e,2);
-            }
-            this.out = new FileOutputStream(this.file);
-        } catch(java.io.FileNotFoundException e) {
-            Logger.errln("无法打开文件: "+e.getMessage());
-            return;
-        }
-        // load cookie
-        Http.loadCookieCache();
-        // create connection
-        this.conn = Http.setGetConnURL(url);
-        // return
-        this.status = "ready";
-        return;
     }
 
-    private long length = -1;
-    public long getLength() {
-        return this.length;
-    }
-
-    private long progress = 0;
-    public long getProgress() {
-        return this.progress;
-    }
-    
     /**
-     * Download file.
-     * @return Downloaded             file
-     * @throws IllegalStateException  When file has already been downloaded or file could not be created
+     * Download file with specified url, path.
+     * @param url          string of {@link java.net.URL}
+     * @param fileDirPath  directory for downloaded file
+     * @throws java.io.FileNotFoundException  if the file does not exist but cannot be created, 
+     *                                        or cannot be opened for any other reason
      */
-    public File download() {
-        // check if can download
-        if(this.out==null||this.status.equals("init")) {
-            throw new IllegalStateException("File "+this.fname+" could not be created");
-        }
-        if(this.conn==null||this.status.equals("finished")) {
-            throw new IllegalStateException("File "+this.fname+" has already been downloaded");
-        }
-        // connect
-        this.status = "downloading";
+    public Downloader(String url, String fileDirPath) throws java.io.FileNotFoundException {
+        this(url,fileDirPath,null);
+    }
+
+    /**
+     * Download file with specified url.
+     * @param url          string of {@link java.net.URL}
+     * @throws java.io.FileNotFoundException  if the file does not exist but cannot be created, 
+     *                                        or cannot be opened for any other reason
+     */
+    public Downloader(String url) throws java.io.FileNotFoundException {
+        this(url,null,null);
+    }
+
+    private long length;
+    private long progress;
+
+    /**
+     * Start downloading file.
+     * @return Downloaded file.
+     * @throws IOException if it occurred while downloading
+     */
+    public File download() throws IOException {
+        // try to connect
         try {
             conn.connect();
         } catch(IOException e) {
-            Logger.errln("连接至 "+(this.conn.getURL().toString())+" 时发生异常");
-            OutFormat.outThrowable(e,3);
-            this.status = "failed";
-            return this.file;
+            Logger.warnln("连接至 "+(this.conn.getURL().toString())+" 时发生异常");
+            OutFormat.outThrowable(e,2);
         }
-        // content type
-        this.contentType = conn.getContentType();
-        // file length
-        this.length = this.conn.getContentLengthLong();
         // header
         if(Logger.debug) {
             for(String line : Http.getFormattedHeaderFields(conn)) {
                 Logger.debugln(line);
             }
-        } else {
-            Logger.println("Content-Type: "+this.contentType);
-            Logger.println("Content-Length: " + length);
         }
+        // content-length
+        this.length = conn.getContentLengthLong();
         // download
-        BufferedInputStream in = null;
+        InputStream in = null;
         try {
-            in = new BufferedInputStream(conn.getInputStream());
+            in = conn.getInputStream();
             // download
             int bufferSize = 0;
             byte[] buffer = new byte[1024];
             this.progressReporter.start();
             while((bufferSize=in.read(buffer,0,1024))!=-1) {
                 this.out.write(buffer,0,bufferSize);
-                this.progress+=bufferSize;
+                this.progress += bufferSize;
             }
             try {
                 this.progressReporter.join();
             } catch(InterruptedException e) {
-                OutFormat.outThrowable(e,2);
+                OutFormat.outThrowable(e,0);
             }
             // set date
             this.file.setLastModified(this.conn.getLastModified());
             // ok
-            Logger.println("文件 "+this.fname+" 下载完毕");
-            this.status = "finished";
+            Logger.println("文件 "+this.file.getName()+" 下载完毕");
         } catch(IOException e) {
-            Logger.errln("从 "+(this.conn.getURL().toString())+" 下载时发生异常");
-            OutFormat.outThrowable(e,3);
-            this.status = "failed";
+            throw e;
         } finally {
-            try {
-                this.out.close();
-            } catch(IOException e) {
-                Logger.warnln("关闭文件时发生异常: "+e.getMessage());
-                OutFormat.outThrowable(e,0);
-            }
+            // close in
             try {
                 if(in!=null) {
                     in.close();
@@ -183,11 +153,20 @@ public class Downloader {
                 Logger.warnln("关闭输入流时发生异常: "+e.getMessage());
                 OutFormat.outThrowable(e,0);
             }
-            this.conn = null;
+            in = null;
+            // close out
+            try {
+                if(out!=null) {
+                    out.close();
+                }
+            } catch(IOException e) {
+                Logger.warnln("关闭文件时发生异常: "+e.getMessage());
+                OutFormat.outThrowable(e,0);
+            }
+            out = null;
         }
         return this.file;
     }
-
     private Thread progressReporter = new Thread(() -> {
         while(!(this.progress>=this.length||this.conn==null)) {
             Logger.footln(String.format("Download progress: %d/%d (%d%s)", this.progress, this.length, this.progress*100L/this.length, "%"));
@@ -198,19 +177,25 @@ public class Downloader {
             }
         }
         Logger.clearFootln();
-    },  "DownloadProgressReporter-"+this.fname);
-    
+    },  "DownloadProgressReporter-"+this.file.getName());
+
+    /**
+     * Returns a string representation of this downloader.
+     * @return a string representation of this downloader.
+     */
     @Override
     public String toString() {
-        return "Downloader-"+this.fname;
+        return "Downloader@"+this.conn.getURL();
     }
     
+    /**
+     * Returns a hash code value for this downloader.
+     * @return a hash code value for this downloader.
+     */
     @Override
     public int hashCode() {
         final int prime = 31;
         long result = 1454;
-        result = prime * result + this.path.hashCode();
-        result = prime * result + this.fname.hashCode();
         result = prime * result + this.file.hashCode();
         if(this.conn!=null) {
             result = prime * result + this.conn.hashCode();
@@ -218,16 +203,16 @@ public class Downloader {
         if(this.out!=null) {
             result = prime * result + this.out.hashCode();
         }
-        if(this.contentType!=null) {
-            result = prime * result + this.contentType.hashCode();
-        }
         result = prime * result + this.toString().hashCode();
         result = prime * result + this.length;
         result = prime * result + this.progress;
-        result = prime * result + this.status.hashCode();
         return (int)result;
     }
     
+    /**
+     * Indicates whether some other object is "equal to" this one.
+     * @return {@code true} if this object is the same as the {@code obj} argument.
+     */
     @Override
     public boolean equals(Object obj) {
         if(obj==this) {
@@ -246,8 +231,9 @@ public class Downloader {
     /**
      * For test.
      * @param args args
+     * @throws IOException  from {@link Downloader(String,String)} and {@link download()}
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         String url = "http://cachefly.cachefly.net/1mb.test";
         String dir = System.getProperty("user.home")+"/downloads/";
         Logger.println("tk.xhuoffice.sessbilinfo.net.Downloader 下载演示");
