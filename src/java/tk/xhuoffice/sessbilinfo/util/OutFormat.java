@@ -288,8 +288,11 @@ public class OutFormat {
      * @return     pages
      */
     public static String[] pageBreak(String str) {
+        if(Frame.size==null) {
+            return new String[]{str};
+        }
         // prepare variables
-        int lns = Frame.size.getRows()-2;
+        int lns = Frame.size.getRows()-4;
         String[] lines = str.split("\\n");
         List<String> pages = new ArrayList<>();
         // lines to pages
@@ -300,8 +303,9 @@ public class OutFormat {
                 page.append(lines[i++]);
                 page.append("\n");
             }
+            page.append(String.format("第%d页 共%d页", pages.size()+1, lines.length/lns+1));
             // add page to pages
-            pages.add(page.deleteCharAt(page.length()-1).toString());
+            pages.add(page.toString());
         }
         // return
         return pages.toArray(new String[0]);
