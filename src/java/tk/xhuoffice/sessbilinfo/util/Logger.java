@@ -179,7 +179,7 @@ public class Logger {
     }
 
     /**
-     * Print & Log.
+     * Print &amp; Log.
      * @param str  log
      * @param lv   level
      */
@@ -190,7 +190,7 @@ public class Logger {
     }
 
     /**
-     * Print & Log (level 1).
+     * Print &amp; Log (level 1).
      * @param str  log
      * @see println(String,int)
      */
@@ -199,7 +199,7 @@ public class Logger {
     }
 
     /**
-     * Print & Log (level 1).
+     * Print &amp; Log (level 1).
      * @param obj  log
      * @see println(String,int)
      * @see String#valueOf(Object)
@@ -209,7 +209,7 @@ public class Logger {
     }
 
     /**
-     * Print & Log (level 2).
+     * Print &amp; Log (level 2).
      * @param str  log
      * @see println(String,int)
      */
@@ -218,7 +218,7 @@ public class Logger {
     }
     
     /**
-     * Print & Log (level 3.
+     * Print &amp; Log (level 3.
      * @param str  log
      * @see println(String,int)
      */
@@ -227,7 +227,7 @@ public class Logger {
     }
     
     /**
-     * Print & Log (level 4).
+     * Print &amp; Log (level 4).
      * @param str  log
      * @see println(String,int)
      */
@@ -236,7 +236,7 @@ public class Logger {
     }
 
     /**
-     * Print & Log (level 0).
+     * Print &amp; Log (level 0).
      * @param str  log
      * @see println(String,int)
      * @see debug
@@ -248,7 +248,7 @@ public class Logger {
     }
 
     /**
-     * Print & Log (level 0).
+     * Print &amp; Log (level 0).
      * @param obj  log
      * @see println(String,int)
      * @see String#valueOf(Object)
@@ -261,7 +261,7 @@ public class Logger {
     }
     
     /**
-     * Print & Log without detailed description.
+     * Print &amp; Log without detailed description.
      * @param str  log
      * @param lv   level
      */
@@ -297,7 +297,7 @@ public class Logger {
     }
     
     /**
-     * Log & print at foot of terminal. Only support <bold>ONE</bold> line.
+     * Log &amp; print at foot of terminal. Only support <strong>ONE</strong> line.
      * @param text  text
      * @see Frame#size
      */
