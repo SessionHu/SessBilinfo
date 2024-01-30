@@ -114,9 +114,13 @@ public class Frame {
         text.append(titleSpace);
         text.append("\033[0m");
         // set line
-        Prompt.setCursorPosition(1);
-        System.out.print(text);
-        Prompt.restoreCursorPosition();
+        if(!Prompt.getLineReader().isReading()) {
+            Prompt.setCursorPosition(1);
+            System.out.print(text);
+            Prompt.restoreCursorPosition();
+        } else {
+            Prompt.getLineReader().printAbove("\033[1f"+text+"\033["+(Frame.size.getRows()-2)+"f");
+        }
     }
     
     /**
@@ -142,11 +146,9 @@ public class Frame {
      * Redraw UI. Automatically executed when {@link size} changes.
      */
     public static void redraw() {
-        synchronized(terminal) {
-            String[] history = Logger.history.toArray(new String[0]);
-            reset();
-            Logger.printLinesForEach(history);
-        }
+        String[] history = Logger.history.toArray(new String[0]);
+        reset();
+        Logger.printLinesForEach(history);
     }
 
 }

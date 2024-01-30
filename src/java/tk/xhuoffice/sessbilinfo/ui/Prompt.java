@@ -49,8 +49,8 @@ public class Prompt {
      */
     public static String getPasswordLine(String prompt, Character mask) {
         String nextline = null;
-        boolean clearline = (mask==null || (mask!=null && !mask.equals(Character.MIN_VALUE)));
-        synchronized(Frame.terminal) {
+        boolean clearline = (mask==null || (mask!=null && !mask.equals(Character.MIN_VALUE) && prompt!=null));
+        synchronized(lineReader) {
             while(nextline==null) {
                 try {
                     // set cursor position
@@ -150,6 +150,14 @@ public class Prompt {
         if(Frame.size!=null) {
             System.out.print("\033[u");
         }
+    }
+
+    /**
+     * Get {@link LineReader} of this class.
+     * @return {@code lineReader}
+     */
+    public static LineReader getLineReader() {
+        return lineReader;
     }
 
 }

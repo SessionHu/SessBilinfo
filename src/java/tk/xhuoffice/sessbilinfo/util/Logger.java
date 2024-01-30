@@ -129,16 +129,21 @@ public class Logger {
      */
     public static void printLinesForEach(String[] lines, boolean usestderr) {
         // print
-        synchronized(Frame.terminal) {
+        synchronized(history) {
             for(String text : lines) {
                 // print to screen
-                if(usestderr) {
-                    System.err.println(text);
+                if(!Prompt.getLineReader().isReading()) {
+                    if(usestderr) {
+                        System.err.println(text);
+                    } else {
+                        System.out.println(text);
+                    }
+                    // save cursor
+                    Prompt.saveCursorPosition();
                 } else {
-                    System.out.println(text);
+                    Prompt.restoreCursorPosition();
+                    Prompt.getLineReader().printAbove("\033[u"+text+"\n\033[s\033["+(Frame.size.getRows()-2)+"f");
                 }
-                // save cursor
-                Prompt.saveCursorPosition();
                 // write to file
                 writeln(text);
                 // add to history
@@ -309,14 +314,20 @@ public class Logger {
         // print
         if(Frame.size!=null) {
             // normal
-            synchronized(Frame.terminal) {
+            if(!Prompt.getLineReader().isReading()) {
                 Prompt.setCursorPosition(Frame.size.getColumns());
                 System.out.print(text);
                 Prompt.restoreCursorPosition();
+            } else {
+                Prompt.getLineReader().printAbove("\033["+Frame.size.getColumns()+"f"+text+"\033[A");
             }
         } else {
             // no terminal
-            System.out.println(text);
+            if(!Prompt.getLineReader().isReading()) {
+                System.out.println(text);
+            } else {
+                Prompt.getLineReader().printAbove(text);
+            }
         }
         // write to file
         writeln(text);
@@ -328,10 +339,12 @@ public class Logger {
      */
     public static void clearFootln() {
         if(Frame.size!=null) {
-            synchronized(Frame.terminal) {
+            if(!Prompt.getLineReader().isReading()) {
                 Prompt.setCursorPosition(Frame.size.getRows());
                 System.out.print("\033[2K");
                 Prompt.restoreCursorPosition();
+            } else {
+                Prompt.getLineReader().printAbove("\033["+Frame.size.getColumns()+"f\033[2K\033[A");
             }
         }
     }
@@ -340,8 +353,7 @@ public class Logger {
      * Press Enter key to continue.
      */
     public static void enter2continue() {
-        footln("Press Enter key to continue ...");
-        Prompt.getPasswordLine(Character.MIN_VALUE);
+        Prompt.getPasswordLine("Press Enter key to continue ...",Character.MIN_VALUE);
         clearFootln();
     }
     
