@@ -3,9 +3,7 @@ package tk.xhuoffice.sessbilinfo.ui;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Cursor;
-import tk.xhuoffice.sessbilinfo.Lancher;
 import tk.xhuoffice.sessbilinfo.util.Logger;
-import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 /**
  * Get user input.
@@ -66,24 +64,20 @@ public class Prompt {
                     // read line
                     nextline = lineReader.readLine(prompt,mask);
                 } catch(org.jline.reader.UserInterruptException e) {
-                    // do nothing...
-                } catch(org.jline.reader.EndOfFileException e) {
-                    // cursor up & clear line
-                    if(clearline && Frame.size!=null) {
-                        System.out.print("\033[A\033[2K");
+                    if(clearline){
+                        Logger.footln("输入被取消: "+e.toString());
                     }
-                    // restore cursor position
-                    Prompt.restoreCursorPosition();
-                    // exit
-                    Logger.fataln("非法的输入");
-                    OutFormat.outThrowable(e,4);
-                    Lancher.exit(Lancher.ExitType.IO_FATAL);
+                } catch(org.jline.reader.EndOfFileException e) {
+                    if(clearline){
+                        Logger.footln("非法的输入: "+e.toString());
+                    }
                 }
             }
             // cursor up & clear line
             System.out.print("\033[A");
             if(clearline && Frame.size!=null) {
                 System.out.print("\033[2K");
+                Logger.clearFootln();
             }
             // restore cursor position
             Prompt.restoreCursorPosition();
