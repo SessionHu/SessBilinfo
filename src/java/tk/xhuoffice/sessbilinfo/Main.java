@@ -1,7 +1,6 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import org.fusesource.jansi.AnsiConsole;
 import tk.xhuoffice.sessbilinfo.Lancher;
@@ -95,13 +94,13 @@ public class Main {
         } else if(id==6) {
             // 修改 Cookie
             CookieFile.edit();
-        } else if(id==114514) {
-            // for test
-            FileWriter w = new FileWriter("unicode.txt");
-            for(char c = '\u0000'; c < '\uFFFF'; c++) {
-                w.write(c);
-            }
-            w.close();
+        //} else if(id==114514) {
+        //    // for test
+        //    FileWriter w = new FileWriter("unicode.txt");
+        //    for(char c = '\u0000'; c < '\uFFFF'; c++) {
+        //        w.write(c);
+        //    }
+        //    w.close();
         } else if(id==0) {
             // 退出
             Lancher.exit(Lancher.ExitType.OK);

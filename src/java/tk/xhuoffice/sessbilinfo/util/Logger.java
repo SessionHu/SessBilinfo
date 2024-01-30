@@ -353,8 +353,14 @@ public class Logger {
      * Press Enter key to continue.
      */
     public static void enter2continue() {
-        Prompt.getPasswordLine("Press Enter key to continue ...",Character.MIN_VALUE);
-        clearFootln();
+        if(Frame.size!=null) {
+            writeln("Press Enter key to continue ...");
+            Prompt.getPasswordLine(" \nPress Enter key to continue ...",Character.MIN_VALUE);
+            clearFootln();
+        } else {
+            writeln("Press Enter key to continue ...");
+            Prompt.getPasswordLine("Press Enter key to continue ...",Character.MIN_VALUE);
+        }
     }
     
 }
