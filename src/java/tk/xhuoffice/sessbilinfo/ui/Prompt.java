@@ -63,8 +63,6 @@ public class Prompt {
                     }
                     // read line
                     nextline = lineReader.readLine(prompt,mask);
-                    // auto end the line
-                    System.out.println();
                 } catch(org.jline.reader.UserInterruptException e) {
                     if(clearline){
                         Logger.footln("输入被取消: "+e.toString());
@@ -76,9 +74,8 @@ public class Prompt {
                 }
             }
             // cursor up & clear line
-            System.out.print("\033[A");
             if(clearline && Frame.size!=null) {
-                System.out.print("\033[2K");
+                System.out.print("\033[A\033[2K");
                 Logger.clearFootln();
             }
             // restore cursor position
