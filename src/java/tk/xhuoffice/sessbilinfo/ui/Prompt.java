@@ -64,19 +64,34 @@ public class Prompt {
                     // read line
                     nextline = lineReader.readLine(prompt,mask);
                 } catch(org.jline.reader.UserInterruptException e) {
-                    if(clearline){
+                    if(clearline) {
                         Logger.footln("输入被取消: "+e.toString());
                     }
                 } catch(org.jline.reader.EndOfFileException e) {
-                    if(clearline){
+                    if(clearline) {
                         Logger.footln("非法的输入: "+e.toString());
                     }
                 }
+                // if prompt is more than one line
+                if(prompt.contains("\n")) {
+                    Frame.redraw();
+                }
             }
-            // cursor up & clear line
+            // redraw
             if(clearline && Frame.size!=null) {
-                System.out.print("\033[A\033[2K");
-                Logger.clearFootln();
+                // should only get one line
+                if(nextline.contains("\n") || nextline.contains("\n")) {
+                    // replace to no '\r' or '\n'
+                    nextline = nextline.replace("\r\n","\n")
+                                       .replace('\r','\n')
+                                       .replace("\n","");
+                    // redraw
+                    Frame.redraw();
+                } else {
+                    // clear last 2 lines
+                    System.out.print("\033[A\033[2K");
+                    Logger.clearFootln();
+                }
             }
             // restore cursor position
             Prompt.restoreCursorPosition();
