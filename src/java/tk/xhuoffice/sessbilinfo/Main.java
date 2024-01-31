@@ -21,7 +21,7 @@ public class Main {
     public static final String SOFT_NAME = "SessBilinfo";
     /**
      * Application version */
-    public static final String SOFT_VERSION = "1.1.0-beta.2";
+    public static final String SOFT_VERSION = "1.1.0-beta.3";
     /**
      * Application title */
     public static final String SOFT_TITLE = SOFT_NAME+" "+SOFT_VERSION;
