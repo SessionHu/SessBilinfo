@@ -4,6 +4,7 @@ import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Cursor;
 import tk.xhuoffice.sessbilinfo.util.Logger;
+import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 /**
  * Get user input.
@@ -71,6 +72,9 @@ public class Prompt {
                     if(clearline) {
                         Logger.footln("非法的输入: "+e.toString());
                     }
+                } catch(java.io.IOError e) {
+                    Logger.fataln("发生 IO 错误: "+e.toString());
+                    OutFormat.outThrowable(e,0);
                 }
                 // if prompt is more than one line
                 if(prompt.contains("\n")) {

@@ -72,12 +72,16 @@ public class Frame {
             return;
         }
         // get size
-        Size newsize;
+        Size newsize = null;
         exitable = false;
         while(!Lancher.exit) {
             // size
-            newsize = terminal.getSize();
-            if(!newsize.equals(size)) {
+            try {
+                newsize = terminal.getSize();
+            } catch(java.io.IOError e) {
+                Logger.warnln("获取终端大小失败: "+e.toString());
+            }
+            if(!size.equals(newsize)) {
                 size = newsize;
                 redraw();
             }
