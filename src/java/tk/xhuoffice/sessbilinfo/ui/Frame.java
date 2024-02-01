@@ -79,7 +79,7 @@ public class Frame {
             try {
                 newsize = terminal.getSize();
             } catch(java.io.IOError e) {
-                Logger.warnln("获取终端大小失败: "+e.toString());
+                Logger.errln("获取终端大小失败: "+e.toString());
             }
             if(!size.equals(newsize)) {
                 size = newsize;
@@ -149,7 +149,7 @@ public class Frame {
     /**
      * Redraw UI. Automatically executed when {@link size} changes.
      */
-    public static void redraw() {
+    public static synchronized void redraw() {
         String[] history = Logger.history.toArray(new String[0]);
         reset();
         Logger.printLinesForEach(history);
