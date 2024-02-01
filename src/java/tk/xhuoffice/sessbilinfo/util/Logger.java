@@ -147,7 +147,7 @@ public class Logger {
                 // write to file
                 writeln(text);
                 // add to history
-                if(history.size()==128) {
+                if(history.size()==128 || (Frame.size!=null && history.size()==(Frame.size.getColumns()-1))) {
                     history.remove(0);
                 }
                 history.add(text);
