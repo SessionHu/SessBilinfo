@@ -73,6 +73,9 @@ public class Prompt {
                     }
                 } catch(java.io.IOError e) {
                     Logger.debugln("发生 IO 错误: "+e.toString());
+                    if(Logger.debug) {
+                        Frame.redraw();
+                    }
                 }
                 // if prompt is more than one line
                 if(prompt.contains("\n")) {

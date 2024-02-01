@@ -79,7 +79,10 @@ public class Frame {
             try {
                 newsize = terminal.getSize();
             } catch(java.io.IOError e) {
-                Logger.errln("获取终端大小失败: "+e.toString());
+                Logger.debugln("获取终端大小失败: "+e.toString());
+                if(Logger.debug) {
+                    redraw();
+                }
             }
             if(!size.equals(newsize)) {
                 size = newsize;
