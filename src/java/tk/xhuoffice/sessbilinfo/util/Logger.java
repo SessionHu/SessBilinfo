@@ -141,8 +141,7 @@ public class Logger {
                     // save cursor
                     Prompt.saveCursorPosition();
                 } else {
-                    Prompt.restoreCursorPosition();
-                    Prompt.getLineReader().printAbove("\033[u"+text+"\n\033[s\033["+(Frame.size.getRows()-2)+"f");
+                    Prompt.getLineReader().printAbove("\033[u"+text+"\n\033[s\033["+(Frame.size.getRows()-2)+"f\n");
                 }
                 // write to file
                 writeln(text);
