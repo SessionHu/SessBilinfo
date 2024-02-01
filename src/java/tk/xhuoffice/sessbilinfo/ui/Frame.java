@@ -152,10 +152,29 @@ public class Frame {
     /**
      * Redraw UI. Automatically executed when {@link size} changes.
      */
-    public static synchronized void redraw() {
-        String[] history = Logger.history.toArray(new String[0]);
-        reset();
-        Logger.printLinesForEach(history);
+    public static void redraw() {
+        synchronized(Logger.history) {
+            String[] history = Logger.history.toArray(new String[0]);
+            reset();
+            // print
+            for(String text : history) {
+                // print to screen
+                if(!Prompt.getLineReader().isReading()) {
+                    System.out.println(text);
+                    // save cursor
+                    Prompt.saveCursorPosition();
+                } else {
+                    Prompt.restoreCursorPosition();
+                    Prompt.getLineReader().printAbove("\033[u"+text+"\n\033[s\033["+(Frame.size.getRows()-2)+"f");
+                }
+                // restore history
+                Logger.history.add(text);
+            }
+            // title
+            if(Frame.size!=null) {
+                Frame.printTitle();
+            }
+        }
     }
 
 }
