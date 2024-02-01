@@ -91,7 +91,7 @@ public class Http {
                 if(msg.equals("Read timed out")) {
                     // 读取超时
                     Logger.println(connMsg="读取超时, 请检查网络连接是否稳定",l);
-                } else if(msg.equals("connect timed out")) {
+                } else if(msg.toLowerCase().equals("connect timed out")) {
                     // 连接超时
                     Logger.println(connMsg="连接超时, 请检查网络连接是否稳定",l);
                 } else {
