@@ -1,8 +1,10 @@
 package tk.xhuoffice.sessbilinfo.net;
 
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.Properties;
 import tk.xhuoffice.sessbilinfo.util.Logger;
 import tk.xhuoffice.sessbilinfo.util.OutFormat;
@@ -16,7 +18,7 @@ public class Setting {
     
     public static void load() {
         // load from file
-        try(FileReader reader = new FileReader(PROP_PATH,StringCoder.UTF_8)) {
+        try(InputStreamReader reader = new InputStreamReader(new FileInputStream(PROP_PATH),StringCoder.UTF_8)) {
             props.load(reader);
         } catch(java.io.FileNotFoundException e) {
             Logger.debugln(e.toString());
@@ -33,7 +35,7 @@ public class Setting {
         } catch(IOException e) {
             // do nothing
         }
-        try(FileWriter writer = new FileWriter(PROP_PATH,StringCoder.UTF_8)) {
+        try(OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(PROP_PATH),StringCoder.UTF_8)) {
             StringBuilder dftprop = new StringBuilder(); 
             dftprop.append("# Settings\n");
             dftprop.append("# Comming soon...\n");
