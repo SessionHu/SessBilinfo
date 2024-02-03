@@ -82,7 +82,7 @@ public class Search {
             }
         }
         // check input if aid or bvid
-        if(lwk.startsWith("av") || lwk.startsWith("bv")) {
+        if(lwk.startsWith("av")) {
             // get aid in string
             Logger.debugln("尝试获取字符串中 Aid");
             Matcher matcher = Pattern.compile("\\d+").matcher(keyword);
@@ -98,11 +98,10 @@ public class Search {
                     return Video.getDetail(aid).getValue();
                 }
             }
+        } else if(lwk.startsWith("bv") && keyword.length()==12) {
             // get bvid in string
-            if(keyword.length()==12) {
-                Logger.println("检测到您的输入为 Bvid, 操作变为获取视频信息");
-                return Video.getDetail(String.valueOf(new AvBv(keyword).getAid())).getValue();
-            }
+            Logger.println("检测到您的输入为 Bvid, 操作变为获取视频信息");
+            return Video.getDetail(String.valueOf(new AvBv(keyword).getAid())).getValue();
         }
         // 发送请求
         String rawJson = BiliAPIs.getSearchAll(keyword);
