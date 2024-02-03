@@ -12,51 +12,34 @@ public class Setting {
     
     public static final String PROP_PATH = System.getProperty("user.home") + "/.openbili/settings.properties";
     
-    public static Properties props = new Properties();
+    private static Properties props = new Properties();
     
     public static void load() {
         // load from file
-        try(FileReader reader = new FileReader(PROP_PATH)) {
+        try(FileReader reader = new FileReader(PROP_PATH,StringCoder.UTF_8)) {
             props.load(reader);
         } catch(java.io.FileNotFoundException e) {
             Logger.debugln(e.toString());
-            try {
-                create();
-            } catch(IOException ioe) {
-                OutFormat.outThrowable(e,3);
-            }
+            create();
         } catch(IOException e) {
             OutFormat.outThrowable(e,3);
         }
-        // get properties
-        ProxySetting.useSys = !props.getProperty("proxy.sys","true").equals("false"); // default: true
-        ProxySetting.useProxy = props.getProperty("proxy.use","false").equals("true"); // default: false
     }
+
     
-    public static void create() throws IOException {
-        CookieFile.checkParentDir(PROP_PATH);
-        try(FileWriter writer = new FileWriter(PROP_PATH)) {
-            String dftprop = ""; {
-                dftprop += "# =====================================================\n";
-                dftprop += "# Proxy Settings\n";
-                dftprop += "# proxy.sys > proxy.use (http) > proxy.use (socks)\n";
-                dftprop += "# -----------------------------------------------------\n";
-                dftprop += "# Use System Proxy (default: true)\n";
-                dftprop += "proxy.sys=true\n";
-                dftprop += "# Use Proxy settings below (default: false)\n";
-                dftprop += "proxy.use=false\n";
-                dftprop += "# Proxy Type (http/socks)\n";
-                dftprop += "proxy.type=http\n";
-                dftprop += "# Proxy Host (IP/Domain)\n";
-                dftprop += "proxy.host=127.0.0.1\n";
-                dftprop += "# Proxy Port (0-65535)\n";
-                dftprop += "proxy.port=10809\n";
-                dftprop += "# Proxy UserName and Password when proxy.type is http\n";
-                dftprop += "proxy.username=\n";
-                dftprop += "proxy.password=\n";
-                dftprop += "# =====================================================\n";
-            }
-            writer.write(dftprop);
+    public static void create() {
+        try {
+            CookieFile.checkParentDir(PROP_PATH);
+        } catch(IOException e) {
+            // do nothing
+        }
+        try(FileWriter writer = new FileWriter(PROP_PATH,StringCoder.UTF_8)) {
+            StringBuilder dftprop = new StringBuilder(); 
+            dftprop.append("# Settings\n");
+            dftprop.append("# Comming soon...\n");
+            writer.write(dftprop.toString());
+        } catch(IOException e) {
+            OutFormat.outThrowable(e,3);
         }
     }
     

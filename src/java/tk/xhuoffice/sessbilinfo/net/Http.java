@@ -167,7 +167,7 @@ public class Http {
         // 打开连接
         HttpURLConnection conn = null;
         try {
-            conn = (HttpURLConnection)url.openConnection(ProxySetting.get());
+            conn = (HttpURLConnection)url.openConnection();
         } catch(IOException e) {
             throw new HttpConnectException("打开连接失败",e);
         }
@@ -181,8 +181,6 @@ public class Http {
         conn.setConnectTimeout(timeoutc);
         // 设置读取超时时间
         conn.setReadTimeout(timeoutr);
-        // 设置HTTP代理身份验证
-        conn = ProxySetting.setHttpProxyAuth(conn);
         // 设置 User-Agent 请求头
         {
             // choose userAgent
