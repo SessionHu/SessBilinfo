@@ -1,6 +1,10 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.fusesource.jansi.AnsiConsole;
 import tk.xhuoffice.sessbilinfo.Lancher;
 import tk.xhuoffice.sessbilinfo.net.CookieFile;
@@ -126,61 +130,81 @@ public class Main {
 
     /**
      * Parse command arguments.
-     * @param command arguments
+     * @param ags  command arguments
      */
-    public static void cmdArgs(String... args) {
+    public static void cmdArgs(String... ags) {
         // 判断命令行参数
-        if(args.length==0) {
+        if(ags.length==0) {
             return;
         }
-        for(String arg : args) {
-            switch(arg) {
-                case "-?":
-                case "-h":
-                case "--help":
+        // 短参数转换
+        List<String> args = new ArrayList<>();
+        Map<Character,String> conv = new HashMap<>();
+        conv.put('d',"--debug");
+        conv.put('n',"--nocookie");
+        conv.put('a',"--force-ansi");
+        conv.put('c',"--clear-log");
+        conv.put('l',"--cli");
+        for(String arg : ags) {
+            if(arg.startsWith("-") && !arg.startsWith("--")) {
+                // if help or version
+                if(arg.contains("?") || arg.contains("h")) {
+                    // print help information directly and exit
                     printHelpInfo();
                     Lancher.exit(Lancher.ExitType.OK);
-                    break;
-                case "-v":
-                case "--version":
-                    // 输出版本信息
+                } else if(arg.contains("v")) {
+                    // print version information directly and exit
                     Logger.debug = false;
-                    System.out.println(
-                            SOFT_TITLE+"\n"+
-                            "Copyright (C) 2023 SessionHu\n"+
-                            "Cookie Path:  "+CookieFile.getCookieFilePath()+"\n"+
-                            "Current Time: "+System.currentTimeMillis()/1000L);
+                    printVersion();
                     Lancher.exit(Lancher.ExitType.OK);
-                    break;
-                case "-d":
-                case "--debug":
-                    // DEBUG 输出是否启用
-                    Logger.debug = true;
-                    break;
-                case "-n":
-                case "--nocookie":
-                    // Cookie 处理
-                    CookieFile.rm();
-                    break;
-                case "-a":
-                case "--force-ansi":
-                    // Force use of JANSI library
-                    AnsiConsole.systemInstall();
-                    break;
-                case "-c":
-                case "--clear-log":
-                    // clear log
-                    Logger.clearLogs();
-                    break;
-                case "-l":
-                case "--cli":
-                    // CLI mode
-                    Frame.cli = true;
-                    break;
-                default:
-                    // nothing here...
+                }
+                // convert
+                for(int i = 0; i < arg.length(); i++) {
+                    String fu = conv.get(arg.charAt(i));
+                    if(fu!=null) {
+                        args.add(fu);
+                    }
+                }
             }
         }
+        for(String arg : args) {
+            if(arg.equals("--help")) {
+                // print help information
+                printHelpInfo();
+                Lancher.exit(Lancher.ExitType.OK);
+            } else if(arg.equals("--version")) {
+                // print version information
+                Logger.debug = false;
+                printVersion();
+                Lancher.exit(Lancher.ExitType.OK);
+            } else if(arg.equals("--debug")) {
+                // DEBUG 输出是否启用
+                Logger.debug = true;
+            } else if(arg.equals("--nocookie")) {
+                // Cookie 处理
+                CookieFile.rm();
+            } else if(arg.equals("--force-ansi")) {
+                // Force use of JANSI library
+                AnsiConsole.systemInstall();
+            } else if(arg.equals("--clear-log")) {
+                // clear log
+                Logger.clearLogs();
+            } else if(arg.equals("--cli")) {
+                // CLI mode
+                Frame.cli = true;
+            }
+        }
+    }
+
+    /**
+     * Print version information of SessBilinfo.
+     */
+    public static void printVersion() {
+        System.out.println(
+                        SOFT_TITLE+"\n"+
+                        "Copyright (C) 2023 SessionHu\n"+
+                        "Cookie Path:  "+CookieFile.getCookieFilePath()+"\n"+
+                        "Current Time: "+System.currentTimeMillis()/1000L);
     }
     
     /**
@@ -215,7 +239,7 @@ public class Main {
                 "    -h, --help       Output this help information\n"+
                 "    -v, --version    Output version and other information";
         String helpMsgZhCn = "用法:\n"+
-                "	java -jar \""+jarFileName+"\"\n"+
+                "    java -jar \""+jarFileName+"\"\n"+
                 "命令参数:\n"+
                 "    -a, --force-ansi 强制使用 JANSI 库\n"+
                 "    -c, --clear-log  清空日志文件\n"+
