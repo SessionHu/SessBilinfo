@@ -1,7 +1,6 @@
 package tk.xhuoffice.sessbilinfo;
 
 import java.io.File;
-import java.io.IOException;
 import org.fusesource.jansi.AnsiConsole;
 import tk.xhuoffice.sessbilinfo.Lancher;
 import tk.xhuoffice.sessbilinfo.net.CookieFile;
@@ -21,7 +20,7 @@ public class Main {
     public static final String SOFT_NAME = "SessBilinfo";
     /**
      * Application version */
-    public static final String SOFT_VERSION = "1.1.0-beta.3";
+    public static final String SOFT_VERSION = "1.1.0";
     /**
      * Application title */
     public static final String SOFT_TITLE = SOFT_NAME+" "+SOFT_VERSION;
@@ -30,7 +29,7 @@ public class Main {
      * User entrance.
      * @param args unused
      */
-    public static void main(String... args) throws IOException {
+    public static void main(String... args) {
         while(true) {
             // 显示菜单
             int id = menu();
@@ -75,7 +74,7 @@ public class Main {
      * Run task.
      * @param task id
      */
-    public static void task(int id) throws IOException {
+    public static void task(int id) {
         if(id==1) {
             // 获取用户信息
             UserInfo.getUserInfo();

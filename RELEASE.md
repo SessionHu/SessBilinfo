@@ -2,6 +2,10 @@
 
 ## 2024
 
+### February
+
+- Feb 3  发布版本 [`1.1.0`](https://github.com/SessionHu/SessBilinfo/releases/v1.0.0)
+
 ### January
 
 - Jan 7  引入 `org.jline` 库

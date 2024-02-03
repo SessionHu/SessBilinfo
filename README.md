@@ -11,7 +11,9 @@
       java -jar "SessBilinfo.jar"
   命令参数
       -a, --force-ansi 强制使用 JANSI 库
+      -c, --clear-log  清空日志文件
       -d, --debug      启用 DEBUG 输出
+      -l, --cli        启用 CLI 模式
       -n, --nocookie   删除 Cookie 文件后运行程序
   环境变量
       OPEN_BILI_DEBUG  当值为 "true" 时, 与 '-d' 或 '-debug' 相同
