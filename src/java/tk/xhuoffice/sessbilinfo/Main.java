@@ -159,12 +159,14 @@ public class Main {
                     Lancher.exit(Lancher.ExitType.OK);
                 }
                 // convert
-                for(int i = 0; i < arg.length(); i++) {
+                for(int i = 1; i < arg.length(); i++) {
                     String fu = conv.get(arg.charAt(i));
                     if(fu!=null) {
                         args.add(fu);
                     }
                 }
+            } else if(arg.startsWith("--")) {
+                args.add(arg);
             }
         }
         for(String arg : args) {
