@@ -54,10 +54,13 @@ public class Search {
             OutFormat.outThrowable(e,4);
         }
     }
-    
-    public static String all(String keyword) {
-        // 初始化变量
-        String results = "";
+
+    /**
+     * Rediret search result.
+     * @param keyword  search keyword
+     * @return         {@code ""} if cannot be redirected
+     */
+    public static String redirect(String keyword) {
         // 用户输入是否为mid
         String lwk = keyword.toLowerCase();
         if(lwk.startsWith("mid") || lwk.startsWith("uid") || keyword.length()==16) {
@@ -102,6 +105,17 @@ public class Search {
             // get bvid in string
             Logger.println("检测到您的输入为 Bvid, 操作变为获取视频信息");
             return Video.getDetail(String.valueOf(new AvBv(keyword).getAid())).getValue();
+        }
+        return "";
+    }
+    
+    public static String all(String keyword) {
+        // 初始化变量
+        String results = "";
+        // check if can redirect search
+        results = redirect(keyword);
+        if(!results.isEmpty()) {
+            return results;
         }
         // 发送请求
         String rawJson = BiliAPIs.getSearchAll(keyword);
