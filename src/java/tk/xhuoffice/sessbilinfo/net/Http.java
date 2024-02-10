@@ -151,7 +151,7 @@ public class Http {
         try {
             return setGetConnURL(new URI(inurl).toURL());
         } catch(java.net.URISyntaxException | java.net.MalformedURLException e) {
-            throw new HttpConnectException("非法的 URL: "+e.getMessage());
+            throw new HttpConnectException("非法的 URL: "+e.getMessage(),e);
         }
     }
     
