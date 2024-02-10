@@ -1,10 +1,14 @@
 package tk.xhuoffice.sessbilinfo.util;
 
 import com.google.gson.JsonObject;
+import java.net.URI;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 import tk.xhuoffice.sessbilinfo.net.Http;
 import tk.xhuoffice.sessbilinfo.net.HttpConnectException;
+import tk.xhuoffice.sessbilinfo.net.StringCoder;
 
 /**
  * APIs about Bilibili. <br>
@@ -19,18 +23,51 @@ public class BiliAPIs {
     private BiliAPIs() {}
 
     /** 
-     * Base HTTP GET request.
+     * Base HTTP GET request with string param.
      * @param apiurl  API URL
-     * @param args    String to add to the end of the URL
-     * @return Response from server <br> {@code null} if {@link tk.xhuoffice.sessbilinfo.net.HttpConnectException} catched
+     * @param args    param string
+     * @return Response from server <br> {@code null} if {@link tk.xhuoffice.sessbilinfo.net.HttpConnectException} caught
      */
     public static String get(String apiurl, String... args) {
+        // string to map
+        Map<String,String> map = new HashMap<>();
+        for(String param : args) {
+            // if param can be use
+            String[] pair = param.split("=");
+            if(pair.length>1) {
+                // param value
+                String val = "";
+                for(int i = 1; i < pair.length; i++) {
+                    val += pair[i];
+                }
+                // put param to map
+                map.put(pair[0],val);
+            }
+        }
+        // get & return
+        return get(apiurl,map);
+    }
+
+    /**
+     * Base HTTP GET request with map param.
+     * @param apiurl  API URL
+     * @param map     param map
+     * @return Response from server <br> {@code null} if {@link tk.xhuoffice.sessbilinfo.net.HttpConnectException} caught
+     */
+    public static String get(String apiurl, Map<String,String> map) {
         // build request url
         StringBuilder url = new StringBuilder(apiurl);
-        if(args.length>0) {
+        if(url.toString().contains("wbi")) {
+            // wbi
             url.append("?");
-            for(String param : args) {
-                url.append(param);
+            url.append(toWbiParams(map));
+        } else if(map.size()>0) {
+            // map to string
+            url.append("?");
+            for(Map.Entry<String,String> param : map.entrySet()) {
+                url.append(param.getKey());
+                url.append("=");
+                url.append(Http.encode(param.getValue()));
                 url.append("&");
             }
             url.deleteCharAt(url.length()-1);
@@ -122,7 +159,7 @@ public class BiliAPIs {
      * @param keyword  keyword
      * @return         json from API */
     public static String getSearchAll(String keyword) {
-        return get(SEARCH_ALL,"keyword="+Http.encode(keyword));
+        return get(SEARCH_ALL,"keyword="+keyword);
     }
     
     /**
@@ -133,7 +170,7 @@ public class BiliAPIs {
      * @param nickName  nickName
      * @return          json from API */
     public static String getAccountCheckNickname(String nickName) {
-        return get(ACCOUNT_CHECK_NICKNAME,"nickName="+Http.encode(nickName));
+        return get(ACCOUNT_CHECK_NICKNAME,"nickName="+nickName);
     }
     
     /**
@@ -180,7 +217,88 @@ public class BiliAPIs {
     public static String getIpLocation() {
         return get(IP_LOCATION);
     }
-    
+
+    /**
+     * 导航栏用户信息. */
+    public static final String NAV = BASE_URL + "/web-interface/nav";
+    /**
+     * GET 导航栏用户信息.
+     * @return json from API */
+    public static String getNav() {
+        return get(NAV);
+    }
+
+    private static final int[] mixinKeyEncTab = new int[]{
+        46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35, 27, 43, 5, 49,
+        33, 9, 42, 19, 29, 28, 14, 39, 12, 38, 41, 13, 37, 48, 7, 16, 24, 55, 40,
+        61, 26, 17, 0, 1, 60, 51, 30, 4, 22, 25, 54, 21, 56, 59, 6, 63, 57, 62, 11,
+        36, 20, 34, 44, 52
+    };
+
+    /**
+     * Get MixinKey for Wbi sign from Nav.
+     * @return {@code null} if any exceptions caught
+     */
+    public static String getMixinKey() {
+        // get json from Nav
+        String nav = BiliAPIs.getNav();
+        // if server did not respose as usual
+        int code = JsonLib.getInt(nav,"code");
+        if(code==-8888 || !(code==-101 || code==0)) {
+            BiliAPIs.codeErrExceptionBuilder(nav).outDetailMessage();
+            return null;
+        }
+        // get name
+        String imgName,subName;
+        try {
+            // get uri
+            URI imgUrl,subUrl;
+            imgUrl = new URI(JsonLib.getString(nav,"data","wbi_img","img_url"));
+            subUrl = new URI(JsonLib.getString(nav,"data","wbi_img","sub_url"));
+            // get name
+            imgName = Paths.get(imgUrl.getPath()).getFileName().toString();
+            subName = Paths.get(subUrl.getPath()).getFileName().toString();
+        } catch(java.net.URISyntaxException e) {
+            OutFormat.outThrowable(e,3);
+            return null;
+        }
+        // get keys
+        String s = imgName.substring(0,imgName.length()-5)
+                 + subName.substring(0,subName.length()-5);
+        StringBuilder key = new StringBuilder();
+        for(int i = 0; i < 32; i++) {
+            key.append(s.charAt(mixinKeyEncTab[i]));
+        }
+        return key.toString();
+    }
+
+    private static String mixinKeyCache = null;
+
+    /**
+     * Convent param map to param string and add Wbi sign.
+     * @param map  param map
+     * @return     param string with Wbi sign
+     * @see <a href="https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/sign/wbi.md">WBI 签名</a>
+     */
+    public static String toWbiParams(Map<String,String> map) {
+        // get mixin key
+        final String mixinKey;
+        if(mixinKeyCache==null) {
+            mixinKey = mixinKeyCache = getMixinKey();
+        } else {
+            mixinKey = mixinKeyCache;
+        }
+        // wts
+        map.put("wts",String.valueOf(System.currentTimeMillis()/1000L));
+        // 排序 + 拼接字符串
+        StringJoiner params = new StringJoiner("&");
+        map.entrySet().stream()
+            .sorted(Map.Entry.comparingByKey())
+            .forEach(entry -> params.add(entry.getKey()+"="+Http.encode(entry.getValue().toString().toUpperCase())));
+        // return
+        return params.add("w_rid="+StringCoder.md5(params+mixinKey)).toString();
+   }
+
     /**
      * Print summary with code from Bilibili API.
      * @deprecated Poor performance and complex to use.
