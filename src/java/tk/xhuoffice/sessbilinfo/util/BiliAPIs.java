@@ -294,9 +294,11 @@ public class BiliAPIs {
         StringJoiner params = new StringJoiner("&");
         map.entrySet().stream()
             .sorted(Map.Entry.comparingByKey())
-            .forEach(entry -> params.add(entry.getKey()+"="+Http.encode(entry.getValue().toString().toUpperCase())));
+            .forEach(entry -> params.add(entry.getKey()+"="+Http.encode(entry.getValue()).replace("+","%20").toUpperCase()));
         // return
-        return params.add("w_rid="+StringCoder.md5(params+mixinKey)).toString();
+        String result =  params.add("w_rid="+StringCoder.md5(params+mixinKey)).toString();
+        Logger.debugln("Wbi params: "+result);
+        return result;
    }
 
     /**
