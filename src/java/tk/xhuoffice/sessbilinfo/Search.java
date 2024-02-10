@@ -66,7 +66,7 @@ public class Search {
         if(lwk.startsWith("mid") || lwk.startsWith("uid") || keyword.length()==16) {
             // 获取字符串中的mid
             Logger.debugln("尝试获取字符串中 Mid");
-            Matcher matcher = Pattern.compile("\\d+").matcher(keyword);
+            Matcher matcher = Pattern.compile("^\\d+$").matcher(keyword);
             if(matcher.find()) {
                 // 提取出mid
                 String mid = matcher.group(); 
