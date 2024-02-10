@@ -166,6 +166,8 @@ public class Downloader {
                 OutFormat.outThrowable(e,0);
             }
             in = null;
+            // no connection
+            this.conn = null;
             // close out
             try {
                 if(out!=null) {
