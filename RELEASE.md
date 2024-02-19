@@ -4,6 +4,8 @@
 
 ### February
 
+- Feb 19 发布版本 [`1.1.1`](https://github.com/SessionHu/SessBilinfo/releases/v1.0.1)
+
 - Feb 3  发布版本 [`1.1.0`](https://github.com/SessionHu/SessBilinfo/releases/v1.0.0)
 
 ### January
