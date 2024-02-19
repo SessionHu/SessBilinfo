@@ -87,7 +87,7 @@ public class Main {
             Video.simpleViewer();
         } else if(id==3) {
             // 进行综合搜索
-            Search.search();
+            Search.searchAll();
         } else if(id==4) {
             // 检查昵称状态
             Account.checkNickname();

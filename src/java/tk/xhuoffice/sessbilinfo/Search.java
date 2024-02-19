@@ -18,7 +18,7 @@ import tk.xhuoffice.sessbilinfo.util.OutFormat;
 
 public class Search {
     
-    public static void search() {
+    public static void searchAll() {
         Frame.reset();
         // 获取搜索内容
         Logger.println("请输入关键词 (不区分大小写)");
@@ -30,7 +30,7 @@ public class Search {
             Logger.println("正在请求数据...");
             // 获取数据
             result.append("------------------------\n \n");
-            result.append(all(keyword));
+            result.append(redirect(keyword));
             result.append("------------------------");
             Logger.println("请求完毕");
             // 输出结果
@@ -106,68 +106,98 @@ public class Search {
             Logger.println("检测到您的输入为 Bvid, 操作变为获取视频信息");
             return Video.getDetail(String.valueOf(new AvBv(keyword).getAid())).getValue();
         }
-        return "";
-    }
-    
-    public static String all(String keyword) {
-        // 初始化变量
-        String results = "";
-        // check if can redirect search
-        results = redirect(keyword);
-        if(!results.isEmpty()) {
-            return results;
-        }
-        // 发送请求
-        String rawJson = BiliAPIs.getSearchAll(keyword);
-        // 获取返回值
-        int code = JsonLib.getInt(rawJson,"code");
-        if(code==0) {
-            // 获取分类结果数目信息 (信息分类依赖API文档)
-            Logger.debugln("获取分类结果数目信息");
-            // int liveRoomCount = JsonLib.getInt(rawJson,"data","top_tlist","live_room"); // 直播
-            // int topicCount = JsonLib.getInt(rawJson,"data","top_tlist","topic"); // 话题
-            String videoCount = null; { // 视频
-                int video = JsonLib.getInt(rawJson,"data","top_tlist","video");
-                videoCount = OutFormat.num(video);
-            }
-            String biliUserCount = null; { // 用户
-                int biliUser = JsonLib.getInt(rawJson,"data","top_tlist","bili_user");
-                biliUserCount = OutFormat.num(biliUser);
-            }
-            // int mediaFtCount = JsonLib.getInt(rawJson,"data","top_tlist","media_ft"); // 电影
-            // int articleCount = JsonLib.getInt(rawJson,"data","top_tlist","article"); // 专栏
-            // int mediaBangumiCount = JsonLib.getInt(rawJson,"data","top_tlist","media_bangumi"); // 番剧
-            // int liveCount = JsonLib.getInt(rawJson,"data","top_tlist","live"); // 直播间
-            // int activityCount = JsonLib.getInt(rawJson,"data","top_tlist","activity"); // 活动
-            // int liveUserCount = JsonLib.getInt(rawJson,"data","top_tlist","live_user"); // 主播
-            // 获取查询结果
-            String[] result = JsonLib.getArray(rawJson,"data","result");
-            for(int i = 0; i < result.length; i++) {
-                String json = result[i];
-                // 用户
-                results += getUserSearchResult(json,biliUserCount);
-                // 视频
-                results += getVideoSearchResult(json,videoCount);
-            }
-        } else if(code==-110) {
-            throw new BiliException("-110 未绑定手机", "错误信息:   -110 未绑定手机\n可能的原因: 输入的信息包含敏感词");
-        } else if(code==-111) {
-            throw new BiliException("-111 csrf 校验失败", "错误信息:   -111 csrf 校验失败\n可能的原因: 输入的信息包含敏感词");
-        } else if(code==-412) {
-            throw new BiliException("请求被拦截, 请检测 Cookie 长度");
-        } else {
-            throw BiliAPIs.codeErrExceptionBuilder(rawJson);
-        }
-        return results;
+        // all
+        return new Search().new All(keyword).getAllSearchResult();
     }
 
-    private static String getUserSearchResult(String json, String biliUserCount) {
-        String results = "";
-        if(JsonLib.getString(json,"result_type").equals("bili_user")) {
+    public class All implements Bilinfo {
+
+        // json
+        private String json;
+
+        // count
+        int liveRoomCount; // 直播
+        int topicCount; // 话题
+        int videoCount; // 视频
+        int biliUserCount; // 用户
+        int mediaFtCount; // 电影
+        int articleCount; // 专栏
+        int mediaBangumiCount; // 番剧
+        int liveCount; // 直播间
+        int activityCount; // 活动
+        int liveUserCount; // 主播
+
+        /**
+         * Search all.
+         * @param keyword  keyword
+         */
+        public All(String keyword) {
+            // 发送请求
+            this.json = BiliAPIs.getSearchAll(keyword);
+            // 获取返回值
+            int code = JsonLib.getInt(this.json,"code");
+            if(code==0) {
+                // 获取分类结果数目信息 (信息分类依赖API文档)
+                Logger.debugln("获取分类结果数目信息");
+                this.liveRoomCount = JsonLib.getInt(this.json,"data","top_tlist","live_room"); // 直播
+                this.topicCount = JsonLib.getInt(this.json,"data","top_tlist","topic"); // 话题
+                this.videoCount = JsonLib.getInt(this.json,"data","top_tlist","video"); // 视频
+                this.biliUserCount = JsonLib.getInt(this.json,"data","top_tlist","bili_user"); // 用户
+                this.mediaFtCount = JsonLib.getInt(this.json,"data","top_tlist","media_ft"); // 电影
+                this.articleCount = JsonLib.getInt(this.json,"data","top_tlist","article"); // 专栏
+                this.mediaBangumiCount = JsonLib.getInt(this.json,"data","top_tlist","media_bangumi"); // 番剧
+                this.liveCount = JsonLib.getInt(this.json,"data","top_tlist","live"); // 直播间
+                this.activityCount = JsonLib.getInt(this.json,"data","top_tlist","activity"); // 活动
+                this.liveUserCount = JsonLib.getInt(this.json,"data","top_tlist","live_user"); // 主播
+            } else if(code==-110) {
+                throw new BiliException("-110 未绑定手机", "错误信息:   -110 未绑定手机\n可能的原因: 输入的信息包含敏感词");
+            } else if(code==-111) {
+                throw new BiliException("-111 csrf 校验失败", "错误信息:   -111 csrf 校验失败\n可能的原因: 输入的信息包含敏感词");
+            } else if(code==-412) {
+                throw new BiliException("请求被拦截, 请检测 Cookie 长度");
+            } else {
+                throw BiliAPIs.codeErrExceptionBuilder(this.json);
+            }
+        }
+
+        @Override
+        public String toJson() {
+            return this.json;
+        }
+
+        /**
+         * 获取查询结果.
+         * @return result
+         */
+        public String getAllSearchResult() {
+            String results = "";
+            String[] result = JsonLib.getArray(this.json,"data","result");
+            for(int i = 0; i < result.length; i++) {
+                this.resultJson = result[i];
+                // 用户
+                results += getUserSearchResult();
+                // 视频
+                results += getVideoSearchResult();
+            }
+            return results;
+        }
+
+        private String resultJson;
+        
+        private String userSearchResult = "";
+
+        private String getUserSearchResult() {
+            if(!JsonLib.getString(this.resultJson,"result_type").equals("bili_user")) {
+                return "";
+            }
+            if(!this.userSearchResult.isEmpty()) {
+                return this.userSearchResult;
+            }
+            String results = "";
             Logger.debugln("获取用户信息");
             try {
                 // 获取 data 数组作为 JSON
-                String usrJson = JsonLib.getArray(json,"data")[0]; // 默认仅使用第一个结果
+                String usrJson = JsonLib.getArray(this.resultJson,"data")[0]; // 默认仅使用第一个结果
                 // 解析数据
                 String usrMid = JsonLib.getString(usrJson,"mid"); // mid
                 String usrName = JsonLib.getString(usrJson,"uname"); // 昵称
@@ -192,7 +222,7 @@ public class Search {
                 }
                 // 输出数据
                 String usrInfo = "";
-                usrInfo += "共搜索到约 " + biliUserCount + " 个用户\n";
+                usrInfo += "共搜索到约 " + OutFormat.num(this.biliUserCount) + " 个用户\n";
                 usrInfo += "1. Mid: " + usrMid + "\n";
                 usrInfo += "   " + usrName + "   Lv" + usrLevel + "\n";
                 usrInfo += "   粉丝 " + usrStrFans + "   视频 " + usrStrVideos + "\n";
@@ -205,22 +235,28 @@ public class Search {
                 results += usrInfo;
             } catch(ArrayIndexOutOfBoundsException e) {
                 // 完全匹配的用户啥也没搜到
-                results += "共搜索到约 " + biliUserCount + " 个用户\n";
+                results += "共搜索到约 " + OutFormat.num(this.biliUserCount) + " 个用户\n";
                 results += "无详细结果, 请进行用户搜索\n \n";
             }
+            return this.userSearchResult = results;
         }
-        return results;
-    }
 
-    private static String getVideoSearchResult(String json, String videoCount) {
-        String results = "";
-        if(JsonLib.getString(json,"result_type").equals("video")) {
+        private String videoSearchResult = "";
+
+        private String getVideoSearchResult() {
+            if(!JsonLib.getString(this.resultJson,"result_type").equals("video")) {
+                return "";
+            }
+            if(!this.videoSearchResult.isEmpty()) {
+                return this.videoSearchResult;
+            }
+            String results = "";
             Logger.debugln("获取视频信息");
             // 获取 data 数组作为 JSON
-            String[] videoJson = JsonLib.getArray(json,"data");
+            String[] videoJson = JsonLib.getArray(this.resultJson,"data");
             // 初始化变量
             String vInfo = "";
-            vInfo += "共搜索到约 " + videoCount + " 个视频\n";
+            vInfo += "共搜索到约 " + OutFormat.num(this.videoCount) + " 个视频\n";
             for(int v = 0; v < videoJson.length; v++) {
                 Logger.debugln("读取第 "+(v+1)+" 个视频");
                 // 获取当前视频 JSON
@@ -247,8 +283,9 @@ public class Search {
             }
             vInfo += " \n";
             results += OutFormat.xmlToANSI(vInfo); 
+            return this.videoSearchResult = results;
         }
-        return results;
+
     }
-    
+
 }
