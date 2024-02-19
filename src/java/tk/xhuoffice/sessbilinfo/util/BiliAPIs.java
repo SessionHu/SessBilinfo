@@ -153,9 +153,9 @@ public class BiliAPIs {
     
     /**
      * 搜索综合 */
-    public static final String SEARCH_ALL = BASE_URL+"/web-interface/search/all/v2";
+    public static final String SEARCH_ALL = BASE_URL+"/web-interface/wbi/search/all/v2";
     /**
-     * GET 搜索综合.
+     * GET 搜索综合. (wbi)
      * @param keyword  keyword
      * @return         json from API */
     public static String getSearchAll(String keyword) {
